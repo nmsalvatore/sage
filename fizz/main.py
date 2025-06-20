@@ -1,5 +1,9 @@
+import click
+
+@click.command()
+@click.version_option()
 def main():
-    print("fizz 0.1.0")
+    pass
 
 if __name__ == "__main__":
     main()
