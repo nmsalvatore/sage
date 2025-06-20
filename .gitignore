@@ -11,3 +11,6 @@ wheels/
 
 # Other
 .ropeproject
+
+# Pytest
+.pytest_cache
