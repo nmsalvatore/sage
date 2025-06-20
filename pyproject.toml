@@ -8,12 +8,10 @@ version = "0.1.0"
 description = "A clean and easy-to-use CLI timer"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = [
-    "click>=8.2.1",
-]
+dependencies = ["click>=8.2.1"]
 
 [project.scripts]
-fizz = "fizz.main:main"
+fizz = "fizz.main:fizz"
 
 [dependency-groups]
 dev = ["pytest>=8.4.1"]
