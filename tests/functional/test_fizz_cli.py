@@ -16,12 +16,44 @@ def test_fizz_version():
 
 def test_fizz_help():
     """
-    To get familiar with fizz usage, a user uses the `fizz --help`
-    command.
+    To get familiar with basic fizz usage, a user uses the `fizz
+    --help` command.
     """
 
     result = subprocess.run(
         ["fizz", "--help"], capture_output=True, text=True, timeout=5
     )
 
-    assert all(option in result.stdout for option in ["--version", "--help"])
+    assert all(
+        option in result.stdout
+        for option in ["--version", "--help", "timer", "stopwatch"]
+    )
+
+
+def test_fizz_timer_help():
+    """
+    Now familiar with the basic fizz commands, the user checks to see how
+    to use the timer command with `fizz timer --help`.
+    """
+
+    result = subprocess.run(
+        ["fizz", "timer", "--help"], capture_output=True, text=True, timeout=5
+    )
+
+    assert all(
+        option in result.stdout
+        for option in ["--hours", "--minutes", "--seconds", "-h", "-m", "-s"]
+    )
+
+
+def test_fizz_accepts_arguments():
+    """
+    Feeling confident, our user is ready to see fizz in action by
+    starting a 5 second timer.
+    """
+
+    result = subprocess.run(
+        ["fizz", "timer", "-s", "5"], capture_output=True, text=True, timeout=5
+    )
+
+    assert "5 seconds" in result.stdout
