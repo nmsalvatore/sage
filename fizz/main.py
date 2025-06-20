@@ -6,14 +6,12 @@ import click
 def cli():
     pass
 
-
 @cli.command()
 @click.option("-h", "--hours", type=int)
 @click.option("-m", "--minutes", type=int)
 @click.option("-s", "--seconds", type=int)
 def timer(hours=0, minutes=0, seconds=0):
     click.echo(f"{seconds} seconds")
-
 
 @cli.command()
 def stopwatch():
