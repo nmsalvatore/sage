@@ -41,3 +41,16 @@ def test_fizz_timer_help():
         option in result.stdout
         for option in ["--hours", "--minutes", "--seconds", "-h", "-m", "-s"]
     )
+
+
+def test_fizz_timer_accepts_options():
+    """
+    Check that `fizz timer` accepts option arguments. Running `fizz
+    timer` with the `--test` flag will avoid the curses interface and
+    echo "Test successful" if no exceptions are raised.
+    """
+    result = subprocess.run(
+        ["fizz", "timer", "-s", "5", "--test"], capture_output=True, text=True, timeout=5
+    )
+
+    assert "Test successful" in result.stdout
