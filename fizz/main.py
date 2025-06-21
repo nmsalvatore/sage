@@ -47,10 +47,11 @@ def fizz():
 @click.option("-h", "--hours", type=int, default=0)
 @click.option("-m", "--minutes", type=int, default=0)
 @click.option("-s", "--seconds", type=int, default=0)
+@click.argument("time_string", required=False)
 @click.option("--test", is_flag=True, hidden=True)
 def timer(test, **kwargs):
     if test:
-        click.echo("Test successful")
+        click.echo("Test successful")   # If this executes, no exception occurred
     else:
         curses.wrapper(lambda stdscr: load_timer(stdscr, **kwargs))
 
