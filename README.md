@@ -6,7 +6,7 @@ fizz is a clean and easy-to-use CLI timer and stopwatch.
 
 fizz provides a simple and intuitive command line interface.
 
-### `fizz timer`
+### `fizz timer` - IN PROGRESS
 
 The fizz timer is built to be intuitive, the hope being that it works
 how you expect it to work. Since we all intuit differently, timers can
@@ -27,9 +27,9 @@ fizz timer -s 45            # 45 second timer
 fizz timer -s 30 -m 2       # 2 minute 30 second timer
 ```
 
-#### Time strings
+#### Time strings - TODO
 
-We're not all robots, so `fizz timer` also accepts human readable time
+We're not all robots, so `fizz timer` also accepts human-readable time
 strings.
 
 ```bash
@@ -37,12 +37,13 @@ fizz timer "00:35:00"       # 35 minute timer
 fizz timer "25 minutes"     # 25 minute timer
 ```
 
-#### Custom names
+#### Custom names - TODO
 
-Timers can also be saved with custom names by using the `--name` flag.
-To load a custom timer, pass the timer name after `fizz timer`. For
-example, fizz includes a 25 minute pomodoro timer by default with the name
-`pomodoro`, which can be loaded with `fizz timer pomodoro`.
+Timers can also be saved with custom names by using the `--name` flag,
+followed by a name. To load a custom timer, pass the timer name after
+`fizz timer`. For example, fizz includes a 25 minute pomodoro timer by
+default with the name `pomodoro`, which can be loaded with `fizz timer
+pomodoro`.
 
 Here are some other examples.
 
@@ -53,12 +54,13 @@ fizz timer -m 55 --name potato      # updates `potato` to 55 minute timer
 fizz timer potato                   # runs 55 minute timer because it was updated above
 ```
 
-To *view* all of your custom timers, use `fizz timer list`.
+To view all of your custom timers, use `fizz timer list`.
 
-To *delete* a custom timer, use `fizz timer delete <custom_name>`. If I
-wanted to delete `potato` for instance, use `fizz timer delete potato`.
+To delete a custom timer, use `fizz timer delete <custom_name>`. If I
+wanted to delete `potato` for instance, I'd use `fizz timer delete
+potato`.
 
-### `fizz stopwatch`
+### `fizz stopwatch` - TODO
 
 fizz also provides a stopwatch (or an ascending timer?), which can be
 loaded using `fizz stopwatch`.
