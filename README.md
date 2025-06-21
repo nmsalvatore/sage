@@ -1,27 +1,64 @@
-# Fizz
+# fizz
 
-Fizz is a clean and easy-to-use CLI timer and stopwatch.
+fizz is a clean and easy-to-use CLI timer and stopwatch.
 
 ## Usage
 
-Fizz provides a simple and intuitive command line interface. The following examples provide a comprehensive view of Fizz usage.
+fizz provides a simple and intuitive command line interface.
+
+### `fizz timer`
+
+The fizz timer is built to be intuitive, the hope being that it works
+how you expect it to work. Since we all intuit differently, timers can
+loaded in multiple ways.
+
+#### Time unit flags
+
+Use option flags to set the timer. Flags can be applied in any order.
+
+- `-h`, `--hours` - set timer hours
+- `-m`, `--minutes` - set timer minutes
+- `-s`, `--seconds` - set timer seconds
 
 ```bash
-# Timer commands
-fizz timer -m 15        # 15 minute timer
-fizz timer -h 1 -m 30   # 1 hour 30 minute timer
-fizz timer -s 45        # 45 second timer
-fizz timer -s 30 -m 2   # 2 minute 30 second timer, argument order doesn't matter
+fizz timer -m 15            # 15 minute timer
+fizz timer -h 1 -m 30       # 1 hour 30 minute timer
+fizz timer -s 45            # 45 second timer
+fizz timer -s 30 -m 2       # 2 minute 30 second timer
+```
 
-# Stopwatch command
-fizz stopwatch
+#### Time strings
 
-# Custom timers
-fizz timer pomodoro                 # runs 25 minute timer, included by default
+We're not all robots, so `fizz timer` also accepts human readable time
+strings.
+
+```bash
+fizz timer "00:35:00"       # 35 minute timer
+fizz timer "25 minutes"     # 25 minute timer
+```
+
+#### Custom names
+
+Timers can also be saved with custom names by using the `--name` flag.
+To load a custom timer, pass the timer name after `fizz timer`. For
+example, fizz includes a 25 minute pomodoro timer by default with the name
+`pomodoro`, which can be loaded with `fizz timer pomodoro`.
+
+Here are some other examples.
+
+```bash
 fizz timer -h 1 --name potato       # creates a 1 hour timer called `potato`
 fizz timer potato                   # runs 1 hour timer
 fizz timer -m 55 --name potato      # updates `potato` to 55 minute timer
-fizz timer potato                   # runs 55 minute timer
-fizz timer list                     # shows list of custom timers
-fizz timer delete potato            # deletes custom timer `potato`
+fizz timer potato                   # runs 55 minute timer because it was updated above
 ```
+
+To *view* all of your custom timers, use `fizz timer list`.
+
+To *delete* a custom timer, use `fizz timer delete <custom_name>`. If I
+wanted to delete `potato` for instance, use `fizz timer delete potato`.
+
+### `fizz stopwatch`
+
+fizz also provides a stopwatch (or an ascending timer?), which can be
+loaded using `fizz stopwatch`.
