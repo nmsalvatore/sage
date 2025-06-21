@@ -21,20 +21,21 @@ Use option flags to set the timer. Flags can be applied in any order.
 - `-s`, `--seconds` - set timer seconds
 
 ```bash
-fizz timer -m 15            # 15 minute timer
-fizz timer -h 1 -m 30       # 1 hour 30 minute timer
-fizz timer -s 45            # 45 second timer
-fizz timer -s 30 -m 2       # 2 minute 30 second timer
+fizz timer -m 15                    # 15 minute timer
+fizz timer -h 1 -m 30               # 1 hour 30 minute timer
+fizz timer -s 45                    # 45 second timer
+fizz timer -s 30 -m 2               # 2 minute 30 second timer
 ```
 
-#### Time strings - TODO
+#### Time strings
 
 We're not all robots, so `fizz timer` also accepts human-readable time
-strings.
+strings. You can even mix and match unit strings.
 
 ```bash
-fizz timer "00:35:00"       # 35 minute timer
-fizz timer "25 minutes"     # 25 minute timer
+fizz timer "25 minutes"             # 25 minute timer
+fizz timer "10m 30s"                # 10 minute 30 second timer
+fizz timer "2 minute 60 s"          # 3 minute timer
 ```
 
 #### Custom names - TODO
