@@ -40,11 +40,10 @@ sage timer 3min25s                  # 3 minute 25 second timer
 
 #### Custom names - TODO
 
-Timers can also be saved with custom names by using the `--name` flag,
-followed by a name. To load a custom timer, pass the timer name after
-`sage timer`. For example, sage includes a 25 minute pomodoro timer by
-default with the name `pomodoro`, which can be loaded with `sage timer
-pomodoro`.
+Timers can also be saved by giving them a name with the `--name` flag.
+To load a custom timer, pass the timer name after `sage timer`. For
+example, sage includes a 25 minute pomodoro timer by default with the
+name `pomodoro`, which can be loaded with `sage timer pomodoro`.
 
 Here are some other examples.
 
