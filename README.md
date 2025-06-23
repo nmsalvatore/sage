@@ -54,10 +54,10 @@ sage timer -m 55 --name potato      # updates `potato` to 55 minute timer
 sage timer potato                   # runs 55 minute timer because it was updated above
 ```
 
-To view all of your custom timers, use `sage timers`.
+To view all of your custom timers, use `sage timer list`.
 
-To delete a custom timer, use `sage timers --delete <custom_name>`. If
-I wanted to delete `potato` for instance, I'd use `sage timers --delete
+To delete a custom timer, use `sage timer delete <timer_name>`. If
+I wanted to delete `potato` for instance, I'd use `sage timer delete
 potato`.
 
 ### `sage stopwatch` - TODO

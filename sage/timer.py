@@ -1,11 +1,12 @@
 import curses
 import time
 
-from .config import get_saved_timer
+from .config import get_saved_timer, load_saved_timers
 from .common import (
     convert_time_string_to_seconds,
     convert_time_to_seconds,
     format_time_as_clock,
+    format_time_as_english,
     get_curses_center_positions,
 )
 
@@ -29,10 +30,12 @@ def get_timer_duration(hours=0, minutes=0, seconds=0, time_string=None) -> int:
 
 
 def load_timer(stdscr, hours=0, minutes=0, seconds=0, time_string=None):
+    """
+    Load the timer interface.
+    """
     curses.start_color()
-    curses.init_pair(1, curses.COLOR_GREEN, curses.COLOR_BLACK)
-    curses.init_pair(2, curses.COLOR_YELLOW, curses.COLOR_BLACK)
-    curses.init_pair(3, curses.COLOR_BLUE, curses.COLOR_BLACK)
+    curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLACK)
+    curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
 
     stdscr.clear()
     curses.curs_set(0)  # Hide terminal cursor
@@ -45,6 +48,11 @@ def load_timer(stdscr, hours=0, minutes=0, seconds=0, time_string=None):
     start = time.perf_counter()
     total_seconds = get_timer_duration(hours, minutes, seconds, time_string)
 
+    # add one second to total seconds so that the timer duration
+    # accurately reflects the time remaining before the clock hits 0,
+    # rather than the time remaining before the clock hits -1.
+    total_seconds += 1
+
     while True:
         elapsed = time.perf_counter() - start
         time_remaining = total_seconds - elapsed
@@ -54,11 +62,11 @@ def load_timer(stdscr, hours=0, minutes=0, seconds=0, time_string=None):
 
         if timer_name:
             _, timer_name_x = get_curses_center_positions(timer_name)
-            stdscr.addstr(ftime_y - 1, timer_name_x, timer_name, curses.color_pair(3))
+            stdscr.addstr(ftime_y - 1, timer_name_x, timer_name, curses.color_pair(2))
 
         stdscr.addstr(ftime_y, ftime_x, ftime_remaining, curses.color_pair(1))
 
-        if time_remaining < 0:
+        if time_remaining < 1:
             break
 
         time.sleep(0.1)
@@ -68,3 +76,30 @@ def load_timer(stdscr, hours=0, minutes=0, seconds=0, time_string=None):
     message_y, message_x = get_curses_center_positions(message)
     stdscr.addstr(message_y, message_x, message, curses.color_pair(2))
     stdscr.getch()
+
+
+def list_timers():
+    """
+    List all saved timers.
+    """
+    import click
+
+    saved_timers = load_saved_timers()
+
+    if not saved_timers:
+        click.echo("No saved timers.")
+        click.echo("Save a timer with: sage timer <duration> --name <name>")
+        return
+
+    max_width = max(len(name) for name in saved_timers.keys())
+
+    for timer in sorted(saved_timers.keys()):
+        hours = saved_timers[timer].get("hours", 0)
+        minutes = saved_timers[timer].get("minutes", 0)
+        seconds = saved_timers[timer].get("seconds", 0)
+
+        duration = format_time_as_english(
+            convert_time_to_seconds(hours, minutes, seconds)
+        )
+
+        click.echo(f"{timer:<{max_width + 2}} {duration}")
