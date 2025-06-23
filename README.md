@@ -34,7 +34,7 @@ strings. You can even mix and match unit formats.
 
 ```bash
 sage timer 25m                      # 25 minute timer
-sage timer "10m 30s"                # 10 minute 30 second timer
+sage timer "10 minutes 30 sec"      # 10 minute 30 second timer
 sage timer 3min25s                  # 3 minute 25 second timer
 ```
 
@@ -55,7 +55,7 @@ sage timer -m 55 --name potato      # updates `potato` to 55 minute timer
 sage timer potato                   # runs 55 minute timer because it was updated above
 ```
 
-To view all of your custom timers, use `sage timer list`.
+To view all of your custom timers, use `sage timers`.
 
 To delete a custom timer, use `sage timer delete <custom_name>`. If I
 wanted to delete `potato` for instance, I'd use `sage timer delete
