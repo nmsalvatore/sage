@@ -57,8 +57,8 @@ sage timer potato                   # runs 55 minute timer because it was update
 
 To view all of your custom timers, use `sage timers`.
 
-To delete a custom timer, use `sage timer delete <custom_name>`. If I
-wanted to delete `potato` for instance, I'd use `sage timer delete
+To delete a custom timer, use `sage timers --delete <custom_name>`. If
+I wanted to delete `potato` for instance, I'd use `sage timers --delete
 potato`.
 
 ### `sage stopwatch` - TODO
