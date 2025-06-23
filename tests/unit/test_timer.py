@@ -1,14 +1,14 @@
 from unittest import TestCase
 
-from fizz.common import (convert_time_string_to_seconds,
+from sage.common import (convert_time_string_to_seconds,
                          convert_time_to_seconds, expand_time_from_seconds,
                          format_time)
-from fizz.timer import get_timer_duration
+from sage.timer import get_timer_duration
 
 
 class TestTimer(TestCase):
     """
-    Testing suite for fizz timer.
+    Testing suite for sage timer.
     """
 
     def test_convert_time_to_seconds(self):
@@ -62,7 +62,7 @@ class TestTimer(TestCase):
     def test_get_timer_duration(self):
         """
         Test that `get_timer_duration` gets the correct time, depending
-        on how the arguments are passed to `fizz timer`.
+        on how the arguments are passed to `sage timer`.
         """
         self.assertEqual(get_timer_duration(time_string="2m 3s"), 123)
         self.assertEqual(get_timer_duration(hours=1), 3600)

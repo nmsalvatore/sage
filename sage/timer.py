@@ -13,7 +13,7 @@ from .common import (
 def get_timer_duration(hours=0, minutes=0, seconds=0, time_string=None) -> int:
     """
     Determine the timer duration based on which arguments are passed to
-    `fizz timer`. Returns time in seconds for both cases.
+    `sage timer`. Returns time in seconds for both cases.
     """
     if time_string:
         saved_timer = get_saved_timer(time_string)

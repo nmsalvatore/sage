@@ -3,18 +3,15 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "fizz"
+name = "sage"
 version = "0.1.0"
 description = "A clean and easy-to-use CLI timer"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = [
-    "click>=8.2.1",
-    "platformdirs>=4.3.8",
-]
+dependencies = ["click>=8.2.1", "platformdirs>=4.3.8"]
 
 [project.scripts]
-fizz = "fizz.cli:fizz"
+sage = "sage.cli:sage"
 
 [dependency-groups]
 dev = ["pytest>=8.4.1"]

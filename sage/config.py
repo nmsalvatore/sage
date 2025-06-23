@@ -8,7 +8,7 @@ def get_timers_file():
     """
     Retrieve path to the JSON file storing custom timers.
     """
-    config_dir = Path(user_config_dir("fizz"))
+    config_dir = Path(user_config_dir("sage"))
     config_dir.mkdir(parents=True, exist_ok=True)
     return config_dir / "timers.json"
 

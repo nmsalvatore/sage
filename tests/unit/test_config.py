@@ -1,6 +1,6 @@
 from unittest.mock import patch
 
-from fizz.config import load_saved_timers, save_timer, get_saved_timer
+from sage.config import load_saved_timers, save_timer, get_saved_timer
 
 
 def test_load_saved_timers_creates_defaults_on_first_run(tmp_path):
@@ -10,7 +10,7 @@ def test_load_saved_timers_creates_defaults_on_first_run(tmp_path):
     """
     fake_timers_file = tmp_path / "timers.json"
 
-    with patch("fizz.config.get_timers_file", return_value=fake_timers_file):
+    with patch("sage.config.get_timers_file", return_value=fake_timers_file):
         timers = load_saved_timers()
 
         assert "pomodoro" in timers
@@ -22,7 +22,7 @@ def test_save_and_load_timer(tmp_path):
     """
     fake_timers_file = tmp_path / "timers.json"
 
-    with patch("fizz.config.get_timers_file", return_value=fake_timers_file):
+    with patch("sage.config.get_timers_file", return_value=fake_timers_file):
         save_timer("workout", hours=1, minutes=30)
 
         timers = load_saved_timers()
@@ -37,7 +37,7 @@ def test_get_saved_timer(tmp_path):
     """
     fake_timers_file = tmp_path / "timers.json"
 
-    with patch("fizz.config.get_timers_file", return_value=fake_timers_file):
+    with patch("sage.config.get_timers_file", return_value=fake_timers_file):
         save_timer("break", minutes=5)
         save_timer("meeting", minutes=15)
 
@@ -57,7 +57,7 @@ def test_save_timer_overwrites_existing(tmp_path):
     """
     fake_timers_file = tmp_path / "timers.json"
 
-    with patch("fizz.config.get_timers_file", return_value=fake_timers_file):
+    with patch("sage.config.get_timers_file", return_value=fake_timers_file):
         save_timer("test", minutes=10)
         save_timer("test", minutes=20, seconds=30)
 
