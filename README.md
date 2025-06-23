@@ -27,10 +27,10 @@ fizz timer -s 45                    # 45 second timer
 fizz timer -s 30 -m 2               # 2 minute 30 second timer
 ```
 
-#### Time strings
+#### Human-readable time strings
 
 We're not all robots, so `fizz timer` also accepts human-readable time
-strings. You can even mix and match unit strings.
+strings. You can even mix and match unit formats.
 
 ```bash
 fizz timer "25 minutes"             # 25 minute timer

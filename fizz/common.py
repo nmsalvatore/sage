@@ -41,11 +41,22 @@ def convert_time_string_to_seconds(time_string) -> int:
     return total
 
 
-def get_timer_duration(hours=0, minutes=0, seconds=0, time_string=None):
+def format_time(seconds) -> str:
     """
-    Determine a time in total seconds, depending on which arguments are
-    passed to `fizz timer`.
+    Take a time in total seconds, convert it to the correct time units
+    (hours, minutes, seconds) and format it into a 00:00:00 format.
     """
-    if time_string:
-        return convert_time_string_to_seconds(time_string)
-    return convert_time_to_seconds(hours, minutes, seconds)
+    hours, minutes, seconds = expand_time_from_seconds(seconds)
+    return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+
+
+def get_curses_center_positions(string: str) -> tuple:
+    """
+    Calculate the position needed by the `stdscr.addstr` function
+    when centering a string in the curses pane.
+    """
+    import curses
+
+    y = curses.LINES // 2
+    x = (curses.COLS // 2) - (len(string) // 2)
+    return (y, x)

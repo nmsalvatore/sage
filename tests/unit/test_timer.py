@@ -1,9 +1,12 @@
 from unittest import TestCase
 
-from fizz.utils import convert_time_to_seconds, expand_time_from_seconds, convert_time_string_to_seconds, get_timer_duration
+from fizz.common import (convert_time_string_to_seconds,
+                         convert_time_to_seconds, expand_time_from_seconds,
+                         format_time)
+from fizz.timer import get_timer_duration
 
 
-class TestBasicTimer(TestCase):
+class TestTimer(TestCase):
     """
     Testing suite for fizz timer.
     """
@@ -65,3 +68,12 @@ class TestBasicTimer(TestCase):
         self.assertEqual(get_timer_duration(hours=1), 3600)
         self.assertEqual(get_timer_duration(0, 5), 300)
         self.assertEqual(get_timer_duration(time_string="2 minute 60s"), 180)
+
+
+    def test_format_time(self):
+        """
+        Test that `format_time` takes a time in seconds, converts it to
+        the correct time units (hours, minutes, seconds) and formats it
+        into 00:00:00 format.
+        """
+        self.assertEqual(format_time(185), "00:03:05")
