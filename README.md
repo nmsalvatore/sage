@@ -33,9 +33,9 @@ We're not all robots, so `sage timer` also accepts human-readable time
 strings. You can even mix and match unit formats.
 
 ```bash
-sage timer "25 minutes"             # 25 minute timer
+sage timer 25m                      # 25 minute timer
 sage timer "10m 30s"                # 10 minute 30 second timer
-sage timer "2 minute 60 s"          # 3 minute timer
+sage timer 3min25s                  # 3 minute 25 second timer
 ```
 
 #### Custom names - TODO
