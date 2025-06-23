@@ -16,6 +16,7 @@ def test_load_saved_timers_creates_defaults_on_first_run(tmp_path):
         assert "pomodoro" in timers
         assert timers["pomodoro"]["minutes"] == 25
 
+
 def test_save_and_load_timer(tmp_path):
     """
     Test saving a timer and loading it back.
@@ -30,6 +31,7 @@ def test_save_and_load_timer(tmp_path):
         assert timers["workout"]["hours"] == 1
         assert timers["workout"]["minutes"] == 30
         assert "pomodoro" in timers
+
 
 def test_get_saved_timer(tmp_path):
     """

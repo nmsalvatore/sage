@@ -20,7 +20,10 @@ def load_saved_timers():
     timers_file = get_timers_file()
 
     if not timers_file.exists():
-        default_timers = {"pomodoro": {"minutes": 25}}
+        default_timers = {
+            "pomodoro": {"minutes": 25},
+            "nap": {"minutes": 20}
+        }
         save_timers(default_timers)
         return default_timers
 

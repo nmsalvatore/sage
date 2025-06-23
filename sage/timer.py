@@ -5,7 +5,7 @@ from .config import get_saved_timer
 from .common import (
     convert_time_string_to_seconds,
     convert_time_to_seconds,
-    format_time,
+    format_time_as_clock,
     get_curses_center_positions,
 )
 
@@ -41,7 +41,7 @@ def load_timer(stdscr, hours=0, minutes=0, seconds=0, time_string=None):
     while True:
         elapsed = time.perf_counter() - start
         time_remaining = total_seconds - elapsed
-        ftime_remaining = format_time(time_remaining)
+        ftime_remaining = format_time_as_clock(time_remaining)
 
         ftime_y, ftime_x = get_curses_center_positions(ftime_remaining)
         stdscr.addstr(ftime_y, ftime_x, ftime_remaining, curses.color_pair(1))
