@@ -21,10 +21,10 @@ Use option flags to set the timer. Flags can be applied in any order.
 - `-s`, `--seconds` - set timer seconds
 
 ```bash
-sage timer -m 15                    # 15 minute timer
-sage timer -h 1 -m 30               # 1 hour 30 minute timer
-sage timer -s 45                    # 45 second timer
-sage timer -s 30 -m 2               # 2 minute 30 second timer
+sage timer -m 15                        # 15 minute timer
+sage timer --hours 1 --minutes 30       # 1 hour 30 minute timer
+sage timer -s 45                        # 45 second timer
+sage timer --seconds 30 -m 2            # 2 minute 30 second timer
 ```
 
 #### Human-readable time strings
@@ -33,32 +33,40 @@ We're not all robots, so `sage timer` also accepts human-readable time
 strings. You can even mix and match unit formats.
 
 ```bash
-sage timer 25m                      # 25 minute timer
-sage timer "10 minutes 30 sec"      # 10 minute 30 second timer
-sage timer 3min25s                  # 3 minute 25 second timer
+sage timer 25m                          # 25 minute timer
+sage timer "10 minutes 30 sec"          # 10 minute 30 second timer
+sage timer 3min25s                      # 3 minute 25 second timer
 ```
 
-#### Custom names - TODO
+#### Custom timers - TODO
 
-Timers can also be saved by giving them a name with the `--name` flag.
-To load a custom timer, pass the timer name after `sage timer`. For
-example, sage includes a 25 minute pomodoro timer by default with the
-name `pomodoro`, which can be loaded with `sage timer pomodoro`.
+Timers can also be saved under custom names by using `sage create timer
+<name> <duration>`. The timer name can be any valid string and the
+timer duration must adhere to the same rules as above. Sage also
+provides `update`, `rename` and `delete` commands for managing your
+custom timers.
 
-Here are some other examples.
+Examples of usage with custom timers can be seen below.
 
 ```bash
-sage timer -h 1 --name potato       # creates a 1 hour timer called `potato`
-sage timer potato                   # runs 1 hour timer
-sage timer -m 55 --name potato      # updates `potato` to 55 minute timer
-sage timer potato                   # runs 55 minute timer because it was updated above
+sage create timer potato 55m            # creates a 55 minute timer with the name "potato"
+sage update timer potato "50 minutes"   # updates "potato" duration to 50 minutes
+sage rename timer potato pomodoro       # renames timer "potato" to "pomodoro"
+sage update pomodoro --minutes 25       # updates "pomodoro" duration to 25 minutes
+sage delete timer pomodoro              # deletes timer "pomodoro"
 ```
 
-To view all of your custom timers, use `sage timer list`.
+To run a custom timer, simply provide the timer's name as the argument
+following `sage timer` as you would would a normal timer. So instead of
+`sage timer 15mins`, the syntax is `sage timer <name>`. To test this
+functionality yourself, sage includes a 25 minute pomodoro timer by
+default which can be run with the command below.
 
-To delete a custom timer, use `sage timer delete <timer_name>`. If
-I wanted to delete `potato` for instance, I'd use `sage timer delete
-potato`.
+```bash
+sage timer pomodoro
+```
+
+To view a list of all of your custom timers, use `sage list timers`.
 
 ### `sage stopwatch` - TODO
 
