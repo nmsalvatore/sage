@@ -44,10 +44,10 @@ Timers can also be saved under custom names by using `sage create
 timer`. Additionally, sage provides `update`, `rename` and `delete`
 commands for managing custom timers.
 
-`sage create timer <name> <duration>`
-`sage update timer <name> <duration>`
-`sage rename timer <old_name> <new_name>`
-`sage delete timer <name>`
+- `sage create timer <name> <duration>`
+- `sage update timer <name> <duration>`
+- `sage rename timer <old_name> <new_name>`
+- `sage delete timer <name>`
 
 Some examples of usage can be seen below.
 
