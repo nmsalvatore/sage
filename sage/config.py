@@ -23,7 +23,8 @@ def load_saved_timers():
         default_timers = {
             "pomodoro": {"minutes": 25},
             "potato": {"minutes": 50},
-            "johncage": {"minutes": 4, "seconds": 33}
+            "johncage": {"minutes": 4, "seconds": 33},
+            "pika": {"seconds": 5}
         }
         save_timers(default_timers)
         return default_timers
