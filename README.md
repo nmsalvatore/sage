@@ -66,7 +66,7 @@ default which can be run with the command below.
 sage timer pomodoro
 ```
 
-To view a list of all of your custom timers, use `sage list timers`.
+To view a list of all of your custom timers, use `sage timers`.
 
 ### `sage stopwatch` - TODO
 

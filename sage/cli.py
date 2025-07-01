@@ -19,17 +19,16 @@ def sage():
 @click.argument("time_string", required=False)
 @click.option("--test", is_flag=True, hidden=True)
 def timer(test, **kwargs):
-    time_string = kwargs.get("time_string")
-
-    if time_string == "list":
-        list_timers()
-        return
-
     if test:
         time_in_seconds = get_timer_duration(**kwargs)
         click.echo(format_time_as_clock(time_in_seconds))
     else:
         curses.wrapper(lambda stdscr: load_timer(stdscr, **kwargs))
+
+
+@sage.command()
+def timers():
+    list_timers()
 
 
 @sage.command()

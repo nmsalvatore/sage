@@ -88,10 +88,11 @@ def test_list_saved_timers():
     user goes to find out with `sage timers`.
     """
     result = subprocess.run(
-        ["sage", "timer", "list"], capture_output=True, text=True, timeout=5
+        ["sage", "timers"], capture_output=True, text=True, timeout=5
     )
 
     assert result.returncode == 0
     assert "pomodoro" in result.stdout
     assert "johncage" in result.stdout
     assert "potato" in result.stdout
+    assert "pika" in result.stdout
