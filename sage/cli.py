@@ -1,11 +1,11 @@
 import curses
+from textwrap import dedent
 
 import click
 
 from .common import format_time_as_clock
 from .config import save_timer
-from .timer import get_timer_duration, load_timer, list_timers
-from textwrap import dedent
+from .timer import get_timer_duration, list_timers, load_timer
 
 
 @click.group()
@@ -43,11 +43,12 @@ def timers():
 def create(timer_type, timer_name, **kwargs):
     if timer_type == "timer":
         save_timer(timer_name, **kwargs)
-
-        click.echo(dedent(f"""\
+        click.echo(
+            dedent(f"""\
             Successfully created timer!
             You can start your timer with 'sage timer {timer_name}'.\
-        """))
+        """)
+        )
 
 
 @sage.command()
