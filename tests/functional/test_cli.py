@@ -1,3 +1,4 @@
+import os
 import subprocess
 
 
@@ -96,3 +97,25 @@ def test_list_saved_timers():
     assert "johncage" in result.stdout
     assert "potato" in result.stdout
     assert "pika" in result.stdout
+
+
+def test_create_timer(isolated_sage_config):
+    """
+    Time to create a timer and see what this custom stuff is all about.
+    """
+    result = subprocess.run(
+        ["sage", "create", "timer", "rice", "15m"],
+        capture_output=True,
+        text=True,
+        timeout=5
+    )
+
+    assert result.returncode == 0
+    assert "success" in result.stdout.lower()
+    assert "rice" in result.stdout
+
+    result = subprocess.run(
+        ["sage", "timers"], capture_output=True, text=True, timeout=5
+    )
+
+    assert "rice" in result.stdout

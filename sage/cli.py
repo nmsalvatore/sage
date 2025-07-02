@@ -3,7 +3,9 @@ import curses
 import click
 
 from .common import format_time_as_clock
+from .config import save_timer
 from .timer import get_timer_duration, load_timer, list_timers
+from textwrap import dedent
 
 
 @click.group()
@@ -13,10 +15,10 @@ def sage():
 
 
 @sage.command()
+@click.argument("time_string", required=False)
 @click.option("-h", "--hours", type=int, default=0)
 @click.option("-m", "--minutes", type=int, default=0)
 @click.option("-s", "--seconds", type=int, default=0)
-@click.argument("time_string", required=False)
 @click.option("--test", is_flag=True, hidden=True)
 def timer(test, **kwargs):
     if test:
@@ -29,6 +31,23 @@ def timer(test, **kwargs):
 @sage.command()
 def timers():
     list_timers()
+
+
+@sage.command()
+@click.argument("timer_type", required=True)
+@click.argument("timer_name", required=True)
+@click.argument("time_string", required=False)
+@click.option("-h", "--hours", type=int, default=0)
+@click.option("-m", "--minutes", type=int, default=0)
+@click.option("-s", "--seconds", type=int, default=0)
+def create(timer_type, timer_name, **kwargs):
+    if timer_type == "timer":
+        save_timer(timer_name, **kwargs)
+
+        click.echo(dedent(f"""\
+            Successfully created timer!
+            You can start your timer with 'sage timer {timer_name}'.\
+        """))
 
 
 @sage.command()

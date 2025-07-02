@@ -44,10 +44,10 @@ def test_get_saved_timer(tmp_path):
         save_timer("meeting", minutes=15)
 
         break_timer = get_saved_timer("break")
-        assert break_timer == {"minutes": 5}
+        assert break_timer == {"hours": 0, "minutes": 5, "seconds": 0}
 
         meeting_timer = get_saved_timer("meeting")
-        assert meeting_timer == {"minutes": 15}
+        assert meeting_timer == {"hours": 0, "minutes": 15, "seconds": 0}
 
         nonexistent = get_saved_timer("doesntexist")
         assert nonexistent is None
@@ -64,4 +64,13 @@ def test_save_timer_overwrites_existing(tmp_path):
         save_timer("test", minutes=20, seconds=30)
 
         timer = get_saved_timer("test")
-        assert timer == {"minutes": 20, "seconds": 30}
+        assert timer == {"hours": 0, "minutes": 20, "seconds": 30}
+
+
+def test_save_timer_converts_time_string_to_time_units(tmp_path):
+    fake_timers_file = tmp_path / "timers.json"
+
+    with patch("sage.config.get_timers_file", return_value=fake_timers_file):
+        save_timer("test", time_string="15 minutes")
+        timer = get_saved_timer("test")
+        assert timer == {"hours": 0, "minutes": 15, "seconds": 0}

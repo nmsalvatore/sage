@@ -3,6 +3,8 @@ from pathlib import Path
 
 from platformdirs import user_config_dir
 
+from .common import convert_time_string_to_seconds, expand_time_from_seconds
+
 
 def get_timers_file():
     """
@@ -51,5 +53,21 @@ def get_saved_timer(name):
 def save_timer(name, **kwargs):
     """Save a new timer"""
     timers = load_saved_timers()
-    timers[name] = kwargs
+
+    hours = kwargs.get("hours", 0)
+    minutes = kwargs.get("minutes", 0)
+    seconds = kwargs.get("seconds", 0)
+    time_string = kwargs.get("time_string")
+
+    if time_string:
+        hours, minutes, seconds = expand_time_from_seconds(
+            convert_time_string_to_seconds(time_string)
+        )
+
+    timers[name] = {
+        "hours": hours,
+        "minutes": minutes,
+        "seconds": seconds
+    }
+
     save_timers(timers)
