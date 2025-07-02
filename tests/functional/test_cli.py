@@ -49,7 +49,10 @@ def test_timer_accepts_options():
     Check that `sage timer` accepts option arguments.
     """
     result = subprocess.run(
-        ["sage", "timer", "-s", "5", "--test"], capture_output=True, text=True, timeout=5
+        ["sage", "timer", "-s", "5", "--test"],
+        capture_output=True,
+        text=True,
+        timeout=5,
     )
 
     assert result.returncode == 0
@@ -76,7 +79,10 @@ def test_pomodoro_timer():
     pomodoro timer to see what the custom timers are all about.
     """
     result = subprocess.run(
-        ["sage", "timer", "pomodoro", "--test"], capture_output=True, text=True, timeout=5
+        ["sage", "timer", "pomodoro", "--test"],
+        capture_output=True,
+        text=True,
+        timeout=5,
     )
 
     assert result.returncode == 0
@@ -99,15 +105,20 @@ def test_list_saved_timers():
     assert "pika" in result.stdout
 
 
-def test_create_timer(isolated_sage_config):
+def test_create_timer_with_time_string(tmp_path):
     """
     Time to create a timer and see what this custom stuff is all about.
+    We'll use a time string first for convenience.
     """
+    env = os.environ.copy()
+    env["HOME"] = str(tmp_path)
+
     result = subprocess.run(
-        ["sage", "create", "timer", "rice", "15m"],
+        ["sage", "create", "timer", "rice", "4 hours 15m2s"],
         capture_output=True,
         text=True,
-        timeout=5
+        timeout=5,
+        env=env,
     )
 
     assert result.returncode == 0
@@ -115,7 +126,35 @@ def test_create_timer(isolated_sage_config):
     assert "rice" in result.stdout
 
     result = subprocess.run(
-        ["sage", "timers"], capture_output=True, text=True, timeout=5
+        ["sage", "timers"], capture_output=True, text=True, timeout=5, env=env
     )
 
     assert "rice" in result.stdout
+    assert "4 hours 15 minutes 2 seconds" in result.stdout
+
+
+def test_create_timer_with_options(tmp_path):
+    """
+    Now let's see if we can create a timer using option flags.
+    """
+    env = os.environ.copy()
+    env["HOME"] = str(tmp_path)
+
+    result = subprocess.run(
+        ["sage", "create", "timer", "titanic", "--minutes", "14", "--hours", "3"],
+        capture_output=True,
+        text=True,
+        timeout=5,
+        env=env,
+    )
+
+    assert result.returncode == 0
+    assert "success" in result.stdout.lower()
+    assert "titanic" in result.stdout
+
+    result = subprocess.run(
+        ["sage", "timers"], capture_output=True, text=True, timeout=5, env=env
+    )
+
+    assert "titanic" in result.stdout
+    assert "3 hours 14 minutes" in result.stdout
