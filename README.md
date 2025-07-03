@@ -40,23 +40,23 @@ sage timer 3min25s                      # 3 minute 25 second timer
 
 #### Custom timers - TODO
 
-Timers can also be saved under custom names by using `sage create
-timer`. Additionally, sage provides `update`, `rename` and `delete`
-commands for managing custom timers.
+Timers can also be saved under custom names by using `sage create`.
+Additionally, sage provides `update`, `rename` and `delete` commands
+for managing custom timers.
 
-- `sage create timer <name> <duration>`
-- `sage update timer <name> <duration>`
-- `sage rename timer <old_name> <new_name>`
-- `sage delete timer <name>`
+- `sage create <name> <duration>`
+- `sage update <name> <duration>`
+- `sage rename <old_name> <new_name>`
+- `sage delete <name>`
 
 Some examples of usage can be seen below.
 
 ```bash
-sage create timer potato 55m            # creates a 55 minute timer with the name "potato"
-sage update timer potato "50 minutes"   # updates "potato" duration to 50 minutes
-sage rename timer potato pomodoro       # renames timer "potato" to "pomodoro"
-sage update pomodoro --minutes 25       # updates "pomodoro" duration to 25 minutes
-sage delete timer pomodoro              # deletes timer "pomodoro"
+sage create potato 55m                  # creates a 55 minute timer with the name "potato"
+sage update potato "50 minutes"         # updates "potato" duration to 50 minutes
+sage rename potato pomodoro             # renames timer "potato" to "pomodoro"
+sage update --minutes 25                # updates "pomodoro" duration to 25 minutes
+sage delete pomodoro                    # deletes timer "pomodoro"
 ```
 
 To run a custom timer, simply provide the timer's name as the argument

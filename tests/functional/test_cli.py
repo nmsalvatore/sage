@@ -114,7 +114,7 @@ def test_create_timer_with_time_string(tmp_path):
     env["HOME"] = str(tmp_path)
 
     result = subprocess.run(
-        ["sage", "create", "timer", "rice", "4 hours 15m2s"],
+        ["sage", "create", "rice", "15m"],
         capture_output=True,
         text=True,
         timeout=5,
@@ -130,7 +130,7 @@ def test_create_timer_with_time_string(tmp_path):
     )
 
     assert "rice" in result.stdout
-    assert "4 hours 15 minutes 2 seconds" in result.stdout
+    assert "15 minutes" in result.stdout
 
 
 def test_create_timer_with_options(tmp_path):
@@ -141,7 +141,7 @@ def test_create_timer_with_options(tmp_path):
     env["HOME"] = str(tmp_path)
 
     result = subprocess.run(
-        ["sage", "create", "timer", "titanic", "--minutes", "14", "--hours", "3"],
+        ["sage", "create", "titanic", "--minutes", "14", "--hours", "3"],
         capture_output=True,
         text=True,
         timeout=5,

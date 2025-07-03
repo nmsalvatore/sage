@@ -34,21 +34,19 @@ def timers():
 
 
 @sage.command()
-@click.argument("timer_type", required=True)
 @click.argument("timer_name", required=True)
 @click.argument("time_string", required=False)
 @click.option("-h", "--hours", type=int, default=0)
 @click.option("-m", "--minutes", type=int, default=0)
 @click.option("-s", "--seconds", type=int, default=0)
-def create(timer_type, timer_name, **kwargs):
-    if timer_type == "timer":
-        save_timer(timer_name, **kwargs)
-        click.echo(
-            dedent(f"""\
-            Successfully created timer!
-            You can start your timer with 'sage timer {timer_name}'.\
-        """)
-        )
+def create(timer_name, **kwargs):
+    save_timer(timer_name, **kwargs)
+    click.echo(
+        dedent(f"""\
+        Successfully created timer!
+        You can start your timer with 'sage timer {timer_name}'.\
+    """)
+    )
 
 
 @sage.command()
