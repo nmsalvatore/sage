@@ -158,3 +158,54 @@ def test_create_timer_with_options(tmp_path):
 
     assert "titanic" in result.stdout
     assert "3 hours 14 minutes" in result.stdout
+
+
+def test_delete_timer(tmp_path):
+    """
+    Ok, that's pretty cool, but our user doesn't really need a Titanic
+    timer. They use `sage delete titanic' to delete the custom timer.
+    """
+    env = os.environ.copy()
+    env["HOME"] = str(tmp_path)
+
+    result = subprocess.run(
+        ["sage", "create", "titanic", "3 hours 14 minutes"],
+        capture_output=True,
+        text=True,
+        timeout=5,
+        env=env,
+    )
+
+    assert result.returncode == 0
+    assert "success" in result.stdout.lower()
+    assert "titanic" in result.stdout.lower()
+
+    result = subprocess.run(
+        ["sage", "timers"], capture_output=True, text=True, timeout=5, env=env
+    )
+
+    assert result.returncode == 0
+    assert "titanic" in result.stdout
+
+    result = subprocess.run(
+        ["sage", "delete", "titanic"],
+        capture_output=True,
+        text=True,
+        timeout=5,
+        env=env,
+    )
+
+    assert result.returncode == 0
+    assert "success" in result.stdout.lower()
+    assert "deleted" in result.stdout.lower()
+
+    result = subprocess.run(
+        ["sage", "timers"],
+        capture_output=True,
+        text=True,
+        timeout=5,
+        env=env,
+    )
+
+    assert result.returncode == 0
+    assert "titanic" not in result.stdout.lower()

@@ -4,8 +4,8 @@ from textwrap import dedent
 import click
 
 from .common import format_time_as_clock
-from .config import save_timer
-from .timer import get_timer_duration, list_timers, load_timer
+from .config import delete_timer, save_timer
+from .timer import get_timer_duration, list_timers, load_saved_timers, load_timer
 
 
 @click.group()
@@ -41,12 +41,25 @@ def timers():
 @click.option("-s", "--seconds", type=int, default=0)
 def create(timer_name, **kwargs):
     save_timer(timer_name, **kwargs)
+
     click.echo(
         dedent(f"""\
         Successfully created timer!
         You can start your timer with 'sage timer {timer_name}'.\
     """)
     )
+
+
+@sage.command()
+@click.argument("timer_name", required=True)
+def delete(timer_name):
+    timers = load_saved_timers()
+
+    if timer_name in timers:
+        delete_timer(timer_name)
+        click.echo(f"Successfully deleted timer '{timer_name}'.")
+    else:
+        click.echo(f"No saved timer with the name '{timer_name}'.")
 
 
 @sage.command()

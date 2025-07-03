@@ -71,3 +71,10 @@ def save_timer(name, **kwargs):
     }
 
     save_timers(timers)
+
+
+def delete_timer(name):
+    """Delete a saved timer"""
+    timers = load_saved_timers()
+    del timers[name]
+    save_timers(timers)
