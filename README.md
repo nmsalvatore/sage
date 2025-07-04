@@ -52,9 +52,8 @@ sage timer pomodoro
 ### `sage timers` - IN PROGRESS
 
 As mentioned above, sage lets you create custom timers, which are
-managed under `sage timers`. Here you can create, update, rename, and
-delete timers. The commands available under `sage timers` are as
-follows:
+managed under `sage timers`. The commands available under `sage timers`
+are as follows:
 
 - `sage timers list`
 - `sage timers create <timer_name> <timer_duration>`
@@ -69,7 +68,7 @@ sage timers list                            # list all custom timers
 sage timers create potato 55m               # create a 55 minute timer named 'potato'
 sage timers update potato -m 15 -s 30       # change duration of 'potato' to 15 minutes 30 seconds
 sage timers rename potato rice              # change name of 'potato' to 'rice'
-sage timers delete rice                     # delete rice
+sage timers delete rice                     # delete 'rice' timer
 ```
 
 ### `sage stopwatch` - TODO
