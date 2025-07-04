@@ -238,11 +238,11 @@ def test_crud_operations(tmp_path):
     assert result.returncode == 0
     assert "titanic" not in result.stdout.lower()
 
-    # They notice this 'pika' timer in the, which is an adorable name,
-    # but what's the point of a 5 second timer? 5 minutes might be more
-    # useful. Time to try an update.
+    # They notice this 'potato' timer in the timers list, but 50
+    # minutes seems a little bit too short for a fluffy baked potato.
+    # They decide to add 5 minutes with the update command.
     result = subprocess.run(
-        ["sage", "timers", "update", "pika", "5mins"],
+        ["sage", "timers", "update", "potato", "55mins"],
         capture_output=True,
         text=True,
         timeout=5,
@@ -251,4 +251,30 @@ def test_crud_operations(tmp_path):
 
     assert result.returncode == 0
     assert "updated" in result.stdout.lower()
-    assert "pika" in result.stdout.lower()
+    assert "potato" in result.stdout.lower()
+
+    # That's more like it! Time to check the list.
+    result = subprocess.run(
+        ["sage", "timers", "list"],
+        capture_output=True,
+        text=True,
+        timeout=5,
+        env=env,
+    )
+
+    assert result.returncode == 0
+    assert "55 minutes" in result.stdout.lower()
+
+    # Awesome! Since there are so many potatoes, they decide to change
+    # the name to be a little more specific.
+    result = subprocess.run(
+        ["sage", "timers", "rename", "potato", "russet"],
+        capture_output=True,
+        text=True,
+        timeout=5,
+        env=env,
+    )
+
+    assert result.returncode == 0
+    assert "success" in result.stdout.lower()
+    assert "russet" in result.stdout.lower()

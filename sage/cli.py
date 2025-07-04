@@ -4,7 +4,7 @@ from textwrap import dedent
 import click
 
 from .common import format_time_as_clock
-from .config import delete_timer, save_timer
+from .config import delete_timer, save_timer, rename_timer
 from .timer import get_timer_duration, list_timers, get_saved_timer, load_timer
 
 
@@ -39,54 +39,56 @@ def list():
 
 
 @timers.command()
-@click.argument("timer_name", required=True)
+@click.argument("name", required=True)
 @click.argument("time_string", required=False)
 @click.option("-h", "--hours", type=int, default=0)
 @click.option("-m", "--minutes", type=int, default=0)
 @click.option("-s", "--seconds", type=int, default=0)
-def create(timer_name, **kwargs):
-    save_timer(timer_name, **kwargs)
+def create(name, **kwargs):
+    save_timer(name, **kwargs)
     click.echo(
         dedent(f"""\
-            Successfully created '{timer_name}' timer!
-        You can start your timer with 'sage timer {timer_name}'.\
+            Successfully created '{name}' timer!
+        You can start your timer with 'sage timer {name}'.\
     """)
     )
 
 
 @timers.command()
-@click.argument("timer_name", required=True)
+@click.argument("name", required=True)
 @click.argument("time_string", required=False)
 @click.option("-h", "--hours", type=int, default=0)
 @click.option("-m", "--minutes", type=int, default=0)
 @click.option("-s", "--seconds", type=int, default=0)
-def update(timer_name, **kwargs):
-    if not get_saved_timer(timer_name):
-        click.echo(
-            dedent(f"""\
-            Timer '{timer_name}' does not exist.
-            Use 'sage timers create' to create a new timer.\
-        """)
-        )
+def update(name, **kwargs):
+    if not get_saved_timer(name):
+        click.echo(f"Timer '{name}' does not exist.")
         return
 
-    save_timer(timer_name, **kwargs)
-    click.echo(
-        dedent(f"""\
-        Successfully updated '{timer_name}' timer!
-        Use 'sage timer {timer_name}' to start your timer.\
-    """)
-    )
+    save_timer(name, **kwargs)
+    click.echo(f"Successfully updated timer '{name}'.")
+
+
+@timers.command()
+@click.argument("name", required=True)
+@click.argument("new_name", required=True)
+def rename(name, new_name):
+    if not get_saved_timer(name):
+        click.echo(f"Timer '{name}' does not exist.")
+        return
+
+    rename_timer(name, new_name)
+    click.echo(f"Successfully changed the name of timer '{name}' to '{new_name}'.")
 
 
 @timers.command()
 @click.argument("timer_name", required=True)
-def delete(timer_name):
-    if get_saved_timer(timer_name):
-        delete_timer(timer_name)
-        click.echo(f"Successfully deleted timer '{timer_name}'.")
+def delete(name):
+    if get_saved_timer(name):
+        delete_timer(name)
+        click.echo(f"Successfully deleted timer '{name}'.")
     else:
-        click.echo(f"No saved timer with the name '{timer_name}'.")
+        click.echo(f"No saved timer with the name '{name}'.")
 
 
 @sage.command()

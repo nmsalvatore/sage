@@ -1,6 +1,6 @@
 from unittest.mock import patch
 
-from sage.config import load_saved_timers, save_timer, get_saved_timer, delete_timer
+from sage.config import load_saved_timers, save_timer, get_saved_timer, delete_timer, rename_timer
 
 
 def test_load_saved_timers_creates_defaults_on_first_run(tmp_path):
@@ -87,3 +87,18 @@ def test_delete_timer(tmp_path):
         delete_timer("test")
         deleted_timer = get_saved_timer("test")
         assert deleted_timer is None
+
+
+def test_rename_timer(tmp_path):
+    fake_timers_file = tmp_path / "timers.json"
+
+    with patch("sage.config.get_timers_file", return_value=fake_timers_file):
+        save_timer("test", time_string="15 minutes")
+        timer = get_saved_timer("test")
+        assert timer == {"hours": 0, "minutes": 15, "seconds": 0}
+
+        rename_timer("test", "potato")
+        og_timer = get_saved_timer("test")
+        new_timer = get_saved_timer("potato")
+        assert og_timer is None
+        assert new_timer == {"hours": 0, "minutes": 15, "seconds": 0}

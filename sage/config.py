@@ -78,3 +78,10 @@ def delete_timer(name):
     timers = load_saved_timers()
     del timers[name]
     save_timers(timers)
+
+
+def rename_timer(name, new_name):
+    """Rename a saved timer"""
+    timers = load_saved_timers()
+    timers.update({new_name: timers.pop(name)})
+    save_timers(timers)
