@@ -49,7 +49,7 @@ the following command:
 sage timer pomodoro
 ```
 
-### `sage timers` - IN PROGRESS
+### `sage timers`
 
 As mentioned above, sage lets you create custom timers, which are
 managed under `sage timers`. The commands available under `sage timers`
