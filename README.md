@@ -6,7 +6,7 @@ sage is a clean and easy-to-use CLI timer and stopwatch.
 
 sage provides a simple and intuitive command line interface.
 
-### `sage timer` - IN PROGRESS
+### `sage timer`
 
 The sage timer is built to be intuitive, the hope being that it works
 how you expect it to work. Since we all intuit differently, timers can
@@ -38,37 +38,39 @@ sage timer "10 minutes 30 sec"          # 10 minute 30 second timer
 sage timer 3min25s                      # 3 minute 25 second timer
 ```
 
-#### Custom timers - TODO
-
-Timers can also be saved under custom names by using `sage create`.
-Additionally, sage provides `update`, `rename` and `delete` commands
-for managing custom timers.
-
-- `sage create <name> <duration>`
-- `sage update <name> <duration>`
-- `sage rename <old_name> <new_name>`
-- `sage delete <name>`
-
-Some examples of usage can be seen below.
-
-```bash
-sage create potato 55m                  # creates a 55 minute timer with the name "potato"
-sage update potato "50 minutes"         # updates "potato" duration to 50 minutes
-sage rename potato pomodoro             # renames timer "potato" to "pomodoro"
-sage update --minutes 25                # updates "pomodoro" duration to 25 minutes
-sage delete pomodoro                    # deletes timer "pomodoro"
-```
+#### Custom timers
 
 To run a custom timer, simply provide the timer's name as the argument
-following `sage timer` as you would would a normal timer. To test this
-functionality yourself, sage includes a 25 minute pomodoro timer by
-default which can be run with the following command.
+following `sage timer`. To test this functionality yourself, sage
+includes a 25 minute pomodoro timer by default which can be run with
+the following command.
 
 ```bash
 sage timer pomodoro
 ```
 
-To view a list of all of your custom timers, use `sage timers`.
+### `sage create`
+
+As mentioned above, sage lets you create your own custom timers. You
+can do so with `sage create <name> <duration>`. The name argument can
+be any string and the duration follows the same rules as are used in
+`sage timers`.
+
+Here are some examples.
+
+```bash
+sage create potato 55m
+sage create titanic "3 hours 14 minutes"
+sage create rice --minutes 15 --seconds 30
+```
+
+### `sage update` - TODO
+
+### `sage rename` - TODO
+
+### `sage delete` - NEEDS DESCRIPTION
+
+### `sage timers` - NEEDS DESCRIPTION
 
 ### `sage stopwatch` - TODO
 
