@@ -65,7 +65,7 @@ def load_timer(stdscr, hours=0, minutes=0, seconds=0, time_string=None):
 
         if timer_name:
             _, timer_name_x = get_curses_center_positions(timer_name)
-            stdscr.addstr(y - 1, timer_name_x, timer_name, curses.color_pair(2))
+            stdscr.addstr(1, 1, timer_name, curses.color_pair(2))
 
         stdscr.addstr(y, ftime_x, ftime_remaining, curses.color_pair(1))
 
