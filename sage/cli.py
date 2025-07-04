@@ -5,7 +5,7 @@ import click
 
 from .common import format_time_as_clock
 from .config import delete_timer, save_timer
-from .timer import get_timer_duration, list_timers, load_saved_timers, load_timer
+from .timer import get_timer_duration, list_timers, get_saved_timer, load_timer
 
 
 @click.group()
@@ -46,10 +46,9 @@ def list():
 @click.option("-s", "--seconds", type=int, default=0)
 def create(timer_name, **kwargs):
     save_timer(timer_name, **kwargs)
-
     click.echo(
         dedent(f"""\
-        Successfully created timer!
+            Successfully created '{timer_name}' timer!
         You can start your timer with 'sage timer {timer_name}'.\
     """)
     )
@@ -57,10 +56,33 @@ def create(timer_name, **kwargs):
 
 @timers.command()
 @click.argument("timer_name", required=True)
-def delete(timer_name):
-    timers = load_saved_timers()
+@click.argument("time_string", required=False)
+@click.option("-h", "--hours", type=int, default=0)
+@click.option("-m", "--minutes", type=int, default=0)
+@click.option("-s", "--seconds", type=int, default=0)
+def update(timer_name, **kwargs):
+    if not get_saved_timer(timer_name):
+        click.echo(
+            dedent(f"""\
+            Timer '{timer_name}' does not exist.
+            Use 'sage timers create' to create a new timer.\
+        """)
+        )
+        return
 
-    if timer_name in timers:
+    save_timer(timer_name, **kwargs)
+    click.echo(
+        dedent(f"""\
+        Successfully updated '{timer_name}' timer!
+        Use 'sage timer {timer_name}' to start your timer.\
+    """)
+    )
+
+
+@timers.command()
+@click.argument("timer_name", required=True)
+def delete(timer_name):
+    if get_saved_timer(timer_name):
         delete_timer(timer_name)
         click.echo(f"Successfully deleted timer '{timer_name}'.")
     else:

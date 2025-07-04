@@ -160,14 +160,34 @@ def test_create_timer_with_options(tmp_path):
     assert "3 hours 14 minutes" in result.stdout
 
 
-def test_delete_timer(tmp_path):
+def test_crud_operations(tmp_path):
     """
-    Ok, that's pretty cool, but our user doesn't really need a Titanic
-    timer. They use `sage delete titanic' to delete the custom timer.
+    Our user is feeling pretty good about running timers, but one of
+    the core features of sage appears to be these custom timers. They
+    play with `sage timers` to see what it's all about.
     """
     env = os.environ.copy()
     env["HOME"] = str(tmp_path)
 
+    # First, they use the 'list' command to see a list of all of the
+    # available timers.
+    result = subprocess.run(
+        ["sage", "timers", "list"],
+        capture_output=True,
+        text=True,
+        timeout=5,
+        env=env,
+    )
+
+    assert result.returncode == 0
+    assert "pomodoro" in result.stdout
+    assert "johncage" in result.stdout
+    assert "potato" in result.stdout
+    assert "pika" in result.stdout
+
+    # All of the default timers are there, time to create a timer.
+    # Hmm, what's a good test timer? How about their favorite movie's
+    # runtime.
     result = subprocess.run(
         ["sage", "timers", "create", "titanic", "3 hours 14 minutes"],
         capture_output=True,
@@ -180,13 +200,21 @@ def test_delete_timer(tmp_path):
     assert "success" in result.stdout.lower()
     assert "titanic" in result.stdout.lower()
 
+    # Looks like it was created successfully, but they decide to check
+    # the timers list just to be certain.
     result = subprocess.run(
-        ["sage", "timers", "list"], capture_output=True, text=True, timeout=5, env=env
+        ["sage", "timers", "list"],
+        capture_output=True,
+        text=True,
+        timeout=5,
+        env=env,
     )
 
     assert result.returncode == 0
-    assert "titanic" in result.stdout
+    assert "titanic" in result.stdout.lower()
 
+    # Wow, it really worked! Ok, who needs a titanic timer though,
+    # really? Time to delete it.
     result = subprocess.run(
         ["sage", "timers", "delete", "titanic"],
         capture_output=True,
@@ -196,9 +224,9 @@ def test_delete_timer(tmp_path):
     )
 
     assert result.returncode == 0
-    assert "success" in result.stdout.lower()
     assert "deleted" in result.stdout.lower()
 
+    # Again, they check to make sure it's not in the list of timers
     result = subprocess.run(
         ["sage", "timers", "list"],
         capture_output=True,
@@ -209,3 +237,18 @@ def test_delete_timer(tmp_path):
 
     assert result.returncode == 0
     assert "titanic" not in result.stdout.lower()
+
+    # They notice this 'pika' timer in the, which is an adorable name,
+    # but what's the point of a 5 second timer? 5 minutes might be more
+    # useful. Time to try an update.
+    result = subprocess.run(
+        ["sage", "timers", "update", "pika", "5mins"],
+        capture_output=True,
+        text=True,
+        timeout=5,
+        env=env,
+    )
+
+    assert result.returncode == 0
+    assert "updated" in result.stdout.lower()
+    assert "pika" in result.stdout.lower()
