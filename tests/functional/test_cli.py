@@ -95,7 +95,7 @@ def test_list_saved_timers():
     user goes to find out with `sage timers`.
     """
     result = subprocess.run(
-        ["sage", "timers"], capture_output=True, text=True, timeout=5
+        ["sage", "timers", "list"], capture_output=True, text=True, timeout=5
     )
 
     assert result.returncode == 0
@@ -114,7 +114,7 @@ def test_create_timer_with_time_string(tmp_path):
     env["HOME"] = str(tmp_path)
 
     result = subprocess.run(
-        ["sage", "create", "rice", "15m"],
+        ["sage", "timers", "create", "rice", "15m"],
         capture_output=True,
         text=True,
         timeout=5,
@@ -126,7 +126,7 @@ def test_create_timer_with_time_string(tmp_path):
     assert "rice" in result.stdout
 
     result = subprocess.run(
-        ["sage", "timers"], capture_output=True, text=True, timeout=5, env=env
+        ["sage", "timers", "list"], capture_output=True, text=True, timeout=5, env=env
     )
 
     assert "rice" in result.stdout
@@ -141,7 +141,7 @@ def test_create_timer_with_options(tmp_path):
     env["HOME"] = str(tmp_path)
 
     result = subprocess.run(
-        ["sage", "create", "titanic", "--minutes", "14", "--hours", "3"],
+        ["sage", "timers", "create", "titanic", "--minutes", "14", "--hours", "3"],
         capture_output=True,
         text=True,
         timeout=5,
@@ -153,7 +153,7 @@ def test_create_timer_with_options(tmp_path):
     assert "titanic" in result.stdout
 
     result = subprocess.run(
-        ["sage", "timers"], capture_output=True, text=True, timeout=5, env=env
+        ["sage", "timers", "list"], capture_output=True, text=True, timeout=5, env=env
     )
 
     assert "titanic" in result.stdout
@@ -169,7 +169,7 @@ def test_delete_timer(tmp_path):
     env["HOME"] = str(tmp_path)
 
     result = subprocess.run(
-        ["sage", "create", "titanic", "3 hours 14 minutes"],
+        ["sage", "timers", "create", "titanic", "3 hours 14 minutes"],
         capture_output=True,
         text=True,
         timeout=5,
@@ -181,14 +181,14 @@ def test_delete_timer(tmp_path):
     assert "titanic" in result.stdout.lower()
 
     result = subprocess.run(
-        ["sage", "timers"], capture_output=True, text=True, timeout=5, env=env
+        ["sage", "timers", "list"], capture_output=True, text=True, timeout=5, env=env
     )
 
     assert result.returncode == 0
     assert "titanic" in result.stdout
 
     result = subprocess.run(
-        ["sage", "delete", "titanic"],
+        ["sage", "timers", "delete", "titanic"],
         capture_output=True,
         text=True,
         timeout=5,
@@ -200,7 +200,7 @@ def test_delete_timer(tmp_path):
     assert "deleted" in result.stdout.lower()
 
     result = subprocess.run(
-        ["sage", "timers"],
+        ["sage", "timers", "list"],
         capture_output=True,
         text=True,
         timeout=5,

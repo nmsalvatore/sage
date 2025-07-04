@@ -28,12 +28,17 @@ def timer(test, **kwargs):
         curses.wrapper(lambda stdscr: load_timer(stdscr, **kwargs))
 
 
-@sage.command()
+@sage.group()
 def timers():
+    pass
+
+
+@timers.command()
+def list():
     list_timers()
 
 
-@sage.command()
+@timers.command()
 @click.argument("timer_name", required=True)
 @click.argument("time_string", required=False)
 @click.option("-h", "--hours", type=int, default=0)
@@ -50,7 +55,7 @@ def create(timer_name, **kwargs):
     )
 
 
-@sage.command()
+@timers.command()
 @click.argument("timer_name", required=True)
 def delete(timer_name):
     timers = load_saved_timers()
