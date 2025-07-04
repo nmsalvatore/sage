@@ -48,7 +48,7 @@ def create(name, **kwargs):
     save_timer(name, **kwargs)
     click.echo(
         dedent(f"""\
-            Successfully created '{name}' timer!
+        Successfully created '{name}' timer!
         You can start your timer with 'sage timer {name}'.\
     """)
     )
