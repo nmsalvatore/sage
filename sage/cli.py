@@ -82,13 +82,14 @@ def rename(name, new_name):
 
 
 @timers.command()
-@click.argument("timer_name", required=True)
+@click.argument("name", required=True)
 def delete(name):
-    if get_saved_timer(name):
-        delete_timer(name)
-        click.echo(f"Successfully deleted timer '{name}'.")
-    else:
-        click.echo(f"No saved timer with the name '{name}'.")
+    if not get_saved_timer(name):
+        click.echo(f"Timer '{name}' does not exist.")
+        return
+
+    delete_timer(name)
+    click.echo(f"Successfully deleted timer '{name}'.")
 
 
 @sage.command()
