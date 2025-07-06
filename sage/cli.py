@@ -3,10 +3,10 @@ from textwrap import dedent
 
 import click
 
+from .clocks import Stopwatch, Timer
 from .common import format_time_as_clock
 from .config import delete_timer, save_timer, rename_timer
-from .timer import get_timer_duration, list_timers, get_saved_timer, load_timer
-from .stopwatch import Stopwatch
+from .timer import get_timer_duration, list_timers, get_saved_timer
 
 
 @click.group()
@@ -26,7 +26,8 @@ def timer(test, **kwargs):
         time_in_seconds = get_timer_duration(**kwargs)
         click.echo(format_time_as_clock(time_in_seconds))
     else:
-        curses.wrapper(lambda stdscr: load_timer(stdscr, **kwargs))
+        timer = Timer()
+        curses.wrapper(lambda stdscr: timer.load(stdscr, **kwargs))
 
 
 @sage.group()
