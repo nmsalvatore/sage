@@ -104,14 +104,20 @@ def load_timer(stdscr, hours=0, minutes=0, seconds=0, time_string=None):
         stdscr.addstr(curses.LINES - 1, 1, "<q> Quit, <Space> Pause/Resume, <r> Restart", curses.color_pair(3))
 
         if time_remaining < 1:
+            # wait for user input by restoring getch() to blocking
+            # mode. otherwise, pressing 'q' mid-timer will show the
+            # "Time's up!" screen instead of quitting.
+            stdscr.nodelay(0)
             break
 
         time.sleep(0.1)
         stdscr.refresh()
 
-    message = "Time's up! Press any key to exit."
+    message = "Time's up!"
     _, message_x = get_curses_center_positions(message)
-    stdscr.addstr(y + 2, message_x, message, curses.color_pair(3))
+    stdscr.addstr(y + 1, message_x, message, curses.color_pair(4))
+
+    # wait for user to press any key to exit
     stdscr.getch()
 
 
