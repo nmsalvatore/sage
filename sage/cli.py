@@ -6,6 +6,7 @@ import click
 from .common import format_time_as_clock
 from .config import delete_timer, save_timer, rename_timer
 from .timer import get_timer_duration, list_timers, get_saved_timer, load_timer
+from .stopwatch import Stopwatch
 
 
 @click.group()
@@ -94,7 +95,8 @@ def delete(name):
 
 @sage.command()
 def stopwatch():
-    pass
+    stopwatch = Stopwatch()
+    curses.wrapper(lambda stdscr: stopwatch.load(stdscr))
 
 
 if __name__ == "__main__":
