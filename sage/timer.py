@@ -1,5 +1,8 @@
 import curses
 import time
+from pathlib import Path
+
+from nava import play as play_sound
 
 from .config import get_saved_timer, load_saved_timers
 from .common import (
@@ -112,6 +115,9 @@ def load_timer(stdscr, hours=0, minutes=0, seconds=0, time_string=None):
 
         time.sleep(0.1)
         stdscr.refresh()
+
+    sound_path = Path("sounds", "thyme.mp3")
+    play_sound(sound_path.as_posix(), async_mode=True)
 
     message = "Time's up!"
     _, message_x = get_curses_center_positions(message)

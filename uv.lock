@@ -3,6 +3,15 @@ revision = 2
 requires-python = ">=3.13"
 
 [[package]]
+name = "art"
+version = "6.5"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/d4/7d/7d80509bbd19fb747edef94ba487dbadd2747944774ccc0528ad0d005a36/art-6.5.tar.gz", hash = "sha256:a98d77b42c278697ec6cf4b5bdcdfd997f6b2425332da078d4e31e31377d1844", size = 672902, upload_time = "2025-04-12T17:02:20.279Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/67/29/57b06fdb3abdf52c621d3ca3caea735e2db4c8d48288ebd26af448e8e247/art-6.5-py3-none-any.whl", hash = "sha256:70706408144c45c666caab690627d5c74aea7b6c7ce8cc968408ddeef8d84afd", size = 610382, upload_time = "2025-04-12T17:02:21.97Z" },
+]
+
+[[package]]
 name = "click"
 version = "8.2.1"
 source = { registry = "https://pypi.org/simple" }
@@ -30,6 +39,18 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/f2/97/ebf4da567aa6827c909642694d71c9fcf53e5b504f2d96afea02718862f3/iniconfig-2.1.0.tar.gz", hash = "sha256:3abbd2e30b36733fee78f9c7f7308f2d0050e88f0087fd25c2645f63c773e1c7", size = 4793, upload_time = "2025-03-19T20:09:59.721Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/2c/e1/e6716421ea10d38022b952c159d5161ca1193197fb744506875fbb87ea7b/iniconfig-2.1.0-py3-none-any.whl", hash = "sha256:9deba5723312380e77435581c6bf4935c94cbfab9b1ed33ef8d238ea168eb760", size = 6050, upload_time = "2025-03-19T20:10:01.071Z" },
+]
+
+[[package]]
+name = "nava"
+version = "0.7"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "art" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/99/ac/43e77dedad00a84a33bb6ae1f88eb73a56723a66204d49389ff722bb3426/nava-0.7.tar.gz", hash = "sha256:45266e70646c68d80f14a636d93ea81038b67513a858d2d7875c821cfb74c2d6", size = 11724, upload_time = "2024-10-23T00:41:32.078Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/5b/57/f9c64bcfe13b32ee326a58ea31911e6db453bb1e279d212e528279d0270e/nava-0.7-py3-none-any.whl", hash = "sha256:7f4f1520949becbbbd81dad072da88db57b474cb92a1985a71222d35bedd93ee", size = 10083, upload_time = "2024-10-23T00:41:33.766Z" },
 ]
 
 [[package]]
@@ -90,6 +111,7 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "click" },
+    { name = "nava" },
     { name = "platformdirs" },
 ]
 
@@ -101,6 +123,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "click", specifier = ">=8.2.1" },
+    { name = "nava", specifier = ">=0.7" },
     { name = "platformdirs", specifier = ">=4.3.8" },
 ]
 
