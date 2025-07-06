@@ -11,6 +11,7 @@ from .common import (
     format_time_as_clock,
     format_time_as_english,
     get_curses_center_positions,
+    set_curses_colors
 )
 
 
@@ -36,11 +37,7 @@ def load_timer(stdscr, hours=0, minutes=0, seconds=0, time_string=None):
     """
     Load the timer interface.
     """
-    curses.start_color()
-    curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLACK)
-    curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
-    curses.init_pair(3, curses.COLOR_BLUE, curses.COLOR_BLACK)
-    curses.init_pair(4, curses.COLOR_YELLOW, curses.COLOR_BLACK)
+    set_curses_colors()
 
     stdscr.clear()
     curses.curs_set(0)  # Hide terminal cursor

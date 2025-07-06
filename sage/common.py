@@ -72,14 +72,24 @@ def format_time_as_english(total_seconds) -> str:
     return " ".join(parts) if parts else "0 seconds"
 
 
-
 def get_curses_center_positions(string: str) -> tuple:
     """
     Calculate the position needed by the `stdscr.addstr` function
     when centering a string in the curses pane.
     """
     import curses
-
     y = curses.LINES // 2
     x = (curses.COLS // 2) - (len(string) // 2)
     return (y, x)
+
+
+def set_curses_colors() -> None:
+    """
+    Initialize curses color pairs.
+    """
+    import curses
+    curses.start_color()
+    curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLACK)
+    curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
+    curses.init_pair(3, curses.COLOR_BLUE, curses.COLOR_BLACK)
+    curses.init_pair(4, curses.COLOR_YELLOW, curses.COLOR_BLACK)
