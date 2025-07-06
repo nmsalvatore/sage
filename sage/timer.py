@@ -106,7 +106,7 @@ def load_timer(stdscr, hours=0, minutes=0, seconds=0, time_string=None):
             stdscr.addstr(y - 1, timer_name_x, timer_name, curses.color_pair(2))
 
         stdscr.addstr(y, ftime_x, ftime_remaining, curses.color_pair(1))
-        stdscr.addstr(curses.LINES - 1, 1, "<q> Quit, <Space> Pause/Resume, <r> Restart", curses.color_pair(3))
+        stdscr.addstr(curses.LINES - 1, 1, "<q> Quit, <Space> Pause/Resume", curses.color_pair(3))
 
         if time_remaining < 1:
             times_up = True
