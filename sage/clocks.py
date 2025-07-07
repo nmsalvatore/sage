@@ -151,8 +151,7 @@ class Timer(Clock):
         """
         Determine the timer duration.
         """
-        saved_timer = get_saved_timer(time_string)
-        if saved_timer:
+        if saved_timer := get_saved_timer(time_string):
             hours = saved_timer.get("hours", 0)
             minutes = saved_timer.get("minutes", 0)
             seconds = saved_timer.get("seconds", 0)
