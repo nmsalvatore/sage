@@ -5,9 +5,8 @@ from typing import Tuple
 
 import nava
 
-from .common import format_time_as_clock
+from .common import format_time_as_clock, convert_time_string_to_seconds, convert_time_to_seconds
 from .config import get_saved_timer
-from .timer import get_timer_duration
 
 
 class Clock:
@@ -26,6 +25,9 @@ class Clock:
         curses.init_pair(4, curses.COLOR_YELLOW, curses.COLOR_BLACK)
 
     def _init_clock_config(self, stdscr):
+        """
+        Initial configurations for the curses interface.
+        """
         self._setup_colors()
         stdscr.clear()
         curses.curs_set(0)
@@ -33,46 +35,77 @@ class Clock:
 
     @staticmethod
     def _get_center_y_start() -> int:
+        """
+        Calculate the starting y position of the window center.
+        """
         return curses.LINES // 2
 
     @staticmethod
     def _get_center_x_start(text: str) -> int:
+        """
+        Calculate the starting x position for a centered text string.
+        """
         x = (curses.COLS // 2) - (len(text) // 2)
         return x - 1 if len(text) % 2 else x
 
-    def _get_clock_positions(self, text: str) -> Tuple[int, int]:
+    def _get_clock_coordinates(self, text: str) -> Tuple[int, int]:
+        """
+        Calculate the clock coordinates, window center.
+        """
         return (
             self._get_center_y_start(),
             self._get_center_x_start(text)
         )
 
-    def _get_status_positions(self, text: str = "") -> Tuple[int, int]:
-        y, x = self._get_clock_positions(text)
+    def _get_status_coordinates(self, text: str = "") -> Tuple[int, int]:
+        """
+        Calculate the clock status coordinates, below the clock.
+        """
+        y, x = self._get_clock_coordinates(text)
         x = x if text else 0
         return (y + 1, x)
 
-    def _get_title_positions(self, text: str = "") -> Tuple[int, int]:
-        y, x = self._get_clock_positions(text)
+    def _get_title_coordinates(self, text: str = "") -> Tuple[int, int]:
+        """
+        Calculate the clock title coordinates, above the clock.
+        """
+        y, x = self._get_clock_coordinates(text)
         return (y - 1, x)
 
     def _render_clock(self, stdscr, formatted_time: str):
-        y, x = self._get_clock_positions(formatted_time)
+        """
+        Render the clock at window center.
+        """
+        y, x = self._get_clock_coordinates(formatted_time)
         stdscr.addstr(y, x, formatted_time, curses.color_pair(1))
 
     def _render_help_text(self, stdscr, help_text: str):
+        """
+        Render the help text at the bottom left of window.
+        """
         stdscr.addstr(curses.LINES - 1, 1, help_text, curses.color_pair(3))
 
     def _render_status(self, stdscr, status_text: str):
-        y, x = self._get_status_positions(status_text)
+        """
+        Render the status text below the clock.
+        """
+        y, x = self._get_status_coordinates(status_text)
         stdscr.addstr(y, x, status_text, curses.color_pair(4))
 
     def _clear_status(self, stdscr):
-        y, x = self._get_status_positions()
+        """
+        Clear the status text.
+        """
+        y, x = self._get_status_coordinates()
         stdscr.move(y, x)
         stdscr.clrtoeol()
 
     @staticmethod
     def _play_sound(filename: str):
+        """
+        Play a sound file located in the sounds/ directory of the
+        project root.
+        """
         sound_path = Path("sounds", filename)
         nava.play(str(sound_path.resolve()), async_mode=True)
 
@@ -92,7 +125,7 @@ class Stopwatch(Clock):
 
             time_elapsed = time.perf_counter() - start_time
             ftime_elapsed = format_time_as_clock(time_elapsed)
-            y, x = self._get_clock_positions(ftime_elapsed)
+            y, x = self._get_clock_coordinates(ftime_elapsed)
             stdscr.addstr(y, x, ftime_elapsed, curses.color_pair(1))
 
 
@@ -106,12 +139,34 @@ class Timer(Clock):
         self.times_up = False
 
     def _get_elapsed_time(self, start_time) -> int:
+        """
+        Calculate the elapsed time depending on paused status.
+        """
         if self.paused:
             return self.pause_start - start_time - self.pause_time
         else:
             return time.perf_counter() - start_time - self.pause_time
 
+    def get_timer_duration(self, hours=0, minutes=0, seconds=0, time_string=None) -> int:
+        """
+        Determine the timer duration.
+        """
+        saved_timer = get_saved_timer(time_string)
+        if saved_timer:
+            hours = saved_timer.get("hours", 0)
+            minutes = saved_timer.get("minutes", 0)
+            seconds = saved_timer.get("seconds", 0)
+            return convert_time_to_seconds(hours, minutes, seconds)
+
+        if time_string:
+            return convert_time_string_to_seconds(time_string)
+
+        return convert_time_to_seconds(hours, minutes, seconds)
+
     def _handle_pause_toggle(self, stdscr):
+        """
+        Handle logic for pause toggling.
+        """
         if not self.paused:
             self.pause_start = time.perf_counter()
             self.paused = True
@@ -121,6 +176,13 @@ class Timer(Clock):
             self.paused = False
             self.pause_start = 0
             self._clear_status(stdscr)
+
+    def _render_timer_name(self, stdscr, timer_name: str):
+        """
+        Render the timer name in the curses interface.
+        """
+        y, x = self._get_title_coordinates(timer_name)
+        stdscr.addstr(y, x, timer_name, curses.color_pair(2))
 
     def load(self, stdscr, hours=0, minutes=0, seconds=0, time_string=None):
         """
@@ -133,7 +195,7 @@ class Timer(Clock):
             self._render_timer_name(stdscr, time_string)
 
         start_time = time.perf_counter()
-        total_seconds = get_timer_duration(hours, minutes, seconds, time_string)
+        total_seconds = self.get_timer_duration(hours, minutes, seconds, time_string)
         self._render_clock(stdscr, format_time_as_clock(total_seconds))
 
         # since the timer reflects 0 seconds at the moment the seconds
@@ -162,11 +224,7 @@ class Timer(Clock):
             stdscr.refresh()
 
         if self.times_up:
-            self._play_sound("thyme.mp3")
+            self._play_sound("dingdong.mp3")
             self._render_status(stdscr, "Time's up!")
             stdscr.nodelay(0)
             stdscr.getch()
-
-    def _render_timer_name(self, stdscr, timer_name: str):
-        y, x = self._get_title_positions(timer_name)
-        stdscr.addstr(y, x, timer_name, curses.color_pair(2))

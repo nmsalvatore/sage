@@ -5,8 +5,8 @@ import click
 
 from .clocks import Stopwatch, Timer
 from .common import format_time_as_clock
-from .config import delete_timer, save_timer, rename_timer
-from .timer import get_timer_duration, list_timers, get_saved_timer
+from .config import delete_timer, save_timer, rename_timer, get_saved_timer
+from .timers import list_timers
 
 
 @click.group()
@@ -23,7 +23,8 @@ def sage():
 @click.option("--test", is_flag=True, hidden=True)
 def timer(test, **kwargs):
     if test:
-        time_in_seconds = get_timer_duration(**kwargs)
+        timer = Timer()
+        time_in_seconds = timer.get_timer_duration(**kwargs)
         click.echo(format_time_as_clock(time_in_seconds))
     else:
         timer = Timer()
