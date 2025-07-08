@@ -32,6 +32,7 @@ class Clock:
         stdscr.clear()
         curses.curs_set(0)
         stdscr.nodelay(1)
+        self._render_title(stdscr)
 
     @staticmethod
     def _get_center_y_start() -> int:
@@ -91,6 +92,12 @@ class Clock:
         """
         y, x = self._get_status_coordinates(status_text)
         stdscr.addstr(y, x, status_text, curses.color_pair(4))
+
+    def _render_title(self, stdscr, title_text: str = "sage"):
+        """
+        Render title text at the top left of window.
+        """
+        stdscr.addstr(1, 1, title_text, curses.color_pair(2))
 
     def _clear_status(self, stdscr):
         """
