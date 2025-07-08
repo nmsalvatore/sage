@@ -23,10 +23,11 @@ def load_saved_timers():
 
     if not timers_file.exists():
         default_timers = {
+            "pika": {"seconds": 5},
+            "johncage": {"minutes": 4, "seconds": 33},
             "pomodoro": {"minutes": 25},
             "potato": {"minutes": 50},
-            "johncage": {"minutes": 4, "seconds": 33},
-            "pika": {"seconds": 5}
+            "rest": {"minutes": 10},
         }
         save_timers(default_timers)
         return default_timers
@@ -45,15 +46,18 @@ def save_timers(timers):
 
 
 def get_saved_timer(name):
-    """Get a specific saved timer by name"""
+    """
+    Get a specific saved timer by name.
+    """
     timers = load_saved_timers()
     return timers.get(name)
 
 
 def save_timer(name, **kwargs):
-    """Save a new timer"""
+    """
+    Save a new timer.
+    """
     timers = load_saved_timers()
-
     hours = kwargs.get("hours", 0)
     minutes = kwargs.get("minutes", 0)
     seconds = kwargs.get("seconds", 0)
@@ -74,14 +78,18 @@ def save_timer(name, **kwargs):
 
 
 def delete_timer(name):
-    """Delete a saved timer"""
+    """
+    Delete a saved timer.
+    """
     timers = load_saved_timers()
     del timers[name]
     save_timers(timers)
 
 
 def rename_timer(name, new_name):
-    """Rename a saved timer"""
+    """
+    Rename a saved timer.
+    """
     timers = load_saved_timers()
     timers.update({new_name: timers.pop(name)})
     save_timers(timers)
