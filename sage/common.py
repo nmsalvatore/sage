@@ -49,7 +49,7 @@ def format_time_as_clock(total_seconds, include_centiseconds=False) -> str:
     hours, minutes, seconds = expand_time_from_seconds(total_seconds)
 
     if include_centiseconds:
-        centiseconds = round((total_seconds % 1) * 100)
+        centiseconds = round((total_seconds % 1) * 100) % 100
         return f"{hours:02d}:{minutes:02d}:{seconds:02d}:{centiseconds:02d}"
 
     return f"{hours:02d}:{minutes:02d}:{seconds:02d}"

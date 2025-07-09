@@ -28,10 +28,10 @@ class Clock:
         """
         Initial configurations for the curses interface.
         """
-        self._setup_colors()
         stdscr.clear()
         curses.curs_set(0)
         stdscr.nodelay(1)
+        self._setup_colors()
         self._render_title(stdscr)
 
     @staticmethod
@@ -131,7 +131,7 @@ class Stopwatch(Clock):
                 break
 
             time_elapsed = time.perf_counter() - start_time
-            ftime_elapsed = format_time_as_clock(time_elapsed)
+            ftime_elapsed = format_time_as_clock(time_elapsed, include_centiseconds=True)
             y, x = self._get_clock_coordinates(ftime_elapsed)
             stdscr.addstr(y, x, ftime_elapsed, curses.color_pair(1))
 
