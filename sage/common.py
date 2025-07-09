@@ -41,12 +41,17 @@ def convert_time_string_to_seconds(time_string) -> int:
     return total
 
 
-def format_time_as_clock(total_seconds) -> str:
+def format_time_as_clock(total_seconds, include_centiseconds=False) -> str:
     """
     Take a time in total seconds, convert it to the correct time units
     (hours, minutes, seconds) and format it into a 00:00:00 format.
     """
     hours, minutes, seconds = expand_time_from_seconds(total_seconds)
+
+    if include_centiseconds:
+        centiseconds = round((total_seconds % 1) * 100)
+        return f"{hours:02d}:{minutes:02d}:{seconds:02d}:{centiseconds:02d}"
+
     return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
 
 

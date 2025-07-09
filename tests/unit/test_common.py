@@ -66,6 +66,14 @@ class TestTimer(TestCase):
         """
         self.assertEqual(format_time_as_clock(185), "00:03:05")
 
+    def test_format_time_as_clock_with_centiseconds(self):
+        """
+        Test that `format_time_as_clock` takes a time in seconds and
+        converts it to the correct time units when the
+        include_centiseconds parameter is set to True.
+        """
+        self.assertEqual(format_time_as_clock(133.23, include_centiseconds=True), "00:02:13:23")
+
     def test_format_time_as_english(self):
         """
         Test that `format_time_as_english` takes a time in seconds,
