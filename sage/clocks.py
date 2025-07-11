@@ -13,10 +13,9 @@ class Clock:
     """
     Base clock interface.
     """
-    def __init__(self):
-        self.paused = False
-        self.pause_start = 0
-        self.pause_time = 0
+    paused = False
+    pause_start = 0
+    pause_time = 0
 
     def _get_elapsed_time(self, start_time) -> int:
         """
@@ -146,11 +145,6 @@ class Clock:
 
 
 class Stopwatch(Clock):
-    def __init__(self):
-        self.pause_start = 0
-        self.pause_time = 0
-        self.paused = False
-
     def load(self, stdscr):
         """
         Load clock interface for the stopwatch.
@@ -179,9 +173,6 @@ class Timer(Clock):
     TIME_OFFSET = 0.9
 
     def __init__(self):
-        self.pause_start = 0
-        self.pause_time = 0
-        self.paused = False
         self.times_up = False
 
     def get_timer_duration(self, hours=0, minutes=0, seconds=0, time_string=None) -> int:
