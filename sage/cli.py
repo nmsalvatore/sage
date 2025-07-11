@@ -96,8 +96,9 @@ def delete(name):
 
 
 @sage.command()
-def stopwatch():
-    stopwatch = Stopwatch()
+@click.option("--no-start", is_flag=True)
+def stopwatch(no_start):
+    stopwatch = Stopwatch(no_start)
     curses.wrapper(lambda stdscr: stopwatch.load(stdscr))
 
 

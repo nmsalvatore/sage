@@ -17,6 +17,9 @@ class Clock:
     pause_start = 0
     pause_time = 0
 
+    def __init__(self, no_start):
+        self.no_start = no_start
+
     def _get_elapsed_time(self, start_time) -> int:
         """
         Calculate the elapsed time depending on paused status.
@@ -26,19 +29,23 @@ class Clock:
         else:
             return time.perf_counter() - start_time - self.pause_time
 
-    def _handle_pause_toggle(self, stdscr):
+    def _toggle_pause(self, stdscr):
         """
         Handle logic for pause toggling.
         """
         if not self.paused:
             self.pause_start = time.perf_counter()
             self.paused = True
-            self._render_status(stdscr, "Paused")
+            self._render_status_text(stdscr, "Paused")
+            self._clear_help_text(stdscr)
+            self._render_help_text(stdscr, "<q> Quit, <Space> Resume")
         else:
             self.pause_time += time.perf_counter() - self.pause_start
             self.paused = False
             self.pause_start = 0
-            self._clear_status(stdscr)
+            self._clear_status_text(stdscr)
+            self._clear_help_text(stdscr)
+            self._render_help_text(stdscr, "<q> Quit, <Space> Pause")
 
     @staticmethod
     def _setup_colors():
@@ -113,7 +120,14 @@ class Clock:
         """
         stdscr.addstr(curses.LINES - 1, 1, help_text, curses.color_pair(3))
 
-    def _render_status(self, stdscr, status_text: str):
+    def _clear_help_text(self, stdscr):
+        """
+        Clear the help text.
+        """
+        stdscr.move(curses.LINES - 1, 1)
+        stdscr.clrtoeol()
+
+    def _render_status_text(self, stdscr, status_text: str):
         """
         Render the status text below the clock.
         """
@@ -126,7 +140,7 @@ class Clock:
         """
         stdscr.addstr(1, 1, title_text, curses.color_pair(2))
 
-    def _clear_status(self, stdscr):
+    def _clear_status_text(self, stdscr):
         """
         Clear the status text.
         """
@@ -151,15 +165,27 @@ class Stopwatch(Clock):
         """
         self._init_clock_config(stdscr)
         self._render_help_text(stdscr, "<q> Quit, <Space> Pause/Resume")
+        self._start(stdscr)
+
+
+    def _start(self, stdscr):
+        """
+        Start the stopwatch.
+        """
         start_time = time.perf_counter()
+
+        if self.no_start:
+            self._toggle_pause(stdscr)
+            self._clear_status_text(stdscr)
+            self._clear_help_text(stdscr)
+            self._render_help_text(stdscr, "<q> Quit, <Space> Start")
 
         while True:
             key = stdscr.getch()
-
             if key == ord("q"):
                 break
             elif key == ord(" "):
-                self._handle_pause_toggle(stdscr)
+                self._toggle_pause(stdscr)
 
             time_elapsed = self._get_elapsed_time(start_time)
             ftime_elapsed = format_time_as_clock(
@@ -221,7 +247,7 @@ class Timer(Clock):
             key = stdscr.getch()
 
             if key == ord(" "):
-                self._handle_pause_toggle(stdscr)
+                self._toggle_pause(stdscr)
             elif key == ord("q"):
                 break
 
@@ -239,6 +265,6 @@ class Timer(Clock):
 
         if self.times_up:
             self._play_sound("dingdong.mp3")
-            self._render_status(stdscr, "Time's up!")
+            self._render_status_text(stdscr, "Time's up!")
             stdscr.nodelay(0)
             stdscr.getch()
