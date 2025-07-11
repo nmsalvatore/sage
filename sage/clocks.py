@@ -13,6 +13,34 @@ class Clock:
     """
     Base clock interface.
     """
+    def __init__(self):
+        self.paused = False
+        self.pause_start = 0
+        self.pause_time = 0
+
+    def _get_elapsed_time(self, start_time) -> int:
+        """
+        Calculate the elapsed time depending on paused status.
+        """
+        if self.paused:
+            return self.pause_start - start_time - self.pause_time
+        else:
+            return time.perf_counter() - start_time - self.pause_time
+
+    def _handle_pause_toggle(self, stdscr):
+        """
+        Handle logic for pause toggling.
+        """
+        if not self.paused:
+            self.pause_start = time.perf_counter()
+            self.paused = True
+            self._render_status(stdscr, "Paused")
+        else:
+            self.pause_time += time.perf_counter() - self.pause_start
+            self.paused = False
+            self.pause_start = 0
+            self._clear_status(stdscr)
+
     @staticmethod
     def _setup_colors():
         """
@@ -118,6 +146,11 @@ class Clock:
 
 
 class Stopwatch(Clock):
+    def __init__(self):
+        self.pause_start = 0
+        self.pause_time = 0
+        self.paused = False
+
     def load(self, stdscr):
         """
         Load clock interface for the stopwatch.
@@ -129,9 +162,11 @@ class Stopwatch(Clock):
             key = stdscr.getch()
             if key == ord("q"):
                 break
+            elif key == ord(" "):
+                self._handle_pause_toggle(stdscr)
 
-            time_elapsed = time.perf_counter() - start_time
-            ftime_elapsed = format_time_as_clock(time_elapsed, include_centiseconds=True)
+            elapsed = self._get_elapsed_time(start_time)
+            ftime_elapsed = format_time_as_clock(elapsed, include_centiseconds=True)
             y, x = self._get_clock_coordinates(ftime_elapsed)
             stdscr.addstr(y, x, ftime_elapsed, curses.color_pair(1))
 
@@ -144,15 +179,6 @@ class Timer(Clock):
         self.pause_time = 0
         self.paused = False
         self.times_up = False
-
-    def _get_elapsed_time(self, start_time) -> int:
-        """
-        Calculate the elapsed time depending on paused status.
-        """
-        if self.paused:
-            return self.pause_start - start_time - self.pause_time
-        else:
-            return time.perf_counter() - start_time - self.pause_time
 
     def get_timer_duration(self, hours=0, minutes=0, seconds=0, time_string=None) -> int:
         """
@@ -168,20 +194,6 @@ class Timer(Clock):
             return convert_time_string_to_seconds(time_string)
 
         return convert_time_to_seconds(hours, minutes, seconds)
-
-    def _handle_pause_toggle(self, stdscr):
-        """
-        Handle logic for pause toggling.
-        """
-        if not self.paused:
-            self.pause_start = time.perf_counter()
-            self.paused = True
-            self._render_status(stdscr, "Paused")
-        else:
-            self.pause_time += time.perf_counter() - self.pause_start
-            self.paused = False
-            self.pause_start = 0
-            self._clear_status(stdscr)
 
     def _render_timer_name(self, stdscr, timer_name: str):
         """
