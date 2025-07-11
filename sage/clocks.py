@@ -156,19 +156,23 @@ class Stopwatch(Clock):
         Load clock interface for the stopwatch.
         """
         self._init_clock_config(stdscr)
+        self._render_help_text(stdscr, "<q> Quit, <Space> Pause/Resume")
         start_time = time.perf_counter()
 
         while True:
             key = stdscr.getch()
+
             if key == ord("q"):
                 break
             elif key == ord(" "):
                 self._handle_pause_toggle(stdscr)
 
-            elapsed = self._get_elapsed_time(start_time)
-            ftime_elapsed = format_time_as_clock(elapsed, include_centiseconds=True)
-            y, x = self._get_clock_coordinates(ftime_elapsed)
-            stdscr.addstr(y, x, ftime_elapsed, curses.color_pair(1))
+            time_elapsed = self._get_elapsed_time(start_time)
+            ftime_elapsed = format_time_as_clock(
+                time_elapsed,
+                include_centiseconds=True
+            )
+            self._render_clock(stdscr, ftime_elapsed)
 
 
 class Timer(Clock):
@@ -224,6 +228,7 @@ class Timer(Clock):
 
         while True:
             key = stdscr.getch()
+
             if key == ord(" "):
                 self._handle_pause_toggle(stdscr)
             elif key == ord("q"):
