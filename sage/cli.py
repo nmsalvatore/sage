@@ -22,13 +22,18 @@ def sage():
 @click.option("-s", "--seconds", type=int, default=0)
 @click.option("--no-start", is_flag=True)
 @click.option("--test", is_flag=True, hidden=True)
-def timer(test, no_start, **kwargs):
+def timer(test, **kwargs):
     if test:
-        timer = Timer(no_start)
-        time_in_seconds = timer.get_timer_duration(**kwargs)
+        hours = kwargs.get("hours", 0)
+        minutes = kwargs.get("minutes", 0)
+        seconds = kwargs.get("seconds", 0)
+        time_string = kwargs.get("time_string", 0)
+
+        timer = Timer()
+        time_in_seconds = timer.get_timer_duration(hours, minutes, seconds, time_string)
         click.echo(format_time_as_clock(time_in_seconds))
     else:
-        timer = Timer(no_start)
+        timer = Timer()
         curses.wrapper(lambda stdscr: timer.load(stdscr, **kwargs))
 
 
@@ -98,9 +103,9 @@ def delete(name):
 
 @sage.command()
 @click.option("--no-start", is_flag=True)
-def stopwatch(no_start):
-    stopwatch = Stopwatch(no_start)
-    curses.wrapper(lambda stdscr: stopwatch.load(stdscr))
+def stopwatch(**kwargs):
+    stopwatch = Stopwatch()
+    curses.wrapper(lambda stdscr: stopwatch.load(stdscr, **kwargs))
 
 
 if __name__ == "__main__":

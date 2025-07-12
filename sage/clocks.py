@@ -17,9 +17,6 @@ class Clock:
     pause_start = 0
     pause_time = 0
 
-    def __init__(self, no_start):
-        self.no_start = no_start
-
     def _get_elapsed_time(self, start_time) -> int:
         """
         Calculate the elapsed time depending on paused status.
@@ -114,11 +111,11 @@ class Clock:
         y, x = self._get_clock_coordinates(formatted_time)
         stdscr.addstr(y, x, formatted_time, curses.color_pair(1))
 
-    def _render_help_text(self, stdscr, help_text: str):
+    def _render_help_text(self, stdscr, help_text: str, color_id: int = 3):
         """
         Render the help text at the bottom left of window.
         """
-        stdscr.addstr(curses.LINES - 1, 1, help_text, curses.color_pair(3))
+        stdscr.addstr(curses.LINES - 1, 1, help_text, curses.color_pair(color_id))
 
     def _clear_help_text(self, stdscr):
         """
@@ -159,20 +156,20 @@ class Clock:
 
 
 class Stopwatch(Clock):
-    def load(self, stdscr):
+    def load(self, stdscr, no_start=False):
         """
         Load clock interface for the stopwatch.
         """
         self._init_clock_config(stdscr)
-        self._render_help_text(stdscr, "<q> Quit, <Space> Pause/Resume")
-
         start_time = time.perf_counter()
 
-        if self.no_start:
+        if no_start:
             self._toggle_pause(stdscr)
             self._clear_status_text(stdscr)
             self._clear_help_text(stdscr)
-            self._render_help_text(stdscr, "<q> Quit, <Space> Start")
+            self._render_help_text(stdscr, "<q> Quit, <Space> Start", 4)
+        else:
+            self._render_help_text(stdscr, "<q> Quit, <Space> Pause")
 
         while True:
             key = stdscr.getch()
@@ -192,9 +189,8 @@ class Stopwatch(Clock):
 class Timer(Clock):
     TIME_OFFSET = 0.9
 
-    def __init__(self, no_start):
+    def __init__(self):
         self.times_up = False
-        self.no_start = no_start
 
     def get_timer_duration(self, hours=0, minutes=0, seconds=0, time_string=None) -> int:
         """
@@ -218,12 +214,11 @@ class Timer(Clock):
         y, x = self._get_title_coordinates(timer_name)
         stdscr.addstr(y, x, timer_name, curses.color_pair(2))
 
-    def load(self, stdscr, hours=0, minutes=0, seconds=0, time_string=None):
+    def load(self, stdscr, no_start=False, hours=0, minutes=0, seconds=0, time_string=None):
         """
         Load the clock interface for the timer.
         """
         self._init_clock_config(stdscr)
-        self._render_help_text(stdscr, "<q> Quit, <Space> Pause/Resume")
 
         if time_string and get_saved_timer(time_string):
             self._render_timer_name(stdscr, time_string)
@@ -238,11 +233,13 @@ class Timer(Clock):
         # we add 0.9 seconds to the total time.
         total_seconds += self.TIME_OFFSET
 
-        if self.no_start:
+        if no_start:
             self._toggle_pause(stdscr)
             self._clear_status_text(stdscr)
             self._clear_help_text(stdscr)
-            self._render_help_text(stdscr, "<q> Quit, <Space> Start")
+            self._render_help_text(stdscr, "<q> Quit, <Space> Start", 4)
+        else:
+            self._render_help_text(stdscr, "<q> Quit, <Space> Pause")
 
         while True:
             key = stdscr.getch()
