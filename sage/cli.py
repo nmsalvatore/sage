@@ -20,14 +20,15 @@ def sage():
 @click.option("-h", "--hours", type=int, default=0)
 @click.option("-m", "--minutes", type=int, default=0)
 @click.option("-s", "--seconds", type=int, default=0)
+@click.option("--no-start", is_flag=True)
 @click.option("--test", is_flag=True, hidden=True)
-def timer(test, **kwargs):
+def timer(test, no_start, **kwargs):
     if test:
-        timer = Timer()
+        timer = Timer(no_start)
         time_in_seconds = timer.get_timer_duration(**kwargs)
         click.echo(format_time_as_clock(time_in_seconds))
     else:
-        timer = Timer()
+        timer = Timer(no_start)
         curses.wrapper(lambda stdscr: timer.load(stdscr, **kwargs))
 
 

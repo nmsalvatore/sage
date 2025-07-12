@@ -165,13 +165,7 @@ class Stopwatch(Clock):
         """
         self._init_clock_config(stdscr)
         self._render_help_text(stdscr, "<q> Quit, <Space> Pause/Resume")
-        self._start(stdscr)
 
-
-    def _start(self, stdscr):
-        """
-        Start the stopwatch.
-        """
         start_time = time.perf_counter()
 
         if self.no_start:
@@ -198,8 +192,9 @@ class Stopwatch(Clock):
 class Timer(Clock):
     TIME_OFFSET = 0.9
 
-    def __init__(self):
+    def __init__(self, no_start):
         self.times_up = False
+        self.no_start = no_start
 
     def get_timer_duration(self, hours=0, minutes=0, seconds=0, time_string=None) -> int:
         """
@@ -242,6 +237,12 @@ class Timer(Clock):
         # the timer to go off right when the clock reflects 0 seconds,
         # we add 0.9 seconds to the total time.
         total_seconds += self.TIME_OFFSET
+
+        if self.no_start:
+            self._toggle_pause(stdscr)
+            self._clear_status_text(stdscr)
+            self._clear_help_text(stdscr)
+            self._render_help_text(stdscr, "<q> Quit, <Space> Start")
 
         while True:
             key = stdscr.getch()
