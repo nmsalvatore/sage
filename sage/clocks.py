@@ -5,7 +5,11 @@ from typing import Tuple
 
 import nava
 
-from .common import format_time_as_clock, convert_time_string_to_seconds, convert_time_to_seconds
+from .common import (
+    convert_time_string_to_seconds,
+    convert_time_to_seconds,
+    format_time_as_clock,
+)
 from .config import get_saved_timer
 
 
@@ -13,6 +17,10 @@ class Clock:
     """
     Base clock interface.
     """
+
+    START_MESSAGE = "Press SPACE to start"
+    PAUSE_MESSAGE = "Paused"
+
     paused = False
     pause_start = 0
     pause_time = 0
@@ -33,7 +41,7 @@ class Clock:
         if not self.paused:
             self.pause_start = time.perf_counter()
             self.paused = True
-            self._render_status_text(stdscr, "Paused")
+            self._render_status_text(stdscr, self.PAUSE_MESSAGE)
         else:
             self.pause_time += time.perf_counter() - self.pause_start
             self.paused = False
@@ -80,10 +88,7 @@ class Clock:
         """
         Calculate the clock coordinates, window center.
         """
-        return (
-            self._get_center_y_start(),
-            self._get_center_x_start(text)
-        )
+        return (self._get_center_y_start(), self._get_center_x_start(text))
 
     def _get_status_coordinates(self, text: str = "") -> Tuple[int, int]:
         """
@@ -152,7 +157,13 @@ class Clock:
 
 
 class Stopwatch(Clock):
-    laps = 1
+    """
+    Stopwatch interface.
+    """
+
+    HELP_TEXT = "<q> Quit, <Space> Pause/Resume, <Enter> Increment lap"
+
+    counter = 0
 
     def load(self, stdscr, no_start=False):
         """
@@ -160,13 +171,13 @@ class Stopwatch(Clock):
         """
         self._init_clock_config(stdscr)
         start_time = time.perf_counter()
-        self._render_lap_count(stdscr)
-        self._render_help_text(stdscr, "<q> Quit, <Space> Pause/Resume, <Enter> Increment lap")
+        self._render_counter(stdscr)
+        self._render_help_text(stdscr, self.HELP_TEXT)
 
         if no_start:
             self._toggle_pause(stdscr)
             self._clear_status_text(stdscr)
-            self._render_status_text(stdscr, "Press SPACE to start")
+            self._render_status_text(stdscr, self.START_MESSAGE)
 
         while True:
             key = stdscr.getch()
@@ -174,39 +185,45 @@ class Stopwatch(Clock):
                 break
             elif key == ord(" "):
                 self._toggle_pause(stdscr)
-            elif key == 10:
-                self.laps += 1
-                self._render_lap_count(stdscr)
+            elif key == 10 or key == curses.KEY_ENTER:
+                self.counter += 1
+                self._render_counter(stdscr)
 
             time_elapsed = self._get_elapsed_time(start_time)
             ftime_elapsed = format_time_as_clock(
-                time_elapsed,
-                include_centiseconds=True
+                time_elapsed, include_centiseconds=True
             )
             self._render_clock(stdscr, ftime_elapsed)
 
-    def _render_lap_count(self, stdscr, lap_text: str = "Lap: 1"):
+    def _render_counter(self, stdscr, counter_text: str = "Counter: 1"):
         """
         Render the lap count at the bottom right of screen.
         """
-        lap_text = f"Lap: {self.laps}"
+        counter_text = f"Counter: {self.counter}"
         y = curses.LINES - 1
-        x = curses.COLS - len(lap_text) - 1
-        stdscr.addstr(y, x, lap_text, curses.color_pair(3))
+        x = curses.COLS - len(counter_text) - 1
+        stdscr.addstr(y, x, counter_text, curses.color_pair(3))
 
 
 class Timer(Clock):
+    """
+    Timer interface.
+    """
+
+    HELP_TEXT = "<q> Quit, <Space> Pause/Resume"
     TIME_OFFSET = 0.9
 
     def __init__(self):
         self.times_up = False
 
-    def load(self, stdscr, no_start=False, hours=0, minutes=0, seconds=0, time_string=None):
+    def load(
+        self, stdscr, no_start=False, hours=0, minutes=0, seconds=0, time_string=None
+    ):
         """
         Load the clock interface for the timer.
         """
         self._init_clock_config(stdscr)
-        self._render_help_text(stdscr, "<q> Quit, <Space> Pause/Resume")
+        self._render_help_text(stdscr, self.HELP_TEXT)
 
         if time_string and get_saved_timer(time_string):
             self._render_timer_name(stdscr, time_string)
@@ -224,7 +241,7 @@ class Timer(Clock):
         if no_start:
             self._toggle_pause(stdscr)
             self._clear_status_text(stdscr)
-            self._render_status_text(stdscr, "Press SPACE to start")
+            self._render_status_text(stdscr, self.START_MESSAGE)
 
         while True:
             key = stdscr.getch()
@@ -252,7 +269,9 @@ class Timer(Clock):
             stdscr.nodelay(0)
             stdscr.getch()
 
-    def get_timer_duration(self, hours=0, minutes=0, seconds=0, time_string=None) -> int:
+    def get_timer_duration(
+        self, hours=0, minutes=0, seconds=0, time_string=None
+    ) -> int:
         """
         Determine the timer duration.
         """
