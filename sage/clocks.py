@@ -118,13 +118,6 @@ class Clock:
         """
         stdscr.addstr(curses.LINES - 1, 1, help_text, curses.color_pair(color_id))
 
-    def _clear_help_text(self, stdscr):
-        """
-        Clear the help text.
-        """
-        stdscr.move(curses.LINES - 1, 1)
-        stdscr.addstr(curses.LINES - 1, 1, " " * (curses.COLS // 2))
-
     def _render_status_text(self, stdscr, status_text: str):
         """
         Render the status text below the clock.
@@ -161,7 +154,7 @@ class Stopwatch(Clock):
     Stopwatch interface.
     """
 
-    HELP_TEXT = "<q> Quit, <Space> Pause/Resume, <Enter> Increment lap"
+    HELP_TEXT = "<q> Quit, <Space> Pause/Resume, <Enter> Increment counter"
 
     counter = 0
 
@@ -264,7 +257,7 @@ class Timer(Clock):
             stdscr.refresh()
 
         if self.times_up:
-            self._play_sound("dingdong.mp3")
+            self._play_sound("thyme.mp3")
             self._render_status_text(stdscr, "Time's up!")
             stdscr.nodelay(0)
             stdscr.getch()
