@@ -145,8 +145,8 @@ class Clock:
         Play a sound file located in the sounds/ directory of the
         project root.
         """
-        sound_path = Path("sounds", filename)
-        nava.play(str(sound_path.resolve()), async_mode=True)
+        sound_path = Path("sounds", filename).resolve()
+        nava.play(str(sound_path), async_mode=True)
 
 
 class Stopwatch(Clock):
@@ -205,6 +205,8 @@ class Timer(Clock):
 
     HELP_TEXT = "<q> Quit, <Space> Pause/Resume"
     TIME_OFFSET = 0.9
+    TIMES_UP_SOUND_FILENAME = "thyme.mp3"
+    TIMES_UP_TEXT = "Time's up!"
 
     def __init__(self):
         self.times_up = False
@@ -257,8 +259,8 @@ class Timer(Clock):
             stdscr.refresh()
 
         if self.times_up:
-            self._play_sound("thyme.mp3")
-            self._render_status_text(stdscr, "Time's up!")
+            self._play_sound(self.TIMES_UP_SOUND_FILENAME)
+            self._render_status_text(stdscr, self.TIMES_UP_TEXT)
             stdscr.nodelay(0)
             stdscr.getch()
 
