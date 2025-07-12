@@ -34,15 +34,11 @@ class Clock:
             self.pause_start = time.perf_counter()
             self.paused = True
             self._render_status_text(stdscr, "Paused")
-            self._clear_help_text(stdscr)
-            self._render_help_text(stdscr, "<q> Quit, <Space> Resume")
         else:
             self.pause_time += time.perf_counter() - self.pause_start
             self.paused = False
             self.pause_start = 0
             self._clear_status_text(stdscr)
-            self._clear_help_text(stdscr)
-            self._render_help_text(stdscr, "<q> Quit, <Space> Pause")
 
     @staticmethod
     def _setup_colors():
@@ -63,7 +59,7 @@ class Clock:
         curses.curs_set(0)
         stdscr.nodelay(1)
         self._setup_colors()
-        self._render_title(stdscr)
+        self._render_application_title(stdscr)
 
     @staticmethod
     def _get_center_y_start() -> int:
@@ -122,7 +118,7 @@ class Clock:
         Clear the help text.
         """
         stdscr.move(curses.LINES - 1, 1)
-        stdscr.clrtoeol()
+        stdscr.addstr(curses.LINES - 1, 1, " " * (curses.COLS // 2))
 
     def _render_status_text(self, stdscr, status_text: str):
         """
@@ -131,7 +127,7 @@ class Clock:
         y, x = self._get_status_coordinates(status_text)
         stdscr.addstr(y, x, status_text, curses.color_pair(4))
 
-    def _render_title(self, stdscr, title_text: str = "sage"):
+    def _render_application_title(self, stdscr, title_text: str = "sage"):
         """
         Render title text at the top left of window.
         """
@@ -156,20 +152,21 @@ class Clock:
 
 
 class Stopwatch(Clock):
+    laps = 1
+
     def load(self, stdscr, no_start=False):
         """
         Load clock interface for the stopwatch.
         """
         self._init_clock_config(stdscr)
         start_time = time.perf_counter()
+        self._render_lap_count(stdscr)
+        self._render_help_text(stdscr, "<q> Quit, <Space> Pause/Resume, <Enter> Increment lap")
 
         if no_start:
             self._toggle_pause(stdscr)
             self._clear_status_text(stdscr)
-            self._clear_help_text(stdscr)
-            self._render_help_text(stdscr, "<q> Quit, <Space> Start", 4)
-        else:
-            self._render_help_text(stdscr, "<q> Quit, <Space> Pause")
+            self._render_status_text(stdscr, "Press SPACE to start")
 
         while True:
             key = stdscr.getch()
@@ -177,6 +174,9 @@ class Stopwatch(Clock):
                 break
             elif key == ord(" "):
                 self._toggle_pause(stdscr)
+            elif key == 10:
+                self.laps += 1
+                self._render_lap_count(stdscr)
 
             time_elapsed = self._get_elapsed_time(start_time)
             ftime_elapsed = format_time_as_clock(
@@ -185,6 +185,15 @@ class Stopwatch(Clock):
             )
             self._render_clock(stdscr, ftime_elapsed)
 
+    def _render_lap_count(self, stdscr, lap_text: str = "Lap: 1"):
+        """
+        Render the lap count at the bottom right of screen.
+        """
+        lap_text = f"Lap: {self.laps}"
+        y = curses.LINES - 1
+        x = curses.COLS - len(lap_text) - 1
+        stdscr.addstr(y, x, lap_text, curses.color_pair(3))
+
 
 class Timer(Clock):
     TIME_OFFSET = 0.9
@@ -192,33 +201,12 @@ class Timer(Clock):
     def __init__(self):
         self.times_up = False
 
-    def get_timer_duration(self, hours=0, minutes=0, seconds=0, time_string=None) -> int:
-        """
-        Determine the timer duration.
-        """
-        if saved_timer := get_saved_timer(time_string):
-            hours = saved_timer.get("hours", 0)
-            minutes = saved_timer.get("minutes", 0)
-            seconds = saved_timer.get("seconds", 0)
-            return convert_time_to_seconds(hours, minutes, seconds)
-
-        if time_string:
-            return convert_time_string_to_seconds(time_string)
-
-        return convert_time_to_seconds(hours, minutes, seconds)
-
-    def _render_timer_name(self, stdscr, timer_name: str):
-        """
-        Render the timer name in the curses interface.
-        """
-        y, x = self._get_title_coordinates(timer_name)
-        stdscr.addstr(y, x, timer_name, curses.color_pair(2))
-
     def load(self, stdscr, no_start=False, hours=0, minutes=0, seconds=0, time_string=None):
         """
         Load the clock interface for the timer.
         """
         self._init_clock_config(stdscr)
+        self._render_help_text(stdscr, "<q> Quit, <Space> Pause/Resume")
 
         if time_string and get_saved_timer(time_string):
             self._render_timer_name(stdscr, time_string)
@@ -236,10 +224,7 @@ class Timer(Clock):
         if no_start:
             self._toggle_pause(stdscr)
             self._clear_status_text(stdscr)
-            self._clear_help_text(stdscr)
-            self._render_help_text(stdscr, "<q> Quit, <Space> Start", 4)
-        else:
-            self._render_help_text(stdscr, "<q> Quit, <Space> Pause")
+            self._render_status_text(stdscr, "Press SPACE to start")
 
         while True:
             key = stdscr.getch()
@@ -266,3 +251,25 @@ class Timer(Clock):
             self._render_status_text(stdscr, "Time's up!")
             stdscr.nodelay(0)
             stdscr.getch()
+
+    def get_timer_duration(self, hours=0, minutes=0, seconds=0, time_string=None) -> int:
+        """
+        Determine the timer duration.
+        """
+        if saved_timer := get_saved_timer(time_string):
+            hours = saved_timer.get("hours", 0)
+            minutes = saved_timer.get("minutes", 0)
+            seconds = saved_timer.get("seconds", 0)
+            return convert_time_to_seconds(hours, minutes, seconds)
+
+        if time_string:
+            return convert_time_string_to_seconds(time_string)
+
+        return convert_time_to_seconds(hours, minutes, seconds)
+
+    def _render_timer_name(self, stdscr, timer_name: str):
+        """
+        Render the timer name in the curses interface.
+        """
+        y, x = self._get_title_coordinates(timer_name)
+        stdscr.addstr(y, x, timer_name, curses.color_pair(2))
