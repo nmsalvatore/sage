@@ -4,9 +4,8 @@ from textwrap import dedent
 import click
 
 from .clocks import Stopwatch, Timer
-from .common import format_time_as_clock
-from .config import delete_timer, save_timer, rename_timer, get_saved_timer
-from .timers import list_timers
+from .common import convert_time_string_to_seconds, convert_time_to_seconds, format_time_as_english
+from .config import delete_timer, save_timer, rename_timer, get_saved_timer, load_saved_timers
 
 
 @click.group()
@@ -15,26 +14,39 @@ def sage():
     pass
 
 
+def validate_time_string(ctx, param, value):
+    """
+    Validation on time_string that checks if the string can be
+    converted to seconds and if not, checks if there a saved timer with
+    the same name.
+    """
+    if value is None:
+        return
+
+    try:
+        convert_time_string_to_seconds(value)
+        return value
+    except (ValueError, TypeError):
+        saved_timer = get_saved_timer(value)
+        if saved_timer is not None:
+            return value
+        raise click.BadParameter(f"Could not find a time value associated with '{value}'.")
+
+
 @sage.command()
-@click.argument("time_string", required=False)
+@click.argument("time_string", required=False, callback=validate_time_string)
 @click.option("-h", "--hours", type=int, default=0)
 @click.option("-m", "--minutes", type=int, default=0)
 @click.option("-s", "--seconds", type=int, default=0)
 @click.option("--no-start", is_flag=True)
 @click.option("--test", is_flag=True, hidden=True)
 def timer(test, **kwargs):
+    timer = Timer()
     if test:
-        hours = kwargs.get("hours", 0)
-        minutes = kwargs.get("minutes", 0)
-        seconds = kwargs.get("seconds", 0)
-        time_string = kwargs.get("time_string", 0)
+        timer.print_duration(**kwargs)
+        return
 
-        timer = Timer()
-        time_in_seconds = timer.get_timer_duration(hours, minutes, seconds, time_string)
-        click.echo(format_time_as_clock(time_in_seconds))
-    else:
-        timer = Timer()
-        curses.wrapper(lambda stdscr: timer.load(stdscr, **kwargs))
+    timer.run(**kwargs)
 
 
 @sage.group()
@@ -44,12 +56,26 @@ def timers():
 
 @timers.command()
 def list():
-    list_timers()
+    saved_timers = load_saved_timers()
+    if not saved_timers:
+        click.echo("No saved timers.")
+        click.echo("Save a timer with: sage timer <duration> --name <name>")
+        return
+
+    max_width = max(len(name) for name in saved_timers.keys())
+    for timer in sorted(saved_timers.keys()):
+        hours = saved_timers[timer].get("hours", 0)
+        minutes = saved_timers[timer].get("minutes", 0)
+        seconds = saved_timers[timer].get("seconds", 0)
+        total_seconds = convert_time_to_seconds(hours, minutes, seconds)
+
+        duration = format_time_as_english(total_seconds)
+        click.echo(f"{timer:<{max_width + 2}} {duration}")
 
 
 @timers.command()
 @click.argument("name", required=True)
-@click.argument("time_string", required=False)
+@click.argument("time_string", required=False, callback=validate_time_string)
 @click.option("-h", "--hours", type=int, default=0)
 @click.option("-m", "--minutes", type=int, default=0)
 @click.option("-s", "--seconds", type=int, default=0)
@@ -65,12 +91,13 @@ def create(name, **kwargs):
 
 @timers.command()
 @click.argument("name", required=True)
-@click.argument("time_string", required=False)
+@click.argument("time_string", required=False, callback=validate_time_string)
 @click.option("-h", "--hours", type=int, default=0)
 @click.option("-m", "--minutes", type=int, default=0)
 @click.option("-s", "--seconds", type=int, default=0)
 def update(name, **kwargs):
-    if not get_saved_timer(name):
+    saved_timer = get_saved_timer(name)
+    if saved_timer is None:
         click.echo(f"Timer '{name}' does not exist.")
         return
 
@@ -82,7 +109,8 @@ def update(name, **kwargs):
 @click.argument("name", required=True)
 @click.argument("new_name", required=True)
 def rename(name, new_name):
-    if not get_saved_timer(name):
+    saved_timer = get_saved_timer(name)
+    if saved_timer is None:
         click.echo(f"Timer '{name}' does not exist.")
         return
 
@@ -93,7 +121,8 @@ def rename(name, new_name):
 @timers.command()
 @click.argument("name", required=True)
 def delete(name):
-    if not get_saved_timer(name):
+    saved_timer = get_saved_timer(name)
+    if saved_timer is None:
         click.echo(f"Timer '{name}' does not exist.")
         return
 

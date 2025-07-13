@@ -278,3 +278,18 @@ def test_crud_operations(tmp_path):
     assert result.returncode == 0
     assert "success" in result.stdout.lower()
     assert "russet" in result.stdout.lower()
+
+
+def test_invalid_timer_value():
+    """
+    Invalid values passed to `sage timer` should return a message
+    alerting the user that a time value could not be found.
+    """
+    result = subprocess.run(
+        ["sage", "timer", "somenonsense"],
+        capture_output=True,
+        text=True,
+        timeout=5,
+    )
+
+    assert result.returncode == 2

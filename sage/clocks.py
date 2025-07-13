@@ -3,6 +3,7 @@ import time
 from pathlib import Path
 from typing import Tuple
 
+import click
 import nava
 
 from .common import (
@@ -211,6 +212,12 @@ class Timer(Clock):
     def __init__(self):
         self.times_up = False
 
+    def run(self, **kwargs):
+        """
+        Start the clock interfaces with curses.
+        """
+        curses.wrapper(lambda stdscr: self.load(stdscr, **kwargs))
+
     def load(
         self, stdscr, no_start=False, hours=0, minutes=0, seconds=0, time_string=None
     ):
@@ -224,7 +231,7 @@ class Timer(Clock):
             self._render_timer_name(stdscr, time_string)
 
         start_time = time.perf_counter()
-        total_seconds = self.get_timer_duration(hours, minutes, seconds, time_string)
+        total_seconds = self.get_duration(hours, minutes, seconds, time_string)
         self._render_clock(stdscr, format_time_as_clock(total_seconds))
 
         # since the timer reflects 0 seconds at the moment the seconds
@@ -264,7 +271,7 @@ class Timer(Clock):
             stdscr.nodelay(0)
             stdscr.getch()
 
-    def get_timer_duration(
+    def get_duration(
         self, hours=0, minutes=0, seconds=0, time_string=None
     ) -> int:
         """
@@ -280,6 +287,20 @@ class Timer(Clock):
             return convert_time_string_to_seconds(time_string)
 
         return convert_time_to_seconds(hours, minutes, seconds)
+
+    def print_duration(self, **kwargs):
+        """
+        Print the timer duration without loading the timer.
+        """
+        duration_params = {
+            "hours": kwargs.get("hours", 0),
+            "minutes": kwargs.get("minutes", 0),
+            "seconds": kwargs.get("seconds", 0),
+            "time_string": kwargs.get("time_string")
+        }
+
+        time_in_seconds = self.get_duration(**duration_params)
+        click.echo(format_time_as_clock(time_in_seconds))
 
     def _render_timer_name(self, stdscr, timer_name: str):
         """
