@@ -22,9 +22,10 @@ class Clock:
     START_MESSAGE = "Press SPACE to start"
     PAUSE_MESSAGE = "Paused"
 
-    paused = False
-    pause_start = 0
-    pause_time = 0
+    def __init__(self):
+        self.paused = False
+        self.pause_start = 0
+        self.pause_time = 0
 
     def _get_elapsed_time(self, start_time) -> int:
         """
@@ -157,11 +158,20 @@ class Stopwatch(Clock):
 
     HELP_TEXT = "<q> Quit, <Space> Pause/Resume, <Enter> Increment counter"
 
-    counter = 0
+    def __init__(self):
+        super().__init__()
+        self.counter = 0
+
+    def start(self, **kwargs):
+        """
+        Convenience method to initialize curses interface.
+        """
+        curses.wrapper(lambda stdscr: self.load(stdscr, **kwargs))
+
 
     def load(self, stdscr, no_start=False):
         """
-        Load clock interface for the stopwatch.
+        Load the stopwatch.
         """
         self._init_clock_config(stdscr)
         start_time = time.perf_counter()
@@ -210,11 +220,12 @@ class Timer(Clock):
     TIMES_UP_TEXT = "Time's up!"
 
     def __init__(self):
+        super().__init__()
         self.times_up = False
 
-    def run(self, **kwargs):
+    def start(self, **kwargs):
         """
-        Start the clock interfaces with curses.
+        Convenience method to initialize curses interface.
         """
         curses.wrapper(lambda stdscr: self.load(stdscr, **kwargs))
 
@@ -222,7 +233,7 @@ class Timer(Clock):
         self, stdscr, no_start=False, hours=0, minutes=0, seconds=0, time_string=None
     ):
         """
-        Load the clock interface for the timer.
+        Load the timer.
         """
         self._init_clock_config(stdscr)
         self._render_help_text(stdscr, self.HELP_TEXT)
