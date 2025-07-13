@@ -46,7 +46,7 @@ def timer(test, **kwargs):
         timer.print_duration(**kwargs)
         return
 
-    timer.run(**kwargs)
+    timer.start(**kwargs)
 
 
 @sage.group()
@@ -134,7 +134,7 @@ def delete(name):
 @click.option("--no-start", is_flag=True)
 def stopwatch(**kwargs):
     stopwatch = Stopwatch()
-    curses.wrapper(lambda stdscr: stopwatch.load(stdscr, **kwargs))
+    stopwatch.start(**kwargs)
 
 
 if __name__ == "__main__":
