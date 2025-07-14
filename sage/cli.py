@@ -216,7 +216,7 @@ def delete(name):
 @click.option("--no-start", is_flag=True)
 def stopwatch(**kwargs):
     """
-    Run a timer.
+    Run a stopwatch.
     """
     stopwatch = Stopwatch()
     stopwatch.run(**kwargs)
