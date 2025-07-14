@@ -365,3 +365,36 @@ def test_timers_with_no_argument():
     assert "johncage" in result.stdout
     assert "potato" in result.stdout
     assert "pika" in result.stdout
+
+
+def test_stopwatch_with_extra_arguments():
+    """
+    This user is getting crazy with their own tests. They start
+    throwing random arguments at everything, now 'sage stopwatch'.
+    Let's make sure we cut them off with an error.
+    """
+    result = subprocess.run(
+        ["sage", "stopwatch", "anarchy"],
+        capture_output=True,
+        text=True,
+        timeout=5,
+    )
+
+    assert result.returncode == 2
+    assert "unexpected extra argument" in result.stderr.lower()
+
+
+def test_stopwatch_with_invalid_option():
+    """
+    Random arguments fail, what about random options? We better make
+    sure those fail as well.
+    """
+    result = subprocess.run(
+        ["sage", "stopwatch", "--anarchy"],
+        capture_output=True,
+        text=True,
+        timeout=5,
+    )
+
+    assert result.returncode == 2
+    assert "no such option" in result.stderr.lower()
