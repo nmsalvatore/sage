@@ -282,9 +282,7 @@ class Timer(Clock):
             stdscr.nodelay(0)
             stdscr.getch()
 
-    def get_duration(
-        self, hours=0, minutes=0, seconds=0, time_string=None
-    ) -> int:
+    def get_duration(self, hours=0, minutes=0, seconds=0, time_string=None) -> int:
         """
         Determine the timer duration.
         """
@@ -299,16 +297,10 @@ class Timer(Clock):
 
         return convert_time_to_seconds(hours, minutes, seconds)
 
-    def print_duration(self, **kwargs):
+    def print_duration(self, **duration_params):
         """
         Print the timer duration without loading the timer.
         """
-        duration_params = {
-            "hours": kwargs.get("hours", 0),
-            "minutes": kwargs.get("minutes", 0),
-            "seconds": kwargs.get("seconds", 0),
-            "time_string": kwargs.get("time_string")
-        }
 
         time_in_seconds = self.get_duration(**duration_params)
         click.echo(format_time_as_clock(time_in_seconds))

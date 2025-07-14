@@ -1,11 +1,12 @@
 import re
+from textwrap import dedent
 
 
 def convert_time_to_seconds(hours=0, minutes=0, seconds=0) -> int:
     """
     Converts hours, minutes, and seconds to total seconds.
     """
-    return (hours * 3600) + (minutes * 60) + (seconds)
+    return (hours * 3600) + (minutes * 60) + seconds
 
 
 def expand_time_from_seconds(total_seconds) -> tuple:
@@ -26,8 +27,15 @@ def convert_time_string_to_seconds(time_string) -> int:
     minutes = re.search(r"(\d+)\s*(m|min|minute|minutes)", time_string)
     seconds = re.search(r"(\d+)\s*(s|sec|second|seconds)", time_string)
 
-    total = 0
+    if not any([hours, minutes, seconds]):
+        raise ValueError(
+            dedent(
+                f"'{time_string}' is not a valid time format. "
+                "Please use formats like '25m', '1h 30m', or '45s'."
+            )
+        )
 
+    total = 0
     if hours:
         total += int(hours.group(1)) * 3600
     if minutes:
@@ -36,7 +44,12 @@ def convert_time_string_to_seconds(time_string) -> int:
         total += int(seconds.group(1))
 
     if total == 0:
-        raise ValueError(f"Could not find a time value in '{time_string}'")
+        raise ValueError(
+            dedent(
+                "Please check your time values (e.g., use '1s' instead of '0s'). "
+                "Time must be greater than 0 seconds."
+            )
+        )
 
     return total
 
