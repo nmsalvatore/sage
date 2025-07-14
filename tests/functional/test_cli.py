@@ -286,7 +286,7 @@ def test_invalid_timer_value():
     alerting the user that a time value could not be found.
     """
     result = subprocess.run(
-        ["sage", "timer", "somenonsense"],
+        ["sage", "timer", "somenonsense", "--test"],
         capture_output=True,
         text=True,
         timeout=5,
@@ -302,7 +302,7 @@ def test_no_timer_arguments():
     alerting the user that they need to provide a timer duration.
     """
     result = subprocess.run(
-        ["sage", "timer"],
+        ["sage", "timer", "--test"],
         capture_output=True,
         text=True,
         timeout=5,
@@ -319,7 +319,7 @@ def test_timer_zero_seconds():
     greater than 0 seconds.
     """
     result = subprocess.run(
-        ["sage", "timer", "0s"],
+        ["sage", "timer", "0s", "--test"],
         capture_output=True,
         text=True,
         timeout=5,
@@ -336,7 +336,7 @@ def test_timer_with_negative_duration():
     duration greater than 0 seconds.
     """
     result = subprocess.run(
-        ["sage", "timer", "-m", "-5"],
+        ["sage", "timer", "-m", "-5", "--test"],
         capture_output=True,
         text=True,
         timeout=5,
@@ -344,6 +344,39 @@ def test_timer_with_negative_duration():
 
     assert result.returncode == 2
     assert "greater than 0 seconds" in result.stderr.lower()
+
+
+def test_timer_greater_than_24hr():
+    """
+    A duration of greater than 24 hours passed to 'sage timer' should
+    raise an error alerting the user that they need to provide a timer
+    duration of 24 hours or less.
+    """
+    result = subprocess.run(
+        ["sage", "timer", "26hr", "--test"],
+        capture_output=True,
+        text=True,
+        timeout=5,
+    )
+
+    assert result.returncode == 2
+    assert "24 hours or less" in result.stderr.lower()
+
+
+def test_timer_24hr():
+    """
+    A duration of 24 hours passed to 'sage timer' should successfully
+    run.
+    """
+    result = subprocess.run(
+        ["sage", "timer", "24hr", "--test"],
+        capture_output=True,
+        text=True,
+        timeout=5,
+    )
+
+    assert result.returncode == 0
+    assert "24:00:00" in result.stdout.lower()
 
 
 def test_timers_with_no_argument():

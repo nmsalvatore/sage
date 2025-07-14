@@ -71,7 +71,13 @@ def timer(test, **kwargs):
     if timer.get_duration(**duration_params) <= 0:
         raise click.UsageError(
             "Timer duration must be greater than 0 seconds. "
-            "Please check your time values (e.g., use '1s' instead of '0s')."
+            "Please check your time values."
+        )
+
+    if timer.get_duration(**duration_params) > 86400:
+        raise click.UsageError(
+            "Timer duration must be 24 hours or less. "
+            "Please check your time values."
         )
 
     if test:
