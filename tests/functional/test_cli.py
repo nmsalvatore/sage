@@ -282,7 +282,7 @@ def test_crud_operations(tmp_path):
 
 def test_invalid_timer_value():
     """
-    Invalid values passed to `sage timer` should return a message
+    Invalid values passed to `sage timer` should raise an error
     alerting the user that a time value could not be found.
     """
     result = subprocess.run(
@@ -293,3 +293,54 @@ def test_invalid_timer_value():
     )
 
     assert result.returncode == 2
+    assert "invalid value" in result.stderr.lower()
+
+
+def test_no_timer_arguments():
+    """
+    No arguments passed to `sage timer` should raise an error
+    alerting the user that they need to provide a timer duration.
+    """
+    result = subprocess.run(
+        ["sage", "timer"],
+        capture_output=True,
+        text=True,
+        timeout=5,
+    )
+
+    assert result.returncode == 2
+    assert "provide a timer duration" in result.stderr.lower()
+
+
+def test_timer_zero_seconds():
+    """
+    A duration of 0 seconds passed to `sage timer` should raise an
+    error alerting the user that they need to provide a timer duration
+    greater than 0 seconds.
+    """
+    result = subprocess.run(
+        ["sage", "timer", "0s"],
+        capture_output=True,
+        text=True,
+        timeout=5,
+    )
+
+    assert result.returncode == 2
+    assert "greater than 0 seconds" in result.stderr.lower()
+
+
+def test_timer_with_negative_duration():
+    """
+    A duration of less than 0 seconds passed to `sage timer` should
+    raise an error alerting the user that they need to provide a timer
+    duration greater than 0 seconds.
+    """
+    result = subprocess.run(
+        ["sage", "timer", "-m", "-5"],
+        capture_output=True,
+        text=True,
+        timeout=5,
+    )
+
+    assert result.returncode == 2
+    assert "greater than 0 seconds" in result.stderr.lower()
