@@ -51,6 +51,9 @@ def validate_time_string(ctx, param, value):
 @click.option("--no-start", is_flag=True)
 @click.option("--test", is_flag=True, hidden=True)
 def timer(test, **kwargs):
+    """
+    Run a timer.
+    """
     timer = Timer()
     duration_params = {
         "hours": kwargs.get("hours", 0),
@@ -75,7 +78,7 @@ def timer(test, **kwargs):
         timer.print_duration(**duration_params)
         return
 
-    timer.start(**kwargs)
+    timer.run(**kwargs)
 
 
 @sage.group(invoke_without_command=True)
@@ -90,6 +93,9 @@ def timers(ctx):
 
 @timers.command(name="list")
 def list_timers():
+    """
+    List custom timers.
+    """
     saved_timers = load_saved_timers()
     if not saved_timers:
         click.echo(
@@ -118,6 +124,9 @@ def list_timers():
 @click.option("-m", "--minutes", type=int, default=0)
 @click.option("-s", "--seconds", type=int, default=0)
 def create(name, **kwargs):
+    """
+    Create a custom timer.
+    """
     save_timer(name, **kwargs)
     click.echo(
         dedent(f"""\
@@ -134,6 +143,9 @@ def create(name, **kwargs):
 @click.option("-m", "--minutes", type=int, default=0)
 @click.option("-s", "--seconds", type=int, default=0)
 def update(name, **kwargs):
+    """
+    Update the duration of a custom timer.
+    """
     saved_timer = get_saved_timer(name)
     if saved_timer is None:
         click.echo(
@@ -161,6 +173,9 @@ def update(name, **kwargs):
 @click.argument("name", required=True)
 @click.argument("new_name", required=True)
 def rename(name, new_name):
+    """
+    Rename a custom timer.
+    """
     saved_timer = get_saved_timer(name)
     if saved_timer is None:
         click.echo(
@@ -179,6 +194,9 @@ def rename(name, new_name):
 @timers.command()
 @click.argument("name", required=True)
 def delete(name):
+    """
+    Delete a custom timer.
+    """
     saved_timer = get_saved_timer(name)
     if saved_timer is None:
         click.echo(
@@ -197,8 +215,11 @@ def delete(name):
 @sage.command()
 @click.option("--no-start", is_flag=True)
 def stopwatch(**kwargs):
+    """
+    Run a timer.
+    """
     stopwatch = Stopwatch()
-    stopwatch.start(**kwargs)
+    stopwatch.run(**kwargs)
 
 
 if __name__ == "__main__":

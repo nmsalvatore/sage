@@ -162,7 +162,7 @@ class Stopwatch(Clock):
         super().__init__()
         self.counter = 0
 
-    def start(self, **kwargs):
+    def run(self, **kwargs):
         """
         Convenience method to initialize curses interface.
         """
@@ -222,7 +222,7 @@ class Timer(Clock):
         super().__init__()
         self.times_up = False
 
-    def start(self, **kwargs):
+    def run(self, **kwargs):
         """
         Convenience method to initialize curses interface.
         """
