@@ -160,6 +160,26 @@ def test_create_timer_with_options(tmp_path):
     assert "3 hours 14 minutes" in result.stdout
 
 
+def test_create_timer_without_duration(tmp_path):
+    """
+    No duration passed to 'sage timers create' should raise an error
+    alerting the user that the need to include a duration.
+    """
+    env = os.environ.copy()
+    env["HOME"] = str(tmp_path)
+
+    result = subprocess.run(
+        ["sage", "timers", "create", "nothing"],
+        capture_output=True,
+        text=True,
+        timeout=5,
+        env=env,
+    )
+
+    assert result.returncode == 2
+    assert "duration must be specified" in result.stderr.lower()
+
+
 def test_crud_operations(tmp_path):
     """
     Our user is feeling pretty good about running timers, but one of

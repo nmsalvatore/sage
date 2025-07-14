@@ -17,10 +17,16 @@ from .config import (
 )
 
 
-@click.group()
-@click.version_option()
-def sage():
-    pass
+def get_duration_params(**kwargs):
+    """
+    Extract only the duration parameters from kwargs.
+    """
+    return {
+        "hours": kwargs.get("hours", 0),
+        "minutes": kwargs.get("minutes", 0),
+        "seconds": kwargs.get("seconds", 0),
+        "time_string": kwargs.get("time_string"),
+    }
 
 
 def validate_time_string(ctx, param, value):
@@ -43,6 +49,12 @@ def validate_time_string(ctx, param, value):
         raise click.BadParameter(str(e))
 
 
+@click.group()
+@click.version_option()
+def sage():
+    pass
+
+
 @sage.command()
 @click.argument("time_string", required=False, callback=validate_time_string)
 @click.option("-h", "--hours", type=int, default=0)
@@ -55,12 +67,8 @@ def timer(test, **kwargs):
     Run a timer.
     """
     timer = Timer()
-    duration_params = {
-        "hours": kwargs.get("hours", 0),
-        "minutes": kwargs.get("minutes", 0),
-        "seconds": kwargs.get("seconds", 0),
-        "time_string": kwargs.get("time_string"),
-    }
+
+    duration_params = get_duration_params(**kwargs)
 
     if not any(duration_params.values()):
         raise click.UsageError(
@@ -133,6 +141,13 @@ def create(name, **kwargs):
     """
     Create a custom timer.
     """
+    duration_params = get_duration_params(**kwargs)
+    if not any(duration_params.values()):
+        raise click.UsageError(
+            "A duration must be specified to create a custom timer. "
+            "Please provide a timer duration using either a time string (e.g., '25m')"
+        )
+
     save_timer(name, **kwargs)
     click.echo(
         dedent(f"""\
