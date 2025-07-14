@@ -69,7 +69,6 @@ def save_timer(name, **kwargs):
         )
 
     timers[name] = {"hours": hours, "minutes": minutes, "seconds": seconds}
-
     save_timers(timers)
 
 
