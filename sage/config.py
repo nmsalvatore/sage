@@ -68,11 +68,7 @@ def save_timer(name, **kwargs):
             convert_time_string_to_seconds(time_string)
         )
 
-    timers[name] = {
-        "hours": hours,
-        "minutes": minutes,
-        "seconds": seconds
-    }
+    timers[name] = {"hours": hours, "minutes": minutes, "seconds": seconds}
 
     save_timers(timers)
 

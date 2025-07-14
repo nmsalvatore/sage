@@ -1,11 +1,20 @@
-import curses
 from textwrap import dedent
 
 import click
 
 from .clocks import Stopwatch, Timer
-from .common import convert_time_string_to_seconds, convert_time_to_seconds, format_time_as_english
-from .config import delete_timer, save_timer, rename_timer, get_saved_timer, load_saved_timers
+from .common import (
+    convert_time_string_to_seconds,
+    convert_time_to_seconds,
+    format_time_as_english,
+)
+from .config import (
+    delete_timer,
+    save_timer,
+    rename_timer,
+    get_saved_timer,
+    load_saved_timers,
+)
 
 
 @click.group()
@@ -47,7 +56,7 @@ def timer(test, **kwargs):
         "hours": kwargs.get("hours", 0),
         "minutes": kwargs.get("minutes", 0),
         "seconds": kwargs.get("seconds", 0),
-        "time_string": kwargs.get("time_string")
+        "time_string": kwargs.get("time_string"),
     }
 
     if not any(duration_params.values()):
@@ -137,7 +146,7 @@ def update(name, **kwargs):
         new_duration = convert_time_to_seconds(
             hours=updated_timer.get("hours", 0),
             minutes=updated_timer.get("minutes", 0),
-            seconds=updated_timer.get("seconds", 0)
+            seconds=updated_timer.get("seconds", 0),
         )
         new_english_duration = format_time_as_english(new_duration)
         click.echo(f"Successfully updated timer '{name}' to {new_english_duration}.")

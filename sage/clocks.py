@@ -168,7 +168,6 @@ class Stopwatch(Clock):
         """
         curses.wrapper(lambda stdscr: self.load(stdscr, **kwargs))
 
-
     def load(self, stdscr, no_start=False):
         """
         Load the stopwatch.
