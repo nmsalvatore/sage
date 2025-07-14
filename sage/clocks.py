@@ -18,7 +18,6 @@ class Clock:
     """
     Base clock interface.
     """
-
     START_MESSAGE = "Press SPACE to start"
     PAUSE_MESSAGE = "Paused"
 
@@ -155,7 +154,6 @@ class Stopwatch(Clock):
     """
     Stopwatch interface.
     """
-
     HELP_TEXT = "<q> Quit, <Space> Pause/Resume, <Enter> Increment counter"
 
     def __init__(self):
@@ -212,7 +210,6 @@ class Timer(Clock):
     """
     Timer interface.
     """
-
     HELP_TEXT = "<q> Quit, <Space> Pause/Resume"
     TIME_OFFSET = 0.9
     TIMES_UP_SOUND_FILENAME = "thyme.mp3"
