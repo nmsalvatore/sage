@@ -65,15 +65,15 @@ def timer(test, **kwargs):
             "or time options (e.g., --minutes 25)."
         )
 
-    if test:
-        timer.print_duration(**duration_params)
-        return
-
     if timer.get_duration(**duration_params) <= 0:
         raise click.UsageError(
             "Timer duration must be greater than 0 seconds. "
             "Please check your time values (e.g., use '1s' instead of '0s')."
         )
+
+    if test:
+        timer.print_duration(**duration_params)
+        return
 
     timer.start(**kwargs)
 
