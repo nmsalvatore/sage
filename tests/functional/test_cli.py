@@ -4,8 +4,8 @@ import subprocess
 
 def test_version():
     """
-    To check that sage is installed correctly, a user uses the `sage
-    --version` command.
+    To check that sage is installed correctly, a user uses the 'sage
+    --version' command.
     """
     result = subprocess.run(
         ["sage", "--version"], capture_output=True, text=True, timeout=5
@@ -16,8 +16,8 @@ def test_version():
 
 def test_help():
     """
-    To get familiar with basic sage usage, a user uses the `sage
-    --help` command.
+    To get familiar with basic sage usage, a user uses the 'sage
+    --help' command.
     """
     result = subprocess.run(
         ["sage", "--help"], capture_output=True, text=True, timeout=5
@@ -32,7 +32,7 @@ def test_help():
 def test_timer_help():
     """
     Now familiar with the basic sage commands, the user checks to see how
-    to use the timer command with `sage timer --help`.
+    to use the timer command with 'sage timer --help'.
     """
     result = subprocess.run(
         ["sage", "timer", "--help"], capture_output=True, text=True, timeout=5
@@ -46,7 +46,7 @@ def test_timer_help():
 
 def test_timer_accepts_options():
     """
-    Check that `sage timer` accepts option arguments.
+    Check that 'sage timer' accepts option arguments.
     """
     result = subprocess.run(
         ["sage", "timer", "-s", "5", "--test"],
@@ -61,7 +61,7 @@ def test_timer_accepts_options():
 
 def test_timer_accepts_human_readable_strings():
     """
-    Check that 'sage timer` accepts human-readable strings so that
+    Check that 'sage timer' accepts human-readable strings so that
     users don't have to think like robots.
     """
     result = subprocess.run(
@@ -92,7 +92,7 @@ def test_pomodoro_timer():
 def test_list_saved_timers():
     """
     The pomodoro timer works! Are there any other timers hiding? Our
-    user goes to find out with `sage timers`.
+    user goes to find out with 'sage timers'.
     """
     result = subprocess.run(
         ["sage", "timers", "list"], capture_output=True, text=True, timeout=5
@@ -164,7 +164,7 @@ def test_crud_operations(tmp_path):
     """
     Our user is feeling pretty good about running timers, but one of
     the core features of sage appears to be these custom timers. They
-    play with `sage timers` to see what it's all about.
+    play with 'sage timers' to see what it's all about.
     """
     env = os.environ.copy()
     env["HOME"] = str(tmp_path)
@@ -282,7 +282,7 @@ def test_crud_operations(tmp_path):
 
 def test_invalid_timer_value():
     """
-    Invalid values passed to `sage timer` should raise an error
+    Invalid values passed to 'sage timer' should raise an error
     alerting the user that a time value could not be found.
     """
     result = subprocess.run(
@@ -298,7 +298,7 @@ def test_invalid_timer_value():
 
 def test_no_timer_arguments():
     """
-    No arguments passed to `sage timer` should raise an error
+    No arguments passed to 'sage timer' should raise an error
     alerting the user that they need to provide a timer duration.
     """
     result = subprocess.run(
@@ -314,7 +314,7 @@ def test_no_timer_arguments():
 
 def test_timer_zero_seconds():
     """
-    A duration of 0 seconds passed to `sage timer` should raise an
+    A duration of 0 seconds passed to 'sage timer' should raise an
     error alerting the user that they need to provide a timer duration
     greater than 0 seconds.
     """
@@ -331,7 +331,7 @@ def test_timer_zero_seconds():
 
 def test_timer_with_negative_duration():
     """
-    A duration of less than 0 seconds passed to `sage timer` should
+    A duration of less than 0 seconds passed to 'sage timer' should
     raise an error alerting the user that they need to provide a timer
     duration greater than 0 seconds.
     """
@@ -344,3 +344,24 @@ def test_timer_with_negative_duration():
 
     assert result.returncode == 2
     assert "greater than 0 seconds" in result.stderr.lower()
+
+
+def test_timers_with_no_argument():
+    """
+    Well, all those errors certainly set our user straight about how to
+    properly use 'sage timer'. What happens if they don't pass an
+    argument to 'sage timers'? Aha! It lists all of the timers,
+    similar to 'sage list'! How convenient.
+    """
+    result = subprocess.run(
+        ["sage", "timers"],
+        capture_output=True,
+        text=True,
+        timeout=5,
+    )
+
+    assert result.returncode == 0
+    assert "pomodoro" in result.stdout
+    assert "johncage" in result.stdout
+    assert "potato" in result.stdout
+    assert "pika" in result.stdout

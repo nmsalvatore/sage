@@ -78,13 +78,18 @@ def timer(test, **kwargs):
     timer.start(**kwargs)
 
 
-@sage.group()
-def timers():
-    pass
+@sage.group(invoke_without_command=True)
+@click.pass_context
+def timers(ctx):
+    """
+    Manage custom timers.
+    """
+    if ctx.invoked_subcommand is None:
+        ctx.invoke(list_timers)
 
 
-@timers.command()
-def list():
+@timers.command(name="list")
+def list_timers():
     saved_timers = load_saved_timers()
     if not saved_timers:
         click.echo(
