@@ -77,7 +77,6 @@ def timers():
 @timers.command()
 def list():
     saved_timers = load_saved_timers()
-
     if not saved_timers:
         click.echo(
             dedent("""\
