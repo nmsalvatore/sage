@@ -88,14 +88,3 @@ def format_time_as_english(total_seconds) -> str:
         parts.append(pluralize(seconds, "second"))
 
     return " ".join(parts) if parts else "0 seconds"
-
-
-def get_curses_center_positions(string: str) -> tuple:
-    """
-    Calculate the position needed by the `stdscr.addstr` function
-    when centering a string in the curses pane.
-    """
-    import curses
-    y = curses.LINES // 2
-    x = (curses.COLS // 2) - (len(string) // 2)
-    return (y, x)
