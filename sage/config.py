@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
 
+import click
 from platformdirs import user_config_dir
 
 from .common import convert_time_string_to_seconds, expand_time_from_seconds
@@ -10,9 +11,27 @@ def get_timers_file():
     """
     Retrieve path to the JSON file storing custom timers.
     """
-    config_dir = Path(user_config_dir("sage"))
-    config_dir.mkdir(parents=True, exist_ok=True)
-    return config_dir / "timers.json"
+    try:
+        config_dir = Path(user_config_dir("sage"))
+        config_dir.mkdir(parents=True, exist_ok=True)
+        return config_dir / "timers.json"
+
+    except OSError as e:
+        click.echo(f"Warning: Could not access config directory ({e}). Using home directory.", err=True)
+        return Path.home() / ".sage_timers.json"
+
+
+def create_default_timers():
+    """
+    Create and return the default timer configuration.
+    """
+    return {
+        "pika": {"seconds": 5},
+        "johncage": {"minutes": 4, "seconds": 33},
+        "pomodoro": {"minutes": 25},
+        "potato": {"minutes": 50},
+        "rest": {"minutes": 10},
+    }
 
 
 def load_saved_timers():
@@ -20,20 +39,17 @@ def load_saved_timers():
     Load the saved timers, creating defaults if the file doesn't exist.
     """
     timers_file = get_timers_file()
-
     if not timers_file.exists():
-        default_timers = {
-            "pika": {"seconds": 5},
-            "johncage": {"minutes": 4, "seconds": 33},
-            "pomodoro": {"minutes": 25},
-            "potato": {"minutes": 50},
-            "rest": {"minutes": 10},
-        }
+        default_timers = create_default_timers()
         save_timers(default_timers)
         return default_timers
 
-    with open(timers_file, "r") as f:
-        return json.load(f)
+    try:
+        with open(timers_file, "r") as f:
+            return json.load(f)
+
+    except Exception:
+        return create_default_timers()
 
 
 def save_timers(timers):
@@ -41,8 +57,13 @@ def save_timers(timers):
     Save timers to JSON file.
     """
     timers_file = get_timers_file()
-    with open(timers_file, "w") as f:
-        json.dump(timers, f, indent=2)
+
+    try:
+        with open(timers_file, "w") as f:
+            json.dump(timers, f, indent=2)
+
+    except Exception as e:
+        raise click.ClickException(f"Could not save timers file: {e}")
 
 
 def get_saved_timer(name):
