@@ -10,7 +10,7 @@ from .common import (
     convert_time_string_to_seconds,
     convert_time_to_seconds,
     format_time_as_clock,
-    format_time_as_english
+    format_time_as_english,
 )
 from .config import get_saved_timer
 
@@ -19,10 +19,13 @@ class Clock:
     """
     Base clock interface.
     """
+
+    HELP_TEXT = "<q> Quit, <Space> Pause/Resume, <Enter> Increment counter"
     START_MESSAGE = "Press SPACE to start"
     PAUSE_MESSAGE = "Paused"
 
     def __init__(self):
+        self.counter = 0
         self.paused = False
         self.pause_start = 0
         self.pause_time = 0
@@ -114,7 +117,7 @@ class Clock:
         y, x = self._get_clock_coordinates(formatted_time)
         stdscr.addstr(y, x, formatted_time, curses.color_pair(1))
 
-    def _render_help_text(self, stdscr, help_text: str, color_id: int = 3):
+    def _render_help_text(self, stdscr, help_text: str = HELP_TEXT, color_id: int = 3):
         """
         Render the help text at the bottom left of window.
         """
@@ -141,12 +144,21 @@ class Clock:
         stdscr.move(y, x)
         stdscr.clrtoeol()
 
-    def _render_timer_name(self, stdscr, timer_name: str):
+    def _render_clock_heading(self, stdscr, timer_name: str):
         """
         Render the timer name in the curses interface.
         """
         y, x = self._get_title_coordinates(timer_name)
         stdscr.addstr(y, x, timer_name, curses.color_pair(2))
+
+    def _render_counter(self, stdscr, counter_text: str = "Counter: 1"):
+        """
+        Render the lap count at the bottom right of screen.
+        """
+        counter_text = f"Counter: {self.counter}"
+        y = curses.LINES - 1
+        x = curses.COLS - len(counter_text) - 1
+        stdscr.addstr(y, x, counter_text, curses.color_pair(3))
 
     @staticmethod
     def _play_sound(filename: str):
@@ -166,11 +178,6 @@ class Stopwatch(Clock):
     """
     Stopwatch interface.
     """
-    HELP_TEXT = "<q> Quit, <Space> Pause/Resume, <Enter> Increment counter"
-
-    def __init__(self):
-        super().__init__()
-        self.counter = 0
 
     def run(self, **kwargs):
         """
@@ -208,21 +215,12 @@ class Stopwatch(Clock):
             )
             self._render_clock(stdscr, ftime_elapsed)
 
-    def _render_counter(self, stdscr, counter_text: str = "Counter: 1"):
-        """
-        Render the lap count at the bottom right of screen.
-        """
-        counter_text = f"Counter: {self.counter}"
-        y = curses.LINES - 1
-        x = curses.COLS - len(counter_text) - 1
-        stdscr.addstr(y, x, counter_text, curses.color_pair(3))
-
 
 class Timer(Clock):
     """
     Timer interface.
     """
-    HELP_TEXT = "<q> Quit, <Space> Pause/Resume"
+
     TIME_OFFSET = 0.9
     TIMES_UP_SOUND_FILENAME = "thyme.mp3"
     TIMES_UP_TEXT = "Time's up!"
@@ -245,14 +243,14 @@ class Timer(Clock):
         """
         self._init_clock_config(stdscr)
         self._render_help_text(stdscr, self.HELP_TEXT)
-
-        if time_string and get_saved_timer(time_string):
-            self._render_timer_name(stdscr, time_string)
+        self._render_counter(stdscr)
 
         start_time = time.perf_counter()
         total_seconds = self.get_duration(hours, minutes, seconds, time_string)
-        self._render_timer_name(stdscr, format_time_as_english(total_seconds))
         self._render_clock(stdscr, format_time_as_clock(total_seconds))
+
+        heading_text = self._get_timer_heading_text(time_string, total_seconds)
+        self._render_clock_heading(stdscr, heading_text)
 
         # since the timer reflects 0 seconds at the moment the seconds
         # remaining are less than 1 (roughly 0.9 seconds) and we want
@@ -272,6 +270,9 @@ class Timer(Clock):
                 self._toggle_pause(stdscr)
             elif key == ord("q"):
                 break
+            elif key == 10 or key == curses.KEY_ENTER:
+                self.counter += 1
+                self._render_counter(stdscr)
 
             elapsed = self._get_elapsed_time(start_time)
             time_remaining = total_seconds - elapsed
@@ -282,7 +283,7 @@ class Timer(Clock):
                 self.times_up = True
                 break
 
-            time.sleep(0.1)
+            time.sleep(0.05)
             stdscr.refresh()
 
         if self.times_up:
@@ -310,6 +311,13 @@ class Timer(Clock):
         """
         Print the timer duration without loading the timer.
         """
-
         time_in_seconds = self.get_duration(**duration_params)
         click.echo(format_time_as_clock(time_in_seconds))
+
+    def _get_timer_heading_text(self, time_string, total_seconds):
+        """
+        Determine the proper heading text for the timer.
+        """
+        if time_string and get_saved_timer(time_string) is not None:
+            return time_string
+        return format_time_as_english(total_seconds)
