@@ -280,7 +280,6 @@ class Timer(Clock):
             elapsed = self._get_elapsed_time(start_time)
             time_remaining = total_seconds - elapsed
             ftime_remaining = format_time_as_clock(time_remaining)
-
             self._render_clock(stdscr, ftime_remaining)
 
             if time_remaining < 1:
