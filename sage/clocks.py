@@ -218,7 +218,6 @@ class Stopwatch(Clock):
         Load the stopwatch.
         """
         start_time = time.perf_counter()
-
         self._init_clock_config(stdscr)
         self._handle_no_start(stdscr, no_start)
 
@@ -266,14 +265,13 @@ class Timer(Clock):
         self._init_clock_config(stdscr)
         self._render_clock_heading(stdscr, heading_text)
         self._render_clock(stdscr, format_time_as_clock(total_seconds))
+        self._handle_no_start(stdscr, no_start)
 
         # since the timer reflects 0 seconds at the moment the seconds
         # remaining are less than 1 (roughly 0.9 seconds) and we want
         # the timer to go off right when the clock reflects 0 seconds,
         # we add 0.9 seconds to the total time.
         total_seconds += self.TIME_OFFSET
-
-        self._handle_no_start(stdscr, no_start)
 
         while True:
             if self._handle_keystrokes(stdscr) == ord("q"):
