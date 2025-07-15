@@ -10,6 +10,7 @@ from .common import (
     convert_time_string_to_seconds,
     convert_time_to_seconds,
     format_time_as_clock,
+    format_time_as_english
 )
 from .config import get_saved_timer
 
@@ -140,6 +141,13 @@ class Clock:
         stdscr.move(y, x)
         stdscr.clrtoeol()
 
+    def _render_timer_name(self, stdscr, timer_name: str):
+        """
+        Render the timer name in the curses interface.
+        """
+        y, x = self._get_title_coordinates(timer_name)
+        stdscr.addstr(y, x, timer_name, curses.color_pair(2))
+
     @staticmethod
     def _play_sound(filename: str):
         """
@@ -243,6 +251,7 @@ class Timer(Clock):
 
         start_time = time.perf_counter()
         total_seconds = self.get_duration(hours, minutes, seconds, time_string)
+        self._render_timer_name(stdscr, format_time_as_english(total_seconds))
         self._render_clock(stdscr, format_time_as_clock(total_seconds))
 
         # since the timer reflects 0 seconds at the moment the seconds
@@ -304,10 +313,3 @@ class Timer(Clock):
 
         time_in_seconds = self.get_duration(**duration_params)
         click.echo(format_time_as_clock(time_in_seconds))
-
-    def _render_timer_name(self, stdscr, timer_name: str):
-        """
-        Render the timer name in the curses interface.
-        """
-        y, x = self._get_title_coordinates(timer_name)
-        stdscr.addstr(y, x, timer_name, curses.color_pair(2))
