@@ -30,29 +30,6 @@ class Clock:
         self.pause_start = 0
         self.pause_time = 0
 
-    def _get_elapsed_time(self, start_time) -> int:
-        """
-        Calculate the elapsed time depending on paused status.
-        """
-        if self.paused:
-            return self.pause_start - start_time - self.pause_time
-        else:
-            return time.perf_counter() - start_time - self.pause_time
-
-    def _toggle_pause(self, stdscr):
-        """
-        Handle logic for pause toggling.
-        """
-        if not self.paused:
-            self.pause_start = time.perf_counter()
-            self.paused = True
-            self._render_status_text(stdscr, self.PAUSE_MESSAGE)
-        else:
-            self.pause_time += time.perf_counter() - self.pause_start
-            self.paused = False
-            self.pause_start = 0
-            self._clear_status_text(stdscr)
-
     @staticmethod
     def _setup_colors():
         """
@@ -73,6 +50,57 @@ class Clock:
         stdscr.nodelay(1)
         self._setup_colors()
         self._render_application_title(stdscr)
+        self._render_help_text(stdscr, self.HELP_TEXT)
+        self._render_counter(stdscr)
+
+    def _get_elapsed_time(self, start_time) -> int:
+        """
+        Calculate the elapsed time depending on paused status.
+        """
+        if self.paused:
+            return self.pause_start - start_time - self.pause_time
+        else:
+            return time.perf_counter() - start_time - self.pause_time
+
+    def _handle_no_start(self, stdscr, no_start):
+        """
+        Handle logic for --no-start flag.
+        """
+        if no_start:
+            self._toggle_pause(stdscr)
+            self._clear_status_text(stdscr)
+            self._render_status_text(stdscr, self.START_MESSAGE)
+
+    def _handle_keystrokes(self, stdscr):
+        """
+        Handle keystroke logic for curses interface.
+        """
+        key = stdscr.getch()
+
+        if key == ord(" "):
+            self._toggle_pause(stdscr)
+            return
+
+        if key == 10 or key == curses.KEY_ENTER:
+            self.counter += 1
+            self._render_counter(stdscr)
+            return
+
+        return key
+
+    def _toggle_pause(self, stdscr):
+        """
+        Handle logic for pause toggling.
+        """
+        if not self.paused:
+            self.pause_start = time.perf_counter()
+            self.paused = True
+            self._render_status_text(stdscr, self.PAUSE_MESSAGE)
+        else:
+            self.pause_time += time.perf_counter() - self.pause_start
+            self.paused = False
+            self.pause_start = 0
+            self._clear_status_text(stdscr)
 
     @staticmethod
     def _get_center_y_start() -> int:
@@ -189,30 +217,20 @@ class Stopwatch(Clock):
         """
         Load the stopwatch.
         """
-        self._init_clock_config(stdscr)
         start_time = time.perf_counter()
-        self._render_counter(stdscr)
-        self._render_help_text(stdscr, self.HELP_TEXT)
 
-        if no_start:
-            self._toggle_pause(stdscr)
-            self._clear_status_text(stdscr)
-            self._render_status_text(stdscr, self.START_MESSAGE)
+        self._init_clock_config(stdscr)
+        self._handle_no_start(stdscr, no_start)
 
         while True:
-            key = stdscr.getch()
-            if key == ord("q"):
+            if self._handle_keystrokes(stdscr) == ord("q"):
                 break
-            elif key == ord(" "):
-                self._toggle_pause(stdscr)
-            elif key == 10 or key == curses.KEY_ENTER:
-                self.counter += 1
-                self._render_counter(stdscr)
 
             time_elapsed = self._get_elapsed_time(start_time)
             ftime_elapsed = format_time_as_clock(
                 time_elapsed, include_centiseconds=True
             )
+
             self._render_clock(stdscr, ftime_elapsed)
 
 
@@ -241,16 +259,13 @@ class Timer(Clock):
         """
         Load the timer.
         """
-        self._init_clock_config(stdscr)
-        self._render_help_text(stdscr, self.HELP_TEXT)
-        self._render_counter(stdscr)
-
         start_time = time.perf_counter()
         total_seconds = self.get_duration(hours, minutes, seconds, time_string)
-        self._render_clock(stdscr, format_time_as_clock(total_seconds))
-
         heading_text = self._get_timer_heading_text(time_string, total_seconds)
+
+        self._init_clock_config(stdscr)
         self._render_clock_heading(stdscr, heading_text)
+        self._render_clock(stdscr, format_time_as_clock(total_seconds))
 
         # since the timer reflects 0 seconds at the moment the seconds
         # remaining are less than 1 (roughly 0.9 seconds) and we want
@@ -258,25 +273,16 @@ class Timer(Clock):
         # we add 0.9 seconds to the total time.
         total_seconds += self.TIME_OFFSET
 
-        if no_start:
-            self._toggle_pause(stdscr)
-            self._clear_status_text(stdscr)
-            self._render_status_text(stdscr, self.START_MESSAGE)
+        self._handle_no_start(stdscr, no_start)
 
         while True:
-            key = stdscr.getch()
-
-            if key == ord(" "):
-                self._toggle_pause(stdscr)
-            elif key == ord("q"):
+            if self._handle_keystrokes(stdscr) == ord("q"):
                 break
-            elif key == 10 or key == curses.KEY_ENTER:
-                self.counter += 1
-                self._render_counter(stdscr)
 
             elapsed = self._get_elapsed_time(start_time)
             time_remaining = total_seconds - elapsed
             ftime_remaining = format_time_as_clock(time_remaining)
+
             self._render_clock(stdscr, ftime_remaining)
 
             if time_remaining < 1:
@@ -286,11 +292,7 @@ class Timer(Clock):
             time.sleep(0.05)
             stdscr.refresh()
 
-        if self.times_up:
-            self._play_sound(self.TIMES_UP_SOUND_FILENAME)
-            self._render_status_text(stdscr, self.TIMES_UP_TEXT)
-            stdscr.nodelay(0)
-            stdscr.getch()
+        self._handle_timer_completion(stdscr)
 
     def get_duration(self, hours=0, minutes=0, seconds=0, time_string=None) -> int:
         """
@@ -321,3 +323,13 @@ class Timer(Clock):
         if time_string and get_saved_timer(time_string) is not None:
             return time_string
         return format_time_as_english(total_seconds)
+
+    def _handle_timer_completion(self, stdscr):
+        """
+        Handle logic for timer completion.
+        """
+        if self.times_up:
+            self._play_sound(self.TIMES_UP_SOUND_FILENAME)
+            self._render_status_text(stdscr, self.TIMES_UP_TEXT)
+            stdscr.nodelay(0)
+            stdscr.getch()
