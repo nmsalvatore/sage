@@ -146,8 +146,12 @@ class Clock:
         Play a sound file located in the sounds/ directory of the
         project root.
         """
-        sound_path = Path("sounds", filename).resolve()
-        nava.play(str(sound_path), async_mode=True)
+        try:
+            sound_path = Path("sounds", filename).resolve()
+            nava.play(str(sound_path), async_mode=True)
+
+        except Exception:
+            pass
 
 
 class Stopwatch(Clock):
