@@ -163,7 +163,7 @@ def test_create_timer_with_options(tmp_path):
 def test_create_timer_without_duration(tmp_path):
     """
     No duration passed to 'sage timers create' should raise an error
-    alerting the user that the need to include a duration.
+    alerting the user that they need to include a duration.
     """
     env = os.environ.copy()
     env["HOME"] = str(tmp_path)
@@ -177,7 +177,29 @@ def test_create_timer_without_duration(tmp_path):
     )
 
     assert result.returncode == 2
-    assert "duration must be specified" in result.stderr.lower()
+    assert "duration has not been specified" in result.stderr.lower()
+    assert "sage timers create <name> <duration>" in result.stderr.lower()
+
+
+def test_update_timer_without_duration(tmp_path):
+    """
+    No duration passed to 'sage timers update' should raise an error
+    alerting the user that they need to include a duration.
+    """
+    env = os.environ.copy()
+    env["HOME"] = str(tmp_path)
+
+    result = subprocess.run(
+        ["sage", "timers", "update", "nothing"],
+        capture_output=True,
+        text=True,
+        timeout=5,
+        env=env,
+    )
+
+    assert result.returncode == 2
+    assert "duration has not been specified" in result.stderr.lower()
+    assert "sage timers update <name> <duration>" in result.stderr.lower()
 
 
 def test_crud_operations(tmp_path):

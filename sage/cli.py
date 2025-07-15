@@ -69,7 +69,6 @@ def timer(test, **kwargs):
     timer = Timer()
 
     duration_params = get_duration_params(**kwargs)
-
     if not any(duration_params.values()):
         raise click.UsageError(
             "Please provide a timer duration using either a time string (e.g., '25m') "
@@ -115,7 +114,7 @@ def list_timers():
         click.echo(
             dedent("""\
                 No saved timers.
-                Save a timer with: sage timer <duration> --name <name>\
+                Save a timer with 'sage timers create <name> <duration>'.\
             """)
         )
         return
@@ -144,15 +143,15 @@ def create(name, **kwargs):
     duration_params = get_duration_params(**kwargs)
     if not any(duration_params.values()):
         raise click.UsageError(
-            "A duration must be specified to create a custom timer. "
-            "Please provide a timer duration using either a time string (e.g., '25m')"
+            "A duration has not been specified. "
+            "Use 'sage timers create <name> <duration>' to create a custom timer."
         )
 
     save_timer(name, **kwargs)
     click.echo(
         dedent(f"""\
             Successfully created '{name}' timer!
-            You can start your timer with 'sage timer {name}'.\
+            Start your timer with 'sage timer {name}'.\
         """)
     )
 
@@ -167,6 +166,13 @@ def update(name, **kwargs):
     """
     Update the duration of a custom timer.
     """
+    duration_params = get_duration_params(**kwargs)
+    if not any(duration_params.values()):
+        raise click.UsageError(
+            "A duration has not been specified. "
+            "Use 'sage timers update <name> <duration>' to update a custom timer."
+        )
+
     saved_timer = get_saved_timer(name)
     if saved_timer is None:
         click.echo(
