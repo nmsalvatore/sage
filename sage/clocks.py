@@ -1,10 +1,13 @@
 import curses
+import os
 import time
 from pathlib import Path
 from typing import Tuple
 
 import click
 import nava
+from nava.errors import NavaBaseError
+from nava.params import SOUND_FILE_EXIST_ERROR
 
 from .common import (
     convert_time_string_to_seconds,
@@ -189,19 +192,6 @@ class Clock:
         x = curses.COLS - len(counter_text) - 1
         stdscr.addstr(y, x, counter_text, curses.color_pair(3))
 
-    @staticmethod
-    def _play_sound(filename: str):
-        """
-        Play a sound file located in the sounds/ directory of the
-        project root.
-        """
-        try:
-            sound_path = Path("sounds", filename).resolve()
-            nava.play(str(sound_path), async_mode=True)
-
-        except Exception:
-            pass
-
 
 class Stopwatch(Clock):
     """
@@ -266,6 +256,7 @@ class Timer(Clock):
         heading_text = self._get_timer_heading_text(time_string, total_seconds)
 
         self._init_clock_config(stdscr)
+        self._sound_check(stdscr, self.TIMES_UP_SOUND_FILENAME)
         self._render_clock_heading(stdscr, heading_text)
         self._render_clock(stdscr, format_time_as_clock(total_seconds))
         self._handle_no_start(stdscr, no_start)
@@ -334,3 +325,35 @@ class Timer(Clock):
             self._render_status_text(stdscr, self.TIMES_UP_TEXT)
             stdscr.nodelay(0)
             stdscr.getch()
+
+    @staticmethod
+    def _sound_check(stdscr, filename: str):
+        """
+        Check that sound file exists, so that the user can be
+        immediately alerted if no sound is going to be played with the
+        timer completes.
+        """
+        try:
+            sound_path = Path("sounds", filename).resolve()
+            if not os.path.isfile(sound_path):
+                raise NavaBaseError(SOUND_FILE_EXIST_ERROR)
+
+        except Exception as e:
+            error_message = f"Warning: {e}"
+            x = curses.COLS - len(error_message) - 1
+            stdscr.addstr(1, x, error_message, curses.color_pair(4))
+
+    @staticmethod
+    def _play_sound(filename: str):
+        """
+        Play a sound file located in the sounds/ directory of the
+        project root.
+        """
+        try:
+            sound_path = Path("sounds", filename).resolve()
+            nava.play(str(sound_path), async_mode=True)
+
+        except NavaBaseError:
+            # user should have already been alerted if the sound
+            # file doesn't exist, so fail silently.
+            pass
