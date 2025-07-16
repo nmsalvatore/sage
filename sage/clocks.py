@@ -23,6 +23,7 @@ class Clock:
     HELP_TEXT = "<q> Quit, <Space> Pause/Resume, <Enter> Increment counter"
     START_MESSAGE = "Press SPACE to start"
     PAUSE_MESSAGE = "Paused"
+    REFRESH_RATE_IN_SECONDS = 0.01
 
     def __init__(self):
         self.counter = 0
@@ -231,6 +232,8 @@ class Stopwatch(Clock):
             )
 
             self._render_clock(stdscr, ftime_elapsed)
+            time.sleep(self.REFRESH_RATE_IN_SECONDS)
+            stdscr.refresh()
 
 
 class Timer(Clock):
@@ -286,7 +289,7 @@ class Timer(Clock):
                 self.times_up = True
                 break
 
-            time.sleep(0.05)
+            time.sleep(self.REFRESH_RATE_IN_SECONDS)
             stdscr.refresh()
 
         self._handle_timer_completion(stdscr)
