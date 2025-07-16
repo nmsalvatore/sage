@@ -270,10 +270,11 @@ class Timer(Clock):
         self._render_clock(stdscr, format_time_as_clock(total_seconds))
         self._handle_no_start(stdscr, no_start)
 
-        # since the timer reflects 0 seconds at the moment the seconds
-        # remaining are less than 1 (roughly 0.9 seconds) and we want
-        # the timer to go off right when the clock reflects 0 seconds,
-        # we add 0.9 seconds to the total time.
+        # since seconds are being converted to an integer in the clock
+        # formatting, the timer will read 00:00:00 when total seconds
+        # are less than 1. we want the timer to go complete the moment
+        # the clock reads 00:00:00, so we add 0.9 seconds to the total
+        # time.
         total_seconds += self.TIME_OFFSET
 
         while True:
