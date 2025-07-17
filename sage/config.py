@@ -2,6 +2,9 @@ import json
 from pathlib import Path
 
 import click
+import nava
+from nava.errors import NavaBaseError
+from nava.params import SOUND_FILE_EXIST_ERROR
 from platformdirs import user_config_dir
 
 from .common import convert_time_string_to_seconds, expand_time_from_seconds
@@ -109,3 +112,37 @@ def rename_timer(name, new_name):
     timers = load_saved_timers()
     timers.update({new_name: timers.pop(name)})
     save_timers(timers)
+
+
+def get_sound_file(filename: str) -> Path:
+    """
+    Retrieve path to the given sound file.
+    """
+    project_root = Path(__file__).parent.parent
+    return Path(project_root, "sounds", filename).resolve()
+
+
+def sound_path_check(filename: str):
+    """
+    Check that sound file exists, so that the user can be
+    immediately alerted if no sound is going to be played with the
+    timer completes.
+    """
+    sound_path = get_sound_file(filename)
+    if not sound_path.exists():
+        raise NavaBaseError(SOUND_FILE_EXIST_ERROR)
+
+
+def play_sound(filename: str):
+    """
+    Play a sound file located in the sounds/ directory of the
+    project root.
+    """
+    try:
+        sound_path = get_sound_file(filename)
+        nava.play(str(sound_path), async_mode=True)
+
+    except NavaBaseError:
+        # by this point, the user should have already been alerted if
+        # the sound file doesn't exist, so fail silently.
+        pass

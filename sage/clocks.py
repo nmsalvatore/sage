@@ -1,13 +1,8 @@
 import curses
-import os
 import time
-from pathlib import Path
 from typing import Tuple
 
 import click
-import nava
-from nava.errors import NavaBaseError
-from nava.params import SOUND_FILE_EXIST_ERROR
 
 from .common import (
     convert_time_string_to_seconds,
@@ -15,7 +10,7 @@ from .common import (
     format_time_as_clock,
     format_time_as_english,
 )
-from .config import get_saved_timer
+from .config import get_saved_timer, sound_path_check, play_sound
 
 
 class Clock:
@@ -142,33 +137,33 @@ class Clock:
         y, x = self._get_clock_coordinates(text)
         return (y - 1, x)
 
-    def _render_clock(self, stdscr, formatted_time: str):
+    def _render_clock(self, stdscr, formatted_time: str) -> None:
         """
         Render the clock at window center.
         """
         y, x = self._get_clock_coordinates(formatted_time)
         stdscr.addstr(y, x, formatted_time, curses.color_pair(1))
 
-    def _render_help_text(self, stdscr, help_text: str = HELP_TEXT, color_id: int = 3):
+    def _render_help_text(self, stdscr, help_text: str = HELP_TEXT, color_id: int = 3) -> None:
         """
         Render the help text at the bottom left of window.
         """
         stdscr.addstr(curses.LINES - 1, 1, help_text, curses.color_pair(color_id))
 
-    def _render_status_text(self, stdscr, status_text: str):
+    def _render_status_text(self, stdscr, status_text: str) -> None:
         """
         Render the status text below the clock.
         """
         y, x = self._get_status_coordinates(status_text)
         stdscr.addstr(y, x, status_text, curses.color_pair(4))
 
-    def _render_application_title(self, stdscr, title_text: str = "sage"):
+    def _render_application_title(self, stdscr, title_text: str = "sage") -> None:
         """
         Render title text at the top left of window.
         """
         stdscr.addstr(1, 1, title_text, curses.color_pair(2))
 
-    def _clear_status_text(self, stdscr):
+    def _clear_status_text(self, stdscr) -> None:
         """
         Clear the status text.
         """
@@ -176,14 +171,14 @@ class Clock:
         stdscr.move(y, x)
         stdscr.clrtoeol()
 
-    def _render_clock_heading(self, stdscr, timer_name: str):
+    def _render_clock_heading(self, stdscr, timer_name: str) -> None:
         """
         Render the timer name in the curses interface.
         """
         y, x = self._get_title_coordinates(timer_name)
         stdscr.addstr(y, x, timer_name, curses.color_pair(2))
 
-    def _render_counter(self, stdscr, counter_text: str = "Counter: 1"):
+    def _render_counter(self, stdscr, counter_text: str = "Counter: 1") -> None:
         """
         Render the lap count at the bottom right of screen.
         """
@@ -191,6 +186,13 @@ class Clock:
         y = curses.LINES - 1
         x = curses.COLS - len(counter_text) - 1
         stdscr.addstr(y, x, counter_text, curses.color_pair(3))
+
+    def _render_warning(self, stdscr, message: str) -> None:
+        """
+        Render warning text in upper right corner of screen.
+        """
+        x = curses.COLS - len(message) - 1
+        stdscr.addstr(1, x, message, curses.color_pair(4))
 
 
 class Stopwatch(Clock):
@@ -232,7 +234,7 @@ class Timer(Clock):
     """
 
     TIME_OFFSET = 0.9
-    TIMES_UP_SOUND_FILENAME = "thyme.mp3"
+    TIMES_UP_SOUND_FILENAME = "timesup.mp3"
     TIMES_UP_TEXT = "Time's up!"
 
     def __init__(self):
@@ -256,10 +258,14 @@ class Timer(Clock):
         heading_text = self._get_timer_heading_text(time_string, total_seconds)
 
         self._init_clock_config(stdscr)
-        self._sound_check(stdscr, self.TIMES_UP_SOUND_FILENAME)
         self._render_clock_heading(stdscr, heading_text)
         self._render_clock(stdscr, format_time_as_clock(total_seconds))
         self._handle_no_start(stdscr, no_start)
+
+        try:
+            sound_path_check(self.TIMES_UP_SOUND_FILENAME)
+        except Exception as e:
+            self._render_warning(stdscr, f"Warning: {e}")
 
         # since seconds are being converted to an integer in the clock
         # formatting, the timer will read 00:00:00 when total seconds
@@ -321,39 +327,7 @@ class Timer(Clock):
         Handle logic for timer completion.
         """
         if self.times_up:
-            self._play_sound(self.TIMES_UP_SOUND_FILENAME)
+            play_sound(self.TIMES_UP_SOUND_FILENAME)
             self._render_status_text(stdscr, self.TIMES_UP_TEXT)
             stdscr.nodelay(0)
             stdscr.getch()
-
-    @staticmethod
-    def _sound_check(stdscr, filename: str):
-        """
-        Check that sound file exists, so that the user can be
-        immediately alerted if no sound is going to be played with the
-        timer completes.
-        """
-        try:
-            sound_path = Path("sounds", filename).resolve()
-            if not os.path.isfile(sound_path):
-                raise NavaBaseError(SOUND_FILE_EXIST_ERROR)
-
-        except Exception as e:
-            error_message = f"Warning: {e}"
-            x = curses.COLS - len(error_message) - 1
-            stdscr.addstr(1, x, error_message, curses.color_pair(4))
-
-    @staticmethod
-    def _play_sound(filename: str):
-        """
-        Play a sound file located in the sounds/ directory of the
-        project root.
-        """
-        try:
-            sound_path = Path("sounds", filename).resolve()
-            nava.play(str(sound_path), async_mode=True)
-
-        except NavaBaseError:
-            # user should have already been alerted if the sound
-            # file doesn't exist, so fail silently.
-            pass
