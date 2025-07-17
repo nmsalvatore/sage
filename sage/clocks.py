@@ -1,4 +1,5 @@
 import curses
+import math
 import time
 from typing import Tuple
 
@@ -233,7 +234,6 @@ class Timer(Clock):
     Timer interface.
     """
 
-    TIME_OFFSET = 0.9
     TIMES_UP_SOUND_FILENAME = "timesup.mp3"
     TIMES_UP_TEXT = "Time's up!"
 
@@ -267,23 +267,17 @@ class Timer(Clock):
         except Exception as e:
             self._render_warning(stdscr, f"Warning: {e}")
 
-        # since seconds are being converted to an integer in the clock
-        # formatting, the timer will read 00:00:00 when total seconds
-        # are less than 1. we want the timer to go complete the moment
-        # the clock reads 00:00:00, so we add 0.9 seconds to the total
-        # time.
-        total_seconds += self.TIME_OFFSET
-
         while True:
             if self._handle_keystrokes(stdscr) == ord("q"):
                 break
 
             elapsed = self._get_elapsed_time(start_time)
             time_remaining = total_seconds - elapsed
-            ftime_remaining = format_time_as_clock(time_remaining)
-            self._render_clock(stdscr, ftime_remaining)
+            display_seconds = math.ceil(time_remaining)
+            display_time = format_time_as_clock(display_seconds)
+            self._render_clock(stdscr, display_time)
 
-            if time_remaining < 1:
+            if time_remaining <= 0:
                 self.times_up = True
                 break
 
