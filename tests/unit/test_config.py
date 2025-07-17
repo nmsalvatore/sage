@@ -1,6 +1,12 @@
 from unittest.mock import patch
 
-from sage.config import load_saved_timers, save_timer, get_saved_timer, delete_timer, rename_timer
+from sage.config import (
+    load_saved_timers,
+    save_timer,
+    get_saved_timer,
+    delete_timer,
+    rename_timer,
+)
 
 
 def test_load_saved_timers_creates_defaults_on_first_run(tmp_path):
@@ -12,7 +18,6 @@ def test_load_saved_timers_creates_defaults_on_first_run(tmp_path):
 
     with patch("sage.config.get_timers_file", return_value=fake_timers_file):
         timers = load_saved_timers()
-
         assert "pomodoro" in timers
         assert timers["pomodoro"]["minutes"] == 25
 
@@ -68,6 +73,9 @@ def test_save_timer_overwrites_existing(tmp_path):
 
 
 def test_save_timer_converts_time_string_to_time_units(tmp_path):
+    """
+    Test that saving a timer converts time_string to correct time units.
+    """
     fake_timers_file = tmp_path / "timers.json"
 
     with patch("sage.config.get_timers_file", return_value=fake_timers_file):
@@ -77,6 +85,9 @@ def test_save_timer_converts_time_string_to_time_units(tmp_path):
 
 
 def test_delete_timer(tmp_path):
+    """
+    Test that deleting a timer successfully removes it from saved timers.
+    """
     fake_timers_file = tmp_path / "timers.json"
 
     with patch("sage.config.get_timers_file", return_value=fake_timers_file):
@@ -90,6 +101,9 @@ def test_delete_timer(tmp_path):
 
 
 def test_rename_timer(tmp_path):
+    """
+    Test that renaming a timer sucessfully updates the timer name.
+    """
     fake_timers_file = tmp_path / "timers.json"
 
     with patch("sage.config.get_timers_file", return_value=fake_timers_file):
