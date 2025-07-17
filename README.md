@@ -11,10 +11,10 @@ pip install sage
 ## Quick Start
 
 ```bash
-sage timer 25m                 # Start a 25-minute timer
-sage timer pomodoro            # Use the built-in pomodoro timer
-sage stopwatch                # Start a stopwatch
-sage timers list               # See all your custom timers
+sage timer 25m                  # Start a 25-minute timer
+sage timer pomodoro             # Use the built-in pomodoro timer
+sage stopwatch                  # Start a stopwatch
+sage timers list                # See all your custom timers
 ```
 
 ## Features
@@ -99,11 +99,11 @@ sage timers update workout 50m
 sage timers update meditation -m 15
 
 # Organize your timers
-sage timers rename workout "morning-workout"
-sage timers rename meditation "daily-meditation"
+sage timers rename workout morning-workout
+sage timers rename meditation daily-meditation
 
 # Clean up timers you no longer need
-sage timers delete "old-timer-name"
+sage timers delete old-timer-name
 ```
 
 Custom timers accept the same flexible time formats as the main timer command - use whatever feels natural to you.
@@ -123,7 +123,7 @@ sage comes with a few useful timers built in:
 sage also provides a stopwatch for timing activities where you don't know the duration in advance.
 
 ```bash
-sage stopwatch                              # Start a stopwatch
+sage stopwatch                      # Start a stopwatch
 ```
 
 #### Stopwatch controls
@@ -141,8 +141,8 @@ The stopwatch displays elapsed time and includes a counter in the bottom right c
 Both timers and stopwatch can be loaded in a paused state:
 
 ```bash
-sage timer 25m --no-start                   # Load timer but don't start immediately
-sage stopwatch --no-start                  # Load stopwatch but don't start immediately
+sage timer 25m --no-start           # Load timer but don't start immediately
+sage stopwatch --no-start           # Load stopwatch but don't start immediately
 ```
 
 This is useful when you want to set up your timer, then start it at the precise moment you're ready.
