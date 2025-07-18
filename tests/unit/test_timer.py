@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from sage.clocks import Timer
+from sage.clocks.timer import Timer
 
 
 class TestTimer(TestCase):
