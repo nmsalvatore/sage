@@ -2,19 +2,10 @@ from textwrap import dedent
 
 import click
 
-from .clocks import Stopwatch, Timer
-from .common import (
-    convert_time_string_to_seconds,
-    convert_time_to_seconds,
-    format_time_as_english,
-)
-from .config import (
-    delete_timer,
-    save_timer,
-    rename_timer,
-    get_saved_timer,
-    load_saved_timers,
-)
+from sage.clocks.timer import Timer
+from sage.clocks.stopwatch import Stopwatch
+from sage.common import convert, format
+from sage.config import presets
 
 
 def get_duration_params(**kwargs):
@@ -39,14 +30,14 @@ def validate_time_string(ctx, param, value):
         return
 
     try:
-        convert_time_string_to_seconds(value)
-        return value
-    except ValueError as e:
-        saved_timer = get_saved_timer(value)
-        if saved_timer is not None:
-            return value
+        convert.time_string_to_seconds(value)
 
-        raise click.BadParameter(str(e))
+    except ValueError as e:
+        if presets.get_one(value) is None:
+            raise click.BadParameter(str(e))
+
+    return value
+
 
 
 @click.group()
@@ -69,6 +60,7 @@ def timer(test, **kwargs):
     timer = Timer()
 
     duration_params = get_duration_params(**kwargs)
+
     if not any(duration_params.values()):
         raise click.UsageError(
             "Please provide a timer duration using either a time string (e.g., '25m') "
@@ -109,24 +101,23 @@ def list_timers():
     """
     List custom timers.
     """
-    saved_timers = load_saved_timers()
-    if not saved_timers:
-        click.echo(
-            dedent("""\
-                No saved timers.
-                Save a timer with 'sage timers create <name> <duration>'.\
-            """)
-        )
+    all_presets = presets.load_all()
+
+    if not all_presets:
+        click.echo(dedent("""\
+            No saved timers.
+            Save a timer with 'sage timers create <name> <duration>'."""
+        ))
         return
 
-    max_width = max(len(name) for name in saved_timers.keys())
-    for timer in sorted(saved_timers.keys()):
-        hours = saved_timers[timer].get("hours", 0)
-        minutes = saved_timers[timer].get("minutes", 0)
-        seconds = saved_timers[timer].get("seconds", 0)
-        total_seconds = convert_time_to_seconds(hours, minutes, seconds)
+    max_width = max(len(name) for name in all_presets.keys())
 
-        duration = format_time_as_english(total_seconds)
+    for timer in sorted(all_presets.keys()):
+        hours = all_presets[timer].get("hours", 0)
+        minutes = all_presets[timer].get("minutes", 0)
+        seconds = all_presets[timer].get("seconds", 0)
+        total_seconds = convert.time_units_to_seconds(hours, minutes, seconds)
+        duration = format.time_in_english(total_seconds)
         click.echo(f"{timer:<{max_width + 2}} {duration}")
 
 
@@ -141,13 +132,14 @@ def create(name, **kwargs):
     Create a custom timer.
     """
     duration_params = get_duration_params(**kwargs)
+
     if not any(duration_params.values()):
         raise click.UsageError(
             "A duration has not been specified. "
             "Use 'sage timers create <name> <duration>' to create a custom timer."
         )
 
-    save_timer(name, **kwargs)
+    presets.create_one(name, **kwargs)
     click.echo(
         dedent(f"""\
             Successfully created '{name}' timer!
@@ -167,32 +159,30 @@ def update(name, **kwargs):
     Update the duration of a custom timer.
     """
     duration_params = get_duration_params(**kwargs)
+
     if not any(duration_params.values()):
         raise click.UsageError(
             "A duration has not been specified. "
             "Use 'sage timers update <name> <duration>' to update a custom timer."
         )
 
-    saved_timer = get_saved_timer(name)
-    if saved_timer is None:
-        click.echo(
-            dedent(
-                f"Timer '{name}' does not exist. Use 'sage timers list' "
-                f"to see available timers or 'sage timers create {name} "
-                "<duration>' to create it."
-            )
-        )
+    if presets.get_one(name) is None:
+        click.echo(dedent(
+            f"Timer '{name}' does not exist. Use 'sage timers list' "
+            f"to see available timers or 'sage timers create {name} "
+            "<duration>' to create it."
+        ))
         return
 
-    save_timer(name, **kwargs)
-    updated_timer = get_saved_timer(name)
-    if updated_timer:
-        new_duration = convert_time_to_seconds(
-            hours=updated_timer.get("hours", 0),
-            minutes=updated_timer.get("minutes", 0),
-            seconds=updated_timer.get("seconds", 0),
+    presets.create_one(name, **kwargs)
+
+    if preset := presets.get_one(name):
+        new_duration = convert.time_units_to_seconds(
+            hours=preset.get("hours", 0),
+            minutes=preset.get("minutes", 0),
+            seconds=preset.get("seconds", 0),
         )
-        new_english_duration = format_time_as_english(new_duration)
+        new_english_duration = format.time_in_english(new_duration)
         click.echo(f"Successfully updated timer '{name}' to {new_english_duration}.")
 
 
@@ -203,18 +193,15 @@ def rename(name, new_name):
     """
     Rename a custom timer.
     """
-    saved_timer = get_saved_timer(name)
-    if saved_timer is None:
-        click.echo(
-            dedent(
-                f"Timer '{name}' does not exist. Use 'sage timers list' "
-                f"to see available timers or 'sage timers create {name} "
-                "<duration>' to create it."
-            )
-        )
+    if presets.get_one(name) is None:
+        click.echo(dedent(
+            f"Timer '{name}' does not exist. Use 'sage timers list' "
+            f"to see available timers or 'sage timers create {name} "
+            "<duration>' to create it."
+        ))
         return
 
-    rename_timer(name, new_name)
+    presets.rename_one(name, new_name)
     click.echo(f"Successfully changed the name of timer '{name}' to '{new_name}'.")
 
 
@@ -224,18 +211,15 @@ def delete(name):
     """
     Delete a custom timer.
     """
-    saved_timer = get_saved_timer(name)
-    if saved_timer is None:
-        click.echo(
-            dedent(
-                f"Timer '{name}' does not exist. Use 'sage timers list' "
-                f"to see available timers or 'sage timers create {name} "
-                "<duration>' to create it."
-            )
-        )
+    if presets.get_one(name) is None:
+        click.echo(dedent(
+            f"Timer '{name}' does not exist. Use 'sage timers list' "
+            f"to see available timers or 'sage timers create {name} "
+            "<duration>' to create it."
+        ))
         return
 
-    delete_timer(name)
+    presets.delete_one(name)
     click.echo(f"Successfully deleted timer '{name}'.")
 
 
