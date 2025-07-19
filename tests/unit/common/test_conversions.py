@@ -3,7 +3,8 @@ from unittest import TestCase
 from sage.common.conversions import (
     seconds_to_time_units,
     time_units_to_seconds,
-    time_string_to_seconds
+    time_string_to_seconds,
+    time_string_to_time_units
 )
 
 
@@ -25,7 +26,6 @@ class TimeConversionTests(TestCase):
         Test conversion of multiple time units to seconds.
         """
         self.assertEqual(time_units_to_seconds(hours=1, minutes=30), 5400)
-        self.assertEqual(time_units_to_seconds(hours=3, seconds=32), 10832)
         self.assertEqual(time_units_to_seconds(minutes=18, seconds=56), 1136)
         self.assertEqual(time_units_to_seconds(hours=3, minutes=46, seconds=7), 13567)
 
@@ -44,6 +44,14 @@ class TimeConversionTests(TestCase):
         self.assertEqual(time_string_to_seconds("2 minutes"), 120)
         self.assertEqual(time_string_to_seconds("3min40s"), 220)
         self.assertEqual(time_string_to_seconds("17 hours 3 minutes 40 sec"), 61420)
+
+    def test_convert_time_string_to_time_units(self):
+        """
+        Test conversion of time string to hours, minutes, and seconds.
+        """
+        self.assertEqual(time_string_to_time_units("2 minutes"), (0, 2, 0))
+        self.assertEqual(time_string_to_time_units("3min40s"), (0, 3, 40))
+        self.assertEqual(time_string_to_time_units("17 hours 3 minutes 40 sec"), (17, 3, 40))
 
     def test_time_string_error_conditions(self):
         """

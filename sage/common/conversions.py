@@ -1,4 +1,8 @@
 import re
+from typing import TypeAlias
+
+
+HoursMinutesSeconds: TypeAlias = tuple[int, int, int]
 
 
 def time_units_to_seconds(hours=0, minutes=0, seconds=0) -> int:
@@ -6,6 +10,16 @@ def time_units_to_seconds(hours=0, minutes=0, seconds=0) -> int:
     Converts hours, minutes, and seconds to total seconds.
     """
     return (hours * 3600) + (minutes * 60) + seconds
+
+
+def seconds_to_time_units(total_seconds: float) -> HoursMinutesSeconds:
+    """
+    Expand a time in seconds to hours, minutes, and seconds.
+    """
+    hours = int(total_seconds // 3600)
+    minutes = int((total_seconds - (hours * 3600)) // 60)
+    seconds = int(total_seconds % 60)
+    return (hours, minutes, seconds)
 
 
 def time_string_to_seconds(time_string: str) -> int:
@@ -32,11 +46,10 @@ def time_string_to_seconds(time_string: str) -> int:
     return total
 
 
-def seconds_to_time_units(total_seconds: float) -> tuple:
+def time_string_to_time_units(time_string: str) -> HoursMinutesSeconds:
     """
-    Expand a time in seconds to hours, minutes, and seconds.
+    Convert a human-readable time string to hours, minutes, and seconds.
     """
-    hours = int(total_seconds // 3600)
-    minutes = int((total_seconds - (hours * 3600)) // 60)
-    seconds = int(total_seconds % 60)
-    return (hours, minutes, seconds)
+    return seconds_to_time_units(
+        time_string_to_seconds(time_string)
+    )
