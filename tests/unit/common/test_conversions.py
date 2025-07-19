@@ -1,7 +1,5 @@
 from unittest import TestCase
 
-from click.exceptions import BadArgumentUsage
-
 from sage.common.conversions import (
     seconds_to_time_units,
     time_units_to_seconds,
@@ -11,7 +9,7 @@ from sage.common.conversions import (
 
 class TimeConversionTests(TestCase):
     """
-    Test suite for time conversion tests in 'sage.common.convert'.
+    Test suite for time conversions.
     """
 
     def test_single_time_units_to_seconds(self):
@@ -51,9 +49,11 @@ class TimeConversionTests(TestCase):
         """
         Test error conditions of time string conversion.
         """
-        with self.assertRaises(BadArgumentUsage):
+        with self.assertRaises(ValueError):
             time_string_to_seconds("nonsense")
-        with self.assertRaises(BadArgumentUsage):
+        with self.assertRaises(ValueError):
             time_string_to_seconds("0s")
-        with self.assertRaises(BadArgumentUsage):
+        with self.assertRaises(ValueError):
             time_string_to_seconds("")
+        with self.assertRaises(ValueError):
+            time_string_to_seconds("25hrs")
