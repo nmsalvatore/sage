@@ -1,6 +1,4 @@
 import re
-from textwrap import dedent
-from click.exceptions import BadArgumentUsage
 
 
 def time_units_to_seconds(hours=0, minutes=0, seconds=0) -> int:
@@ -14,32 +12,22 @@ def time_string_to_seconds(time_string: str) -> int:
     """
     Convert a human-readable time string to total seconds.
     """
-    hours = re.search(r"(\d+)\s*(h|hour|hours)", time_string)
-    minutes = re.search(r"(\d+)\s*(m|min|minute|minutes)", time_string)
-    seconds = re.search(r"(\d+)\s*(s|sec|second|seconds)", time_string)
+
+    def extract_time_value(pattern: str) -> int:
+        match = re.search(pattern, time_string)
+        return int(match.group(1)) if match else 0
+
+    hours = extract_time_value(r"(\d+)\s*(h|hour|hours)")
+    minutes = extract_time_value(r"(\d+)\s*(m|min|minute|minutes)")
+    seconds = extract_time_value(r"(\d+)\s*(s|sec|second|seconds)")
 
     if not any([hours, minutes, seconds]):
-        raise BadArgumentUsage(
-            dedent(
-                f"'{time_string}' is not a valid time format. "
-                "Please use formats like '25m', '1h 30m', or '45s'."
-            ))
+        raise ValueError("could not find a valid time value in the provided time string.")
 
-    total = 0
+    total = hours * 3600 + minutes * 60 + seconds
 
-    if hours:
-        total += int(hours.group(1)) * 3600
-    if minutes:
-        total += int(minutes.group(1)) * 60
-    if seconds:
-        total += int(seconds.group(1))
-
-    if total == 0:
-        raise BadArgumentUsage(
-            dedent(
-                "Please check your time values (e.g., use '1s' instead of '0s'). "
-                "Time must be greater than 0 seconds."
-            ))
+    if total <= 0 or total > 86400:
+        raise ValueError("total seconds must be greater than 0 and less than or equal to 86400.")
 
     return total
 
