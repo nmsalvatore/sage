@@ -4,33 +4,34 @@ import subprocess
 
 def test_version():
     """
-    To check that sage is installed correctly, a user uses the 'sage
-    --version' command.
+    The '--version' flag should return the project version as specified
+    in pyproject.toml.
     """
     result = subprocess.run(
         ["sage", "--version"], capture_output=True, text=True, timeout=5
     )
 
-    assert "version" in result.stdout
+    assert "sage, version 0.1.0" in result.stdout
 
 
 def test_help():
     """
-    To get familiar with basic sage usage, a user uses the 'sage
-    --help' command.
+    The '--help' flag should show both '--version' and '--help' under
+    the list of sage base options.
     """
     result = subprocess.run(
         ["sage", "--help"], capture_output=True, text=True, timeout=5
     )
 
-    assert all(
-        option in result.stdout
-        for option in ["--version", "--help", "timer", "stopwatch"]
-    )
+    assert "--version" in result.stdout.lower()
+    assert "--help" in result.stdout.lower()
+    assert "timer" in result.stdout.lower()
+    assert "stopwatch" in result.stdout.lower()
 
 
 def test_timer_help():
     """
+    The '--help' flag used with 'sage timer' should
     Now familiar with the basic sage commands, the user checks to see how
     to use the timer command with 'sage timer --help'.
     """
@@ -38,31 +39,15 @@ def test_timer_help():
         ["sage", "timer", "--help"], capture_output=True, text=True, timeout=5
     )
 
-    assert all(
-        option in result.stdout
-        for option in ["--hours", "--minutes", "--seconds", "-h", "-m", "-s"]
-    )
+    assert "run a timer" in result.stdout.lower()
+    assert "--no-start" in result.stdout.lower()
+    assert "--help" in result.stdout.lower()
 
 
-def test_timer_accepts_options():
+def test_timer_with_valid_time_string():
     """
-    Check that 'sage timer' accepts option arguments.
-    """
-    result = subprocess.run(
-        ["sage", "timer", "-s", "5", "--test"],
-        capture_output=True,
-        text=True,
-        timeout=5,
-    )
-
-    assert result.returncode == 0
-    assert "00:00:05" in result.stdout
-
-
-def test_timer_accepts_human_readable_strings():
-    """
-    Check that 'sage timer' accepts human-readable strings so that
-    users don't have to think like robots.
+    A timer passed a human-readable string and the '--test' flag should
+    return the total time formatted for the clock.
     """
     result = subprocess.run(
         ["sage", "timer", "25m", "--test"], capture_output=True, text=True, timeout=5
@@ -74,9 +59,8 @@ def test_timer_accepts_human_readable_strings():
 
 def test_pomodoro_timer():
     """
-    Having read the README, the user remembers that sage offers custom
-    timers, one of which is the included pomodoro timer. They load the
-    pomodoro timer to see what the custom timers are all about.
+    A timer passed the name of the 'pomodoro' preset should return a
+    formatted clock representing 25 minutes.
     """
     result = subprocess.run(
         ["sage", "timer", "pomodoro", "--test"],
@@ -91,8 +75,8 @@ def test_pomodoro_timer():
 
 def test_list_saved_timers():
     """
-    The pomodoro timer works! Are there any other timers hiding? Our
-    user goes to find out with 'sage timers'.
+    The 'sage timers list' command should show a list of all preset
+    timers.
     """
     result = subprocess.run(
         ["sage", "timers", "list"], capture_output=True, text=True, timeout=5
@@ -105,10 +89,29 @@ def test_list_saved_timers():
     assert "pika" in result.stdout
 
 
-def test_create_timer_with_time_string(tmp_path):
+def test_timers_with_no_argument():
     """
-    Time to create a timer and see what this custom stuff is all about.
-    We'll use a time string first for convenience.
+    The 'sage timers' command with no arguments will also list all of
+    the preset timers.
+    """
+    result = subprocess.run(
+        ["sage", "timers"],
+        capture_output=True,
+        text=True,
+        timeout=5,
+    )
+
+    assert result.returncode == 0
+    assert "pomodoro" in result.stdout
+    assert "johncage" in result.stdout
+    assert "potato" in result.stdout
+    assert "pika" in result.stdout
+
+
+def test_create_timer_with_valid_time_string(tmp_path):
+    """
+    A preset timer created with a valid time string should be listed in
+    the list of preset timers with the correct time.
     """
     env = os.environ.copy()
     env["HOME"] = str(tmp_path)
@@ -133,33 +136,6 @@ def test_create_timer_with_time_string(tmp_path):
     assert "15 minutes" in result.stdout
 
 
-def test_create_timer_with_options(tmp_path):
-    """
-    Now let's see if we can create a timer using option flags.
-    """
-    env = os.environ.copy()
-    env["HOME"] = str(tmp_path)
-
-    result = subprocess.run(
-        ["sage", "timers", "create", "titanic", "--minutes", "14", "--hours", "3"],
-        capture_output=True,
-        text=True,
-        timeout=5,
-        env=env,
-    )
-
-    assert result.returncode == 0
-    assert "success" in result.stdout.lower()
-    assert "titanic" in result.stdout
-
-    result = subprocess.run(
-        ["sage", "timers", "list"], capture_output=True, text=True, timeout=5, env=env
-    )
-
-    assert "titanic" in result.stdout
-    assert "3 hours 14 minutes" in result.stdout
-
-
 def test_create_timer_without_duration(tmp_path):
     """
     No duration passed to 'sage timers create' should raise an error
@@ -177,8 +153,7 @@ def test_create_timer_without_duration(tmp_path):
     )
 
     assert result.returncode == 2
-    assert "duration has not been specified" in result.stderr.lower()
-    assert "sage timers create <name> <duration>" in result.stderr.lower()
+    assert "missing argument 'time_string'" in result.stderr.lower()
 
 
 def test_update_timer_without_duration(tmp_path):
@@ -198,8 +173,7 @@ def test_update_timer_without_duration(tmp_path):
     )
 
     assert result.returncode == 2
-    assert "duration has not been specified" in result.stderr.lower()
-    assert "sage timers update <name> <duration>" in result.stderr.lower()
+    assert "missing argument 'time_string'" in result.stderr.lower()
 
 
 def test_crud_operations(tmp_path):
@@ -335,7 +309,7 @@ def test_invalid_timer_value():
     )
 
     assert result.returncode == 2
-    assert "invalid value" in result.stderr.lower()
+    assert "not a valid time format" in result.stderr.lower()
 
 
 def test_no_timer_arguments():
@@ -351,7 +325,7 @@ def test_no_timer_arguments():
     )
 
     assert result.returncode == 2
-    assert "provide a timer duration" in result.stderr.lower()
+    assert "missing argument 'time_string'" in result.stderr.lower()
 
 
 def test_timer_zero_seconds():
@@ -362,23 +336,6 @@ def test_timer_zero_seconds():
     """
     result = subprocess.run(
         ["sage", "timer", "0s", "--test"],
-        capture_output=True,
-        text=True,
-        timeout=5,
-    )
-
-    assert result.returncode == 2
-    assert "greater than 0 seconds" in result.stderr.lower()
-
-
-def test_timer_with_negative_duration():
-    """
-    A duration of less than 0 seconds passed to 'sage timer' should
-    raise an error alerting the user that they need to provide a timer
-    duration greater than 0 seconds.
-    """
-    result = subprocess.run(
-        ["sage", "timer", "-m", "-5", "--test"],
         capture_output=True,
         text=True,
         timeout=5,
@@ -419,27 +376,6 @@ def test_timer_24hr():
 
     assert result.returncode == 0
     assert "24:00:00" in result.stdout.lower()
-
-
-def test_timers_with_no_argument():
-    """
-    Well, all those errors certainly set our user straight about how to
-    properly use 'sage timer'. What happens if they don't pass an
-    argument to 'sage timers'? Aha! It lists all of the timers,
-    similar to 'sage list'! How convenient.
-    """
-    result = subprocess.run(
-        ["sage", "timers"],
-        capture_output=True,
-        text=True,
-        timeout=5,
-    )
-
-    assert result.returncode == 0
-    assert "pomodoro" in result.stdout
-    assert "johncage" in result.stdout
-    assert "potato" in result.stdout
-    assert "pika" in result.stdout
 
 
 def test_stopwatch_with_extra_arguments():

@@ -14,7 +14,7 @@ class TestTimer(TestCase):
         on how the arguments are passed to `sage timer`.
         """
         timer = Timer()
-        self.assertEqual(timer.get_duration(time_string="2m 3s"), 123)
-        self.assertEqual(timer.get_duration(hours=1), 3600)
-        self.assertEqual(timer.get_duration(0, 5), 300)
-        self.assertEqual(timer.get_duration(time_string="2 minute 60s"), 180)
+        self.assertEqual(timer.get_duration("2m3sec"), 123)
+        self.assertEqual(timer.get_duration("1hr"), 3600)
+        self.assertEqual(timer.get_duration("5 minutes"), 300)
+        self.assertEqual(timer.get_duration("2 minute 60s"), 180)
