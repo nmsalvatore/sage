@@ -85,7 +85,7 @@ def create(name: str, time_string: str) -> None:
     Create a preset and save it.
     """
     if get(name):
-        raise ValueError(f"'{name}' is already a saved preset.")
+        raise ValueError(f"'{name}' is already a preset.")
 
     hours, minutes, seconds = time_string_to_time_units(time_string)
     presets = load_all()
@@ -103,7 +103,7 @@ def delete(name: str) -> None:
     Delete a preset.
     """
     if get(name) is None:
-        raise ValueError(f"'{name}' is not a saved preset.")
+        raise ValueError(f"'{name}' is not a preset.")
 
     presets = load_all()
     del presets[name]
@@ -115,8 +115,26 @@ def rename(name: str, new_name: str) -> None:
     Rename a preset.
     """
     if get(name) is None:
-        raise ValueError(f"'{name}' is not a saved preset.")
+        raise ValueError(f"'{name}' is not a preset.")
 
     presets = load_all()
     presets.update({new_name: presets.pop(name)})
+    save_all(presets)
+
+
+def update(name: str, duration: str) -> None:
+    """
+    Update a preset's duration.
+    """
+    if get(name) is None:
+        raise ValueError(f"'{name}' is not a preset.")
+
+    hours, minutes, seconds = time_string_to_time_units(duration)
+    presets = load_all()
+    presets[name] = {
+        "hours": hours,
+        "minutes": minutes,
+        "seconds": seconds
+    }
+
     save_all(presets)

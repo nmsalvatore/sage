@@ -76,6 +76,17 @@ def test_rename_preset(tmp_path):
         assert presets.get("pomodoro") is None
 
 
+def test_update_preset(tmp_path):
+    """
+    Test that an updated preset successfully changes duration.
+    """
+    presets_file = tmp_path / "presets.json"
+
+    with patch("sage.config.presets.get_json_file", return_value=presets_file):
+        presets.update("pomodoro", "30m")
+        assert presets.get("pomodoro") == {"hours": 0, "minutes": 30, "seconds": 0}
+
+
 def test_preset_error_conditions(tmp_path):
     """
     Test various erorr conditions for preset CRUD operations.
