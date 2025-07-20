@@ -5,30 +5,30 @@ from typing import TypeAlias
 import click
 from platformdirs import user_config_dir
 
-from ..common import convert
+from sage.common.conversions import time_string_to_time_units
 
 
-Preset: TypeAlias = dict[str, int]
-Presets: TypeAlias = dict[str, Preset]
+Timer: TypeAlias = dict[str, int]
+Timers: TypeAlias = dict[str, Timer]
 
 
 def get_json_file() -> Path:
     """
-    Retrieve path to the JSON file storing presets.
+    Retrieve path to the JSON file storing timers.
     """
     try:
         config_dir = Path(user_config_dir("sage"))
         config_dir.mkdir(parents=True, exist_ok=True)
-        return config_dir / "presets.json"
+        return config_dir / "timers.json"
 
     except OSError as e:
         click.echo(f"Warning: Could not access config directory ({e}). Using home directory.", err=True)
-        return Path.home() / ".sage_presets.json"
+        return Path.home() / ".sage_timers.json"
 
 
-def create_defaults() -> Presets:
+def create_defaults() -> Timers:
     """
-    Create default presets.
+    Create and return default timers.
     """
     return {
         "pika": {"seconds": 5},
@@ -39,79 +39,84 @@ def create_defaults() -> Presets:
     }
 
 
-def load_all() -> Presets:
+def load_all() -> Timers:
     """
-    Load and return presets, creating defaults if the file doesn't exist.
+    Load and return timers, creating defaults if the file doesn't exist.
     """
-    timers_file = get_json_file()
+    presets_file = get_json_file()
 
-    if not timers_file.exists():
+    if not presets_file.exists():
         default_timers = create_defaults()
         save_all(default_timers)
         return default_timers
 
     try:
-        with open(timers_file, "r") as f:
+        with open(presets_file, "r") as f:
             return json.load(f)
 
     except Exception:
         return create_defaults()
 
 
-def save_all(presets: Presets) -> None:
+def save_all(timers: Timers) -> None:
     """
-    Save presets to JSON file.
+    Save timers to JSON file.
     """
-    presets_file = get_json_file()
+    timers_file = get_json_file()
 
     try:
-        with open(presets_file, "w") as f:
-            json.dump(presets, f, indent=2)
+        with open(timers_file, "w") as f:
+            json.dump(timers, f, indent=2)
 
     except Exception as e:
         raise click.ClickException(f"Could not save presets: {e}")
 
 
-def get_one(preset_name: str) -> Preset | None:
+def get(name: str) -> Timer | None:
     """
-    Get a specific preset by name.
-    """
-    timers = load_all()
-    return timers.get(preset_name)
-
-
-def create_one(preset_name: str, **kwargs) -> None:
-    """
-    Create a new preset and save it.
-    """
-    presets = load_all()
-    hours = kwargs.get("hours", 0)
-    minutes = kwargs.get("minutes", 0)
-    seconds = kwargs.get("seconds", 0)
-    time_string = kwargs.get("time_string")
-
-    if time_string:
-        hours, minutes, seconds = convert.seconds_to_time_units(
-            convert.time_string_to_seconds(time_string)
-        )
-
-    presets[preset_name] = {"hours": hours, "minutes": minutes, "seconds": seconds}
-    save_all(presets)
-
-
-def delete_one(preset_name: str) -> None:
-    """
-    Delete a preset.
+    Get a specific timer by name.
     """
     timers = load_all()
-    del timers[preset_name]
+    return timers.get(name)
+
+
+def create(name: str, time_string: str) -> None:
+    """
+    Create a timer and save it.
+    """
+    if get(name):
+        raise ValueError(f"'{name}' is already a saved preset.")
+
+    hours, minutes, seconds = time_string_to_time_units(time_string)
+    timers = load_all()
+    timers[name] = {
+        "hours": hours,
+        "minutes": minutes,
+        "seconds": seconds
+    }
+
     save_all(timers)
 
 
-def rename_one(preset_name: str, new_preset_name: str) -> None:
+def delete(name: str) -> None:
     """
-    Rename a saved timer.
+    Delete a timer.
     """
+    if get(name) is None:
+        raise ValueError(f"'{name}' is not a saved preset.")
+
+    timers = load_all()
+    del timers[name]
+    save_all(timers)
+
+
+def rename(name: str, new_name: str) -> None:
+    """
+    Rename a timer.
+    """
+    if get(name) is None:
+        raise ValueError(f"'{name}' is not a saved preset.")
+
     presets = load_all()
-    presets.update({new_preset_name: presets.pop(preset_name)})
+    presets.update({new_name: presets.pop(name)})
     save_all(presets)
