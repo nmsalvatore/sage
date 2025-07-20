@@ -8,27 +8,27 @@ from platformdirs import user_config_dir
 from sage.common.conversions import time_string_to_time_units
 
 
-Timer: TypeAlias = dict[str, int]
-Timers: TypeAlias = dict[str, Timer]
+PresetDict: TypeAlias = dict[str, int]
+PresetsDict: TypeAlias = dict[str, PresetDict]
 
 
 def get_json_file() -> Path:
     """
-    Retrieve path to the JSON file storing timers.
+    Retrieve path to the JSON file storing presets.
     """
     try:
         config_dir = Path(user_config_dir("sage"))
         config_dir.mkdir(parents=True, exist_ok=True)
-        return config_dir / "timers.json"
+        return config_dir / "presets.json"
 
     except OSError as e:
         click.echo(f"Warning: Could not access config directory ({e}). Using home directory.", err=True)
-        return Path.home() / ".sage_timers.json"
+        return Path.home() / ".sage_presets.json"
 
 
-def create_defaults() -> Timers:
+def create_defaults() -> PresetsDict:
     """
-    Create and return default timers.
+    Create and return default presets.
     """
     return {
         "pika": {"seconds": 5},
@@ -39,16 +39,16 @@ def create_defaults() -> Timers:
     }
 
 
-def load_all() -> Timers:
+def load_all() -> PresetsDict:
     """
-    Load and return timers, creating defaults if the file doesn't exist.
+    Load and return presets, creating defaults if the file doesn't exist.
     """
     presets_file = get_json_file()
 
     if not presets_file.exists():
-        default_timers = create_defaults()
-        save_all(default_timers)
-        return default_timers
+        default_presets = create_defaults()
+        save_all(default_presets)
+        return default_presets
 
     try:
         with open(presets_file, "r") as f:
@@ -58,61 +58,61 @@ def load_all() -> Timers:
         return create_defaults()
 
 
-def save_all(timers: Timers) -> None:
+def save_all(presets: PresetsDict) -> None:
     """
-    Save timers to JSON file.
+    Save presets to JSON file.
     """
-    timers_file = get_json_file()
+    presets_file = get_json_file()
 
     try:
-        with open(timers_file, "w") as f:
-            json.dump(timers, f, indent=2)
+        with open(presets_file, "w") as f:
+            json.dump(presets, f, indent=2)
 
     except Exception as e:
         raise click.ClickException(f"Could not save presets: {e}")
 
 
-def get(name: str) -> Timer | None:
+def get(name: str) -> PresetDict | None:
     """
-    Get a specific timer by name.
+    Get a specific preset by name.
     """
-    timers = load_all()
-    return timers.get(name)
+    presets = load_all()
+    return presets.get(name)
 
 
 def create(name: str, time_string: str) -> None:
     """
-    Create a timer and save it.
+    Create a preset and save it.
     """
     if get(name):
         raise ValueError(f"'{name}' is already a saved preset.")
 
     hours, minutes, seconds = time_string_to_time_units(time_string)
-    timers = load_all()
-    timers[name] = {
+    presets = load_all()
+    presets[name] = {
         "hours": hours,
         "minutes": minutes,
         "seconds": seconds
     }
 
-    save_all(timers)
+    save_all(presets)
 
 
 def delete(name: str) -> None:
     """
-    Delete a timer.
+    Delete a preset.
     """
     if get(name) is None:
         raise ValueError(f"'{name}' is not a saved preset.")
 
-    timers = load_all()
-    del timers[name]
-    save_all(timers)
+    presets = load_all()
+    del presets[name]
+    save_all(presets)
 
 
 def rename(name: str, new_name: str) -> None:
     """
-    Rename a timer.
+    Rename a preset.
     """
     if get(name) is None:
         raise ValueError(f"'{name}' is not a saved preset.")
