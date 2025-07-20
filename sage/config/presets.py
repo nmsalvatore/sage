@@ -122,7 +122,7 @@ def rename(name: str, new_name: str) -> None:
     save_all(presets)
 
 
-def update(name: str, duration: str) -> None:
+def update(name: str, duration: str) -> PresetDict:
     """
     Update a preset's duration.
     """
@@ -138,3 +138,4 @@ def update(name: str, duration: str) -> None:
     }
 
     save_all(presets)
+    return presets[name]
