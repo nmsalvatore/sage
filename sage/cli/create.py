@@ -16,8 +16,8 @@ def create(name: str, duration: str) -> None:
         presets.create(name, duration)
         click.echo(
             dedent(f"""\
-                Successfully created '{name}' timer!
-                Start your timer with 'sage timer {name}'.\
+                Successfully created '{name}'!
+                Use 'sage timer {name}' to run a timer with your new preset.\
             """)
         )
 
