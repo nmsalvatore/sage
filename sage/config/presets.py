@@ -31,11 +31,11 @@ def create_defaults() -> PresetsDict:
     Create and return default presets.
     """
     return {
-        "pika": {"seconds": 5},
-        "johncage": {"minutes": 4, "seconds": 33},
-        "pomodoro": {"minutes": 25},
-        "potato": {"minutes": 50},
-        "rest": {"minutes": 10},
+        "pika": {"hours": 0, "minutes": 0, "seconds": 5},
+        "johncage": {"hours": 0, "minutes": 4, "seconds": 33},
+        "pomodoro": {"hours": 0, "minutes": 25, "seconds": 0},
+        "potato": {"hours": 0, "minutes": 50, "seconds": 0},
+        "rest": {"hours": 0, "minutes": 10, "seconds": 0},
     }
 
 
@@ -80,7 +80,7 @@ def get(name: str) -> PresetDict | None:
     return presets.get(name)
 
 
-def create(name: str, time_string: str) -> None:
+def create(name: str, time_string: str) -> PresetDict:
     """
     Create a preset and save it.
     """
@@ -96,6 +96,7 @@ def create(name: str, time_string: str) -> None:
     }
 
     save_all(presets)
+    return presets[name]
 
 
 def delete(name: str) -> None:
@@ -110,7 +111,7 @@ def delete(name: str) -> None:
     save_all(presets)
 
 
-def rename(name: str, new_name: str) -> None:
+def rename(name: str, new_name: str) -> PresetDict:
     """
     Rename a preset.
     """
@@ -119,7 +120,9 @@ def rename(name: str, new_name: str) -> None:
 
     presets = load_all()
     presets.update({new_name: presets.pop(name)})
+
     save_all(presets)
+    return presets[new_name]
 
 
 def update(name: str, duration: str) -> PresetDict:
