@@ -15,8 +15,7 @@ def update(name: str, duration: str) -> None:
     """
     try:
         preset = presets.update(name, duration)
-        hours, minutes, seconds = preset.values()
-        total_seconds = time_units_to_seconds(hours, minutes, seconds)
+        total_seconds = time_units_to_seconds(**preset)
         click.echo(f"Successfully updated timer '{name}' to {time_in_english(total_seconds)}.")
 
     except ValueError as e:

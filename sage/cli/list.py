@@ -20,10 +20,6 @@ def list():
 
     max_width = max(len(name) for name in all_presets.keys())
 
-    for timer in sorted(all_presets.keys()):
-        hours = all_presets[timer].get("hours", 0)
-        minutes = all_presets[timer].get("minutes", 0)
-        seconds = all_presets[timer].get("seconds", 0)
-        total_seconds = time_units_to_seconds(hours, minutes, seconds)
-        duration = time_in_english(total_seconds)
-        click.echo(f"{timer:<{max_width + 2}} {duration}")
+    for timer, duration in sorted(all_presets.items()):
+        total_seconds = time_units_to_seconds(**duration)
+        click.echo(f"{timer:<{max_width + 2}} {time_in_english(total_seconds)}")
