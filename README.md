@@ -1,6 +1,6 @@
 # sage
 
-sage is a clean and easy-to-use CLI timer and stopwatch that works the way you think it should.
+A clean and intuitive CLI timer and stopwatch that works the way you think about time.
 
 ## Installation
 
@@ -14,184 +14,158 @@ pip install sage
 sage timer 25m                  # Start a 25-minute timer
 sage timer pomodoro             # Use the built-in pomodoro timer
 sage stopwatch                  # Start a stopwatch
-sage timers list                # See all your custom timers
+sage list                       # See all your custom timers
 ```
 
 ## Features
 
-- **Intuitive timer input** - Use human-readable time strings or flags
-- **Custom timer management** - Create, update, and organize your own timers
-- **Visual interface** - Clean curses-based display with pause/resume
-- **Flexible usage** - Works however you intuitively expect it to
-- **Sound notifications** - Audio alert when timers complete
-- **Stopwatch with counter** - Track laps or intervals during timing sessions
+- **Intuitive time input** - Use natural language like "25m", "1 hour 30 minutes", or "45s"
+- **Custom timer management** - Create, update, and organize your own named timers
+- **Clean interface** - Distraction-free curses display with pause/resume functionality
+- **Sound notifications** - Audio alerts when timers complete
+- **Stopwatch with lap counter** - Track intervals and repetitions
+- **Cross-platform** - Works on Linux, macOS, and Windows
 
 ## Usage
 
 ### Timer
 
-The sage timer is built to be intuitive, working how you expect it to work. Since we all think differently about time, timers can be set in multiple ways.
-
-#### Time unit flags
-
-Use option flags to set the timer. Flags can be applied in any order and combined however makes sense to you.
+sage timer accepts flexible, human-readable time formats that work however you naturally think about time:
 
 ```bash
-sage timer -m 15                            # 15 minute timer
-sage timer --hours 1 --minutes 30           # 1 hour 30 minute timer
-sage timer -s 45                            # 45 second timer
-sage timer --seconds 30 -m 2                # 2 minute 30 second timer
-```
-
-#### Human-readable time strings
-
-We're not all robots, so `sage timer` also accepts human-readable time strings. You can even mix and match unit formats within the same string.
-
-```bash
-sage timer 25m                              # 25 minute timer
-sage timer "10 minutes 30 sec"              # 10 minute 30 second timer
-sage timer 3min25s                          # 3 minute 25 second timer
-sage timer "1 hour 15m"                     # 1 hour 15 minute timer
+sage timer 25m                              # 25 minutes
+sage timer "10 minutes 30 seconds"          # 10 minutes 30 seconds
+sage timer 3min25s                          # 3 minutes 25 seconds
+sage timer "1 hour 15m"                     # 1 hour 15 minutes
 sage timer 2h30m45s                         # 2 hours 30 minutes 45 seconds
 ```
 
-#### Timer controls
+#### Timer Controls
 
-Once your timer is running, you can control it with simple keystrokes:
+Once running, control your timer with simple keystrokes:
 
-- **Space** - Pause and resume the timer
-- **Enter** - Increment the counter (useful for tracking cycles or intervals)
-- **Q** - Quit the timer
+- **Space** - Pause and resume
+- **Enter** - Increment counter
+- **Q** - Quit
 
-#### Custom timers
+#### Custom Timers
 
-Save your frequently used timers with custom names. This is perfect for work routines, exercise intervals, cooking times, or any recurring timing needs.
+Save frequently used timers with memorable names:
 
 ```bash
-sage timer pomodoro                         # Use the built-in 25-minute pomodoro timer
-sage timer potato                           # Use the built-in 50-minute potato timer
-sage timer workout                          # Use your custom workout timer
+sage timer pomodoro                         # Built-in 25-minute timer
+sage timer workout                          # Your custom workout timer
+sage timer meditation                       # Your custom meditation timer
 ```
 
 ### Managing Custom Timers
 
-Custom timers are managed through the `sage timers` command family. This lets you create a personal library of timers for different activities.
+Create and organize your personal library of timers:
 
 ```bash
-sage timers                                 # List all timers (same as 'list')
-sage timers list                            # List all custom timers
-sage timers create <name> <duration>        # Create a new timer
-sage timers update <name> <duration>        # Update an existing timer
-sage timers rename <name> <new_name>        # Rename a timer
-sage timers delete <name>                   # Delete a timer
+sage list                                   # List all available timers
+sage create <name> <duration>               # Create a new timer
+sage update <name> <duration>               # Update existing timer
+sage rename <name> <new_name>               # Rename a timer
+sage delete <name>                          # Delete a timer
 ```
 
 #### Examples
 
 ```bash
 # Create timers for different activities
-sage timers create workout 45m
-sage timers create meditation "10 minutes"
-sage timers create presentation --hours 1 --minutes 15
+sage create workout 45m
+sage create meditation "10 minutes"
+sage create presentation "1 hour 15 minutes"
 
-# Update a timer duration
-sage timers update workout 50m
-sage timers update meditation -m 15
-
-# Organize your timers
-sage timers rename workout morning-workout
-sage timers rename meditation daily-meditation
-
-# Clean up timers you no longer need
-sage timers delete old-timer-name
+# Update and organize
+sage update workout 50m
+sage rename workout morning-routine
+sage delete old-timer
 ```
 
-Custom timers accept the same flexible time formats as the main timer command - use whatever feels natural to you.
-
-#### Built-in timers
-
-sage comes with a few useful timers built in:
-
-- **pomodoro** - 25 minutes (classic productivity timer)
-- **potato** - 50 minutes (perfect for baked potatoes)
-- **johncage** - 4 minutes 33 seconds (the length of John Cage's famous composition)
-- **pika** - 5 seconds (for quick tests)
-- **rest** - 10 minutes (short break timer)
+All timer commands accept the same flexible time formats as the main timer.
 
 ### Stopwatch
 
-sage also provides a stopwatch for timing activities where you don't know the duration in advance.
+For timing activities with unknown duration:
 
 ```bash
 sage stopwatch                      # Start a stopwatch
+sage stopwatch --paused             # Start paused (begin when ready)
 ```
 
-#### Stopwatch controls
+#### Stopwatch Controls
 
-- **Space** - Start, pause, and resume the stopwatch
-- **Enter** - Increment the counter (track laps, intervals, or repetitions)
-- **Q** - Quit the stopwatch
+- **Space** - Pause and resume
+- **Enter** - Increment counter
+- **Q** - Quit
 
-The stopwatch displays elapsed time and includes a counter in the bottom right corner. This is perfect for tracking laps during runs, intervals during workouts, or cycles during any repetitive activity.
+The stopwatch displays elapsed time with centisecond precision and includes a lap counter for tracking intervals or repetitions.
 
 ### Advanced Options
 
-#### No-start mode
+#### Starting Paused
 
-Both timers and stopwatch can be loaded in a paused state:
+Both timers and stopwatch can start in a paused state:
 
 ```bash
-sage timer 25m --no-start           # Load timer but don't start immediately
-sage stopwatch --no-start           # Load stopwatch but don't start immediately
+sage timer 25m --paused             # Load timer but don't start immediately
+sage stopwatch --paused             # Load stopwatch but don't start immediately
 ```
 
-This is useful when you want to set up your timer, then start it at the precise moment you're ready.
+Perfect for setting up your timer, then starting it at the precise moment you're ready.
 
 ## Configuration
 
-sage stores your custom timers in your system's standard configuration directory:
+Custom timers are automatically saved to your system's standard configuration directory:
 
-- **Linux/macOS**: `~/.config/sage/timers.json`
-- **Windows**: `%APPDATA%\sage\timers.json`
+- **Linux/macOS**: `~/.config/sage/presets.json`
+- **Windows**: `%APPDATA%\sage\presets.json`
 
-The configuration file is created automatically when you save your first custom timer. You can back up this file to preserve your custom timers across different machines.
+The configuration file is created automatically when you save your first custom timer.
+
+## Time Format Examples
+
+sage understands time the way you naturally express it:
+
+| Input | Meaning |
+|-------|---------|
+| `25m` | 25 minutes |
+| `1h30m` | 1 hour 30 minutes |
+| `45s` | 45 seconds |
+| `"2 hours"` | 2 hours |
+| `"10 min 30 sec"` | 10 minutes 30 seconds |
+| `1h15m30s` | 1 hour 15 minutes 30 seconds |
 
 ## Error Handling
 
-sage provides helpful error messages to guide you toward correct usage:
+sage provides clear, helpful error messages:
 
 - Invalid time formats suggest correct alternatives
-- Missing timer names show available options
-- Duration requirements are clearly explained
-- Sound file warnings alert you if audio notifications might not work
+- Missing arguments show proper usage
+- Duration limits are clearly explained (1 second to 24 hours)
+- Sound file warnings alert if audio notifications unavailable
 
 ## Requirements
 
-- Python 3.8+
-- Cross-platform support (Linux, macOS, Windows)
+- Python 3.10+
 - Terminal with curses support
+- Cross-platform support (Linux, macOS, Windows)
 
 ## Dependencies
 
-sage uses a minimal set of well-maintained dependencies:
+sage uses minimal, well-maintained dependencies:
 
-- **click** - Command-line interface framework
-- **nava** - Cross-platform audio playback
-- **platformdirs** - System-appropriate config directory handling
-
-## Tips
-
-- **Mix input styles**: Use flags for precise control, strings for quick timers
-- **Organize with names**: Create descriptive timer names for different activities
-- **Use the counter**: Track intervals, laps, or cycles during any timing session
-- **Try the built-ins**: The included timers cover common use cases
-- **Pause when needed**: Both timers and stopwatch can be paused and resumed
+- **click** - Modern command-line interface framework
+- **nava** - Cross-platform audio playback for notifications
+- **platformdirs** - Cross-platform config directory handling
 
 ## Philosophy
 
-sage is designed around the principle that tools should work the way you naturally think about them. Time is personal and contextual - sometimes you think "25 minutes," sometimes "25m," and sometimes "--minutes 25." sage accepts all of these because the tool should adapt to you, not the other way around.
+sage is built on the principle that tools should adapt to how you naturally think, not force you to learn arbitrary syntax. Time is personal and contextual - sometimes you think "25 minutes," sometimes "25m," sometimes you want a named timer for your routine.
 
-The interface is intentionally minimal and distraction-free. When you're timing something, you want to focus on that activity, not on managing the timer. sage gets out of your way while providing exactly the functionality you need.
+The interface is intentionally minimal and distraction-free. When timing something, you want to focus on that activity, not on managing the timer. sage gets out of your way while providing exactly the functionality you need.
 
 ## License
 
@@ -199,8 +173,8 @@ MIT License - see LICENSE file for details.
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit issues and pull requests.
+Contributions welcome! Please feel free to submit issues and pull requests.
 
-## Changelog
+---
 
-See CHANGELOG.md for version history and updates.
+*sage - because timing shouldn't be complicated.*
