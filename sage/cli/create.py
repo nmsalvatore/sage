@@ -1,3 +1,5 @@
+"""Sage create command."""
+
 import click
 
 from sage.config import presets

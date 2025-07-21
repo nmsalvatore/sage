@@ -1,3 +1,5 @@
+"""Sage base CLI command."""
+
 import click
 
 from sage.cli.create import create

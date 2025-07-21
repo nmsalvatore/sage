@@ -1,3 +1,5 @@
+"""Sage delete command."""
+
 import click
 
 from sage.config import presets

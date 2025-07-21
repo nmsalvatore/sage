@@ -1,3 +1,5 @@
+"""Sage time conversions."""
+
 import re
 from typing import TypeAlias
 

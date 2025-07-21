@@ -1,3 +1,5 @@
+"""Sage base clock."""
+
 import curses
 import time
 from typing import Tuple
@@ -7,7 +9,7 @@ from sage.common.constants import HELP_TEXT, PAUSE_MESSAGE
 
 class Clock:
     """
-    Base clock interface.
+    Base clock interface inherited by Timer and Stopwatch.
     """
 
     def __init__(self):

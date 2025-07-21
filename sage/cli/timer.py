@@ -1,3 +1,5 @@
+"""Sage timer command."""
+
 import click
 
 from sage.clocks.timer import Timer

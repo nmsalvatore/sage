@@ -1,4 +1,4 @@
-"""sage constants"""
+"""Sage constants."""
 
 HELP_TEXT = "<q> Quit, <Space> Pause/Resume, <Enter> Increment counter"
 PAUSE_MESSAGE = "Paused"

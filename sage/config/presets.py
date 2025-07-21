@@ -1,3 +1,5 @@
+"""Sage preset configurations."""
+
 import json
 from pathlib import Path
 from typing import TypeAlias

@@ -1,3 +1,5 @@
+"""Sage stopwatch command."""
+
 import click
 
 from sage.clocks.stopwatch import Stopwatch

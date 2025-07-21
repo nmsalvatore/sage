@@ -1,3 +1,5 @@
+"""Sage stopwatch implementation."""
+
 import curses
 import time
 

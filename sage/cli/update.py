@@ -1,3 +1,5 @@
+"""Sage update command."""
+
 import click
 
 from sage.common.formatting import time_in_english

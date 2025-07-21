@@ -1,4 +1,4 @@
-from textwrap import dedent
+"""Sage list command."""
 
 import click
 

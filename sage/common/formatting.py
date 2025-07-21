@@ -1,3 +1,5 @@
+"""Sage time formatting."""
+
 from .conversions import seconds_to_time_units
 
 

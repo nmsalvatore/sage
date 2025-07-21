@@ -1,3 +1,5 @@
+"""Sage timer implementation."""
+
 import curses
 import math
 import time

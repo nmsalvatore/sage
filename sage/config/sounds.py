@@ -1,3 +1,5 @@
+"""Sage sound configurations."""
+
 from pathlib import Path
 
 from nava import play
