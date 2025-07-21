@@ -52,7 +52,7 @@ class Clock:
 
     def _handle_paused_on_start(self, stdscr, paused):
         """
-        Handle logic for --no-start flag.
+        Handle logic for --paused flag.
         """
         if paused:
             self._toggle_pause(stdscr)
