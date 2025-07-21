@@ -3,8 +3,8 @@
 import curses
 import time
 
-from sage.clocks.clock import Clock
-from sage.common.constants import REFRESH_RATE_IN_SECONDS
+from .clock import Clock
+from .constants import REFRESH_RATE_IN_SECONDS
 from sage.common.formatting import time_as_clock
 
 

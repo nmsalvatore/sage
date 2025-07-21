@@ -4,7 +4,7 @@ import curses
 import time
 from typing import Tuple
 
-from sage.common.constants import HELP_TEXT, PAUSE_MESSAGE
+from .constants import HELP_TEXT, PAUSE_MESSAGE
 
 
 class Clock:

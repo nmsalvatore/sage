@@ -6,8 +6,8 @@ import time
 
 import click
 
-from sage.clocks.clock import Clock
-from sage.common.constants import (
+from .clock import Clock
+from .constants import (
     REFRESH_RATE_IN_SECONDS,
     TIMES_UP_SOUND_FILENAME,
     TIMES_UP_TEXT,
