@@ -4,7 +4,12 @@ import time
 
 import click
 
-from .clock import Clock
+from sage.clocks.clock import Clock
+from sage.common.constants import (
+    REFRESH_RATE_IN_SECONDS,
+    TIMES_UP_SOUND_FILENAME,
+    TIMES_UP_TEXT,
+)
 from sage.common.conversions import get_duration
 from sage.common.formatting import time_as_clock, time_in_english
 from sage.config import sounds, presets
@@ -14,9 +19,6 @@ class Timer(Clock):
     """
     Timer interface.
     """
-
-    TIMES_UP_SOUND_FILENAME = "timesup.mp3"
-    TIMES_UP_TEXT = "Time's up!"
 
     def __init__(self):
         super().__init__()
@@ -41,8 +43,10 @@ class Timer(Clock):
         self._render_clock(stdscr, time_as_clock(total_seconds))
         self._handle_paused_on_start(stdscr, paused)
 
-        if not sounds.file_exists(self.TIMES_UP_SOUND_FILENAME):
-            self._render_warning(stdscr, "Warning: Cannot find sound file. Timer will complete silently.")
+        if not sounds.file_exists(TIMES_UP_SOUND_FILENAME):
+            self._render_warning(
+                stdscr, "Warning: Cannot find sound file. Timer will complete silently."
+            )
 
         while True:
             if self._handle_keystrokes(stdscr) == ord("q"):
@@ -58,7 +62,7 @@ class Timer(Clock):
                 self.times_up = True
                 break
 
-            time.sleep(self.REFRESH_RATE_IN_SECONDS)
+            time.sleep(REFRESH_RATE_IN_SECONDS)
             stdscr.refresh()
 
         self._handle_timer_completion(stdscr)
@@ -69,7 +73,6 @@ class Timer(Clock):
         """
         time_in_seconds = get_duration(time_string)
         click.echo(time_as_clock(time_in_seconds))
-
 
     def _get_timer_heading_text(self, time_string: str, total_seconds: float):
         """
@@ -84,7 +87,7 @@ class Timer(Clock):
         Handle logic for timer completion.
         """
         if self.times_up:
-            sounds.play_file(self.TIMES_UP_SOUND_FILENAME)
-            self._render_status_text(stdscr, self.TIMES_UP_TEXT)
+            sounds.play_file(TIMES_UP_SOUND_FILENAME)
+            self._render_status_text(stdscr, TIMES_UP_TEXT)
             stdscr.nodelay(0)
             stdscr.getch()

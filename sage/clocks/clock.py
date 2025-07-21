@@ -2,15 +2,13 @@ import curses
 import time
 from typing import Tuple
 
+from sage.common.constants import HELP_TEXT, PAUSE_MESSAGE
+
 
 class Clock:
     """
     Base clock interface.
     """
-
-    HELP_TEXT = "<q> Quit, <Space> Pause/Resume, <Enter> Increment counter"
-    PAUSE_MESSAGE = "Paused"
-    REFRESH_RATE_IN_SECONDS = 0.01
 
     def __init__(self):
         self.counter = 0
@@ -38,7 +36,7 @@ class Clock:
         stdscr.nodelay(1)
         self._setup_colors()
         self._render_application_title(stdscr)
-        self._render_help_text(stdscr, self.HELP_TEXT)
+        self._render_help_text(stdscr, HELP_TEXT)
         self._render_counter(stdscr)
 
     def _get_elapsed_time(self, start_time) -> int:
@@ -57,7 +55,7 @@ class Clock:
         if paused:
             self._toggle_pause(stdscr)
             self._clear_status_text(stdscr)
-            self._render_status_text(stdscr, self.PAUSE_MESSAGE)
+            self._render_status_text(stdscr, PAUSE_MESSAGE)
 
     def _handle_keystrokes(self, stdscr):
         """
@@ -83,7 +81,7 @@ class Clock:
         if not self.paused:
             self.pause_start = time.perf_counter()
             self.paused = True
-            self._render_status_text(stdscr, self.PAUSE_MESSAGE)
+            self._render_status_text(stdscr, PAUSE_MESSAGE)
         else:
             self.pause_time += time.perf_counter() - self.pause_start
             self.paused = False

@@ -1,8 +1,9 @@
 import curses
 import time
 
+from sage.clocks.clock import Clock
+from sage.common.constants import REFRESH_RATE_IN_SECONDS
 from sage.common.formatting import time_as_clock
-from .clock import Clock
 
 
 class Stopwatch(Clock):
@@ -29,10 +30,8 @@ class Stopwatch(Clock):
                 break
 
             time_elapsed = self._get_elapsed_time(start_time)
-            ftime_elapsed = time_as_clock(
-                time_elapsed, include_centiseconds=True
-            )
+            ftime_elapsed = time_as_clock(time_elapsed, include_centiseconds=True)
 
             self._render_clock(stdscr, ftime_elapsed)
-            time.sleep(self.REFRESH_RATE_IN_SECONDS)
+            time.sleep(REFRESH_RATE_IN_SECONDS)
             stdscr.refresh()
