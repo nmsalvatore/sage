@@ -11,7 +11,7 @@ from sage.config import presets
 def update(name: str, duration: str) -> None:
     """
     Update the duration of an existing timer. Duration accepts flexible
-    formats like '25m', '1 hour 30 minutes', or '45s'.
+    formats like "25m", "1 hour 30 minutes", or "45s".
     """
     try:
         preset = presets.update(name, duration)

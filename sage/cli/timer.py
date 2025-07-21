@@ -9,10 +9,9 @@ from sage.clocks.timer import Timer
 @click.option("--test", is_flag=True, hidden=True)
 def timer(test, **kwargs):
     """
-    Start a timer with flexible time input.
-
-    Accepts human-readable formats like '25m', '1h 30m', or '45 seconds'.
-    You can also use custom timer names like 'pomodoro' or 'workout'.
+    Start a timer with flexible time input. Accepts human-readable
+    formats like "25m", "1h 30m", or "45 seconds". You can also use
+    custom timer names like 'pomodoro' or 'workout'.
     """
     try:
         timer = Timer()
