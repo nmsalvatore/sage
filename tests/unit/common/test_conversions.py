@@ -7,12 +7,12 @@ from sage.common.conversions import (
 
 
 def test_single_time_units_to_seconds():
-        """
-        Test conversion of single time units to seconds.
-        """
-        assert time_units_to_seconds(hours=1) == 3600
-        assert time_units_to_seconds(minutes=19) == 1140
-        assert time_units_to_seconds(seconds=45) == 45
+    """
+    Test conversion of single time units to seconds.
+    """
+    assert time_units_to_seconds(hours=1) == 3600
+    assert time_units_to_seconds(minutes=19) == 1140
+    assert time_units_to_seconds(seconds=45) == 45
 
 
 def test_multiple_time_units_to_seconds():
