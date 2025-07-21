@@ -52,16 +52,3 @@ class TimeConversionTests(TestCase):
         self.assertEqual(time_string_to_time_units("2 minutes"), (0, 2, 0))
         self.assertEqual(time_string_to_time_units("3min40s"), (0, 3, 40))
         self.assertEqual(time_string_to_time_units("17 hours 3 minutes 40 sec"), (17, 3, 40))
-
-    def test_time_string_error_conditions(self):
-        """
-        Test error conditions of time string conversion.
-        """
-        with self.assertRaises(ValueError):
-            time_string_to_seconds("nonsense")
-        with self.assertRaises(ValueError):
-            time_string_to_seconds("0s")
-        with self.assertRaises(ValueError):
-            time_string_to_seconds("")
-        with self.assertRaises(ValueError):
-            time_string_to_seconds("25hrs")

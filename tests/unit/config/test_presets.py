@@ -82,15 +82,33 @@ def test_update_preset(tmp_path):
         assert presets.get("pomodoro") == {"hours": 0, "minutes": 30, "seconds": 0}
 
 
-def test_preset_error_conditions(tmp_path):
+def test_preset_create_error_conditions(tmp_path):
     """
-    Test various erorr conditions for preset CRUD operations.
+    Test various erorr conditions for preset create.
     """
     presets_file = tmp_path / "presets.json"
     with patch("sage.config.presets.get_json_file", return_value=presets_file):
         with pytest.raises(ValueError):
             presets.create("pomodoro", "20 minutes 30 seconds")
         with pytest.raises(ValueError):
+            presets.create("bigones", "25 hours")
+
+
+def test_preset_delete_error_conditions(tmp_path):
+    """
+    Test various erorr conditions for preset delete.
+    """
+    presets_file = tmp_path / "presets.json"
+    with patch("sage.config.presets.get_json_file", return_value=presets_file):
+        with pytest.raises(ValueError):
             presets.delete("nothing")
+
+
+def test_preset_rename_error_conditions(tmp_path):
+    """
+    Test various erorr conditions for preset rename.
+    """
+    presets_file = tmp_path / "presets.json"
+    with patch("sage.config.presets.get_json_file", return_value=presets_file):
         with pytest.raises(ValueError):
             presets.rename("nothing", "10 minutes")

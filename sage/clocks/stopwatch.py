@@ -1,8 +1,8 @@
 import curses
 import time
 
+from sage.common.formatting import time_as_clock
 from .clock import Clock
-from ..common import format
 
 
 class Stopwatch(Clock):
@@ -16,20 +16,20 @@ class Stopwatch(Clock):
         """
         curses.wrapper(lambda stdscr: self.load(stdscr, **kwargs))
 
-    def load(self, stdscr, no_start=False):
+    def load(self, stdscr, paused):
         """
         Load the stopwatch.
         """
         start_time = time.perf_counter()
         self._init_clock_config(stdscr)
-        self._handle_no_start(stdscr, no_start)
+        self._handle_paused_on_start(stdscr, paused)
 
         while True:
             if self._handle_keystrokes(stdscr) == ord("q"):
                 break
 
             time_elapsed = self._get_elapsed_time(start_time)
-            ftime_elapsed = format.time_as_clock(
+            ftime_elapsed = time_as_clock(
                 time_elapsed, include_centiseconds=True
             )
 

@@ -5,8 +5,9 @@ import time
 import click
 
 from .clock import Clock
-from ..common import convert, format
-from ..config import audio, presets
+from sage.common.conversions import get_duration
+from sage.common.formatting import time_as_clock, time_in_english
+from sage.config import sounds, presets
 
 
 class Timer(Clock):
@@ -27,25 +28,21 @@ class Timer(Clock):
         """
         curses.wrapper(lambda stdscr: self.load(stdscr, **kwargs))
 
-    def load(
-        self, stdscr, no_start=False, hours=0, minutes=0, seconds=0, time_string=None
-    ):
+    def load(self, stdscr, time_string, paused):
         """
         Load the timer.
         """
         start_time = time.perf_counter()
-        total_seconds = self.get_duration(hours, minutes, seconds, time_string)
+        total_seconds = get_duration(time_string)
         heading_text = self._get_timer_heading_text(time_string, total_seconds)
 
         self._init_clock_config(stdscr)
         self._render_clock_heading(stdscr, heading_text)
-        self._render_clock(stdscr, format.time_as_clock(total_seconds))
-        self._handle_no_start(stdscr, no_start)
+        self._render_clock(stdscr, time_as_clock(total_seconds))
+        self._handle_paused_on_start(stdscr, paused)
 
-        try:
-            audio.check_sound_path(self.TIMES_UP_SOUND_FILENAME)
-        except Exception as e:
-            self._render_warning(stdscr, f"Warning: {e}")
+        if not sounds.file_exists(self.TIMES_UP_SOUND_FILENAME):
+            self._render_warning(stdscr, "Warning: Cannot find sound file. Timer will complete silently.")
 
         while True:
             if self._handle_keystrokes(stdscr) == ord("q"):
@@ -54,7 +51,7 @@ class Timer(Clock):
             elapsed = self._get_elapsed_time(start_time)
             time_remaining = total_seconds - elapsed
             display_seconds = math.ceil(time_remaining)
-            display_time = format.time_as_clock(display_seconds)
+            display_time = time_as_clock(display_seconds)
             self._render_clock(stdscr, display_time)
 
             if time_remaining <= 0:
@@ -66,42 +63,28 @@ class Timer(Clock):
 
         self._handle_timer_completion(stdscr)
 
-    def get_duration(self, hours=0, minutes=0, seconds=0, time_string="") -> int:
-        """
-        Determine the timer duration.
-        """
-        if saved_timer := presets.get_one(time_string):
-            hours = saved_timer.get("hours", 0)
-            minutes = saved_timer.get("minutes", 0)
-            seconds = saved_timer.get("seconds", 0)
-            return convert.time_units_to_seconds(hours, minutes, seconds)
-
-        if time_string:
-            return convert.time_string_to_seconds(time_string)
-
-        return convert.time_units_to_seconds(hours, minutes, seconds)
-
-    def print_duration(self, **duration_params):
+    def print_duration(self, time_string: str) -> None:
         """
         Print the timer duration without loading the timer.
         """
-        time_in_seconds = self.get_duration(**duration_params)
-        click.echo(format.time_as_clock(time_in_seconds))
+        time_in_seconds = get_duration(time_string)
+        click.echo(time_as_clock(time_in_seconds))
 
-    def _get_timer_heading_text(self, time_string, total_seconds):
+
+    def _get_timer_heading_text(self, time_string: str, total_seconds: float):
         """
         Determine the proper heading text for the timer.
         """
-        if time_string and presets.get_one(time_string) is not None:
+        if time_string and presets.get(time_string) is not None:
             return time_string
-        return format.time_in_english(total_seconds)
+        return time_in_english(total_seconds)
 
     def _handle_timer_completion(self, stdscr):
         """
         Handle logic for timer completion.
         """
         if self.times_up:
-            audio.play_sound(self.TIMES_UP_SOUND_FILENAME)
+            sounds.play_file(self.TIMES_UP_SOUND_FILENAME)
             self._render_status_text(stdscr, self.TIMES_UP_TEXT)
             stdscr.nodelay(0)
             stdscr.getch()

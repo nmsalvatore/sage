@@ -16,10 +16,7 @@ def update(name: str, duration: str) -> None:
         preset = presets.update(name, duration)
         hours, minutes, seconds = preset.values()
         total_seconds = time_units_to_seconds(hours, minutes, seconds)
-
-        click.echo(
-            f"Successfully updated '{name}' to {time_in_english(total_seconds)}!"
-        )
+        click.echo(f"Successfully updated '{name}' to {time_in_english(total_seconds)}.")
 
     except ValueError as e:
-        raise click.ClickException(str(e))
+        raise click.BadArgumentUsage(str(e))

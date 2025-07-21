@@ -9,7 +9,6 @@ class Clock:
     """
 
     HELP_TEXT = "<q> Quit, <Space> Pause/Resume, <Enter> Increment counter"
-    START_MESSAGE = "Press SPACE to start"
     PAUSE_MESSAGE = "Paused"
     REFRESH_RATE_IN_SECONDS = 0.01
 
@@ -51,14 +50,14 @@ class Clock:
         else:
             return time.perf_counter() - start_time - self.pause_time
 
-    def _handle_no_start(self, stdscr, no_start):
+    def _handle_paused_on_start(self, stdscr, paused):
         """
         Handle logic for --no-start flag.
         """
-        if no_start:
+        if paused:
             self._toggle_pause(stdscr)
             self._clear_status_text(stdscr)
-            self._render_status_text(stdscr, self.START_MESSAGE)
+            self._render_status_text(stdscr, self.PAUSE_MESSAGE)
 
     def _handle_keystrokes(self, stdscr):
         """

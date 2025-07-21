@@ -2,7 +2,7 @@ import os
 import subprocess
 
 
-def test_create_preset(tmp_path):
+def test_create(tmp_path):
     """
     Test preset creation.
     """
@@ -20,7 +20,7 @@ def test_create_preset(tmp_path):
     assert "success" in result.stdout.lower()
     assert "rice" in result.stdout
 
-    # Preset should show up in list of presets.
+    # Verify that preset is in preset list.
     result = subprocess.run(
         ["sage", "list"], capture_output=True, text=True, timeout=5, env=env
     )
@@ -28,7 +28,7 @@ def test_create_preset(tmp_path):
     assert "15 minutes" in result.stdout.lower()
 
 
-def test_create_preset_duplicate_name(tmp_path):
+def test_create_duplicate_name(tmp_path):
     """
     Test preset creation with existing preset name.
     """
@@ -42,11 +42,11 @@ def test_create_preset_duplicate_name(tmp_path):
         timeout=5,
         env=env,
     )
-    assert result.returncode == 1
+    assert result.returncode == 2
     assert "already a preset" in result.stderr.lower()
 
 
-def test_create_preset_without_duration(tmp_path):
+def test_create_without_duration(tmp_path):
     """
     Test preset creation without duration argument.
     """
@@ -62,3 +62,39 @@ def test_create_preset_without_duration(tmp_path):
     )
     assert result.returncode == 2
     assert "missing argument" in result.stderr.lower()
+
+
+def test_create_out_of_range_high(tmp_path):
+    """
+    Test preset creation without duration argument.
+    """
+    env = os.environ.copy()
+    env["HOME"] = str(tmp_path)
+
+    result = subprocess.run(
+        ["sage", "create", "bigones", "25hr"],
+        capture_output=True,
+        text=True,
+        timeout=5,
+        env=env,
+    )
+    assert result.returncode == 2
+    assert "cannot exceed 24 hours" in result.stderr.lower()
+
+
+def test_create_out_of_range_low(tmp_path):
+    """
+    Test preset creation without duration argument.
+    """
+    env = os.environ.copy()
+    env["HOME"] = str(tmp_path)
+
+    result = subprocess.run(
+        ["sage", "create", "littleones", "0s"],
+        capture_output=True,
+        text=True,
+        timeout=5,
+        env=env,
+    )
+    assert result.returncode == 2
+    assert "must be greater than 0 seconds" in result.stderr.lower()

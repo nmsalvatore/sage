@@ -1,8 +1,6 @@
 from .conversions import seconds_to_time_units
-from .decorators import validate_seconds
 
 
-@validate_seconds
 def time_as_clock(total_seconds: float, include_centiseconds=False) -> str:
     """
     Take a time in total seconds, convert it to the correct time units
@@ -17,7 +15,6 @@ def time_as_clock(total_seconds: float, include_centiseconds=False) -> str:
     return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
 
 
-@validate_seconds
 def time_in_english(total_seconds: float) -> str:
     """
     Take a time in total seconds, convert it to the correct time units

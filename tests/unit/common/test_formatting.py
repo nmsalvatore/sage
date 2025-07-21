@@ -34,16 +34,3 @@ class TimeFormattingTests(TestCase):
         self.assertEqual(time_in_english(10800),"3 hours")
         self.assertEqual(time_in_english(1501),"25 minutes 1 second")
         self.assertEqual(time_in_english(3960),"1 hour 6 minutes")
-
-    def test_formatting_error_conditions(self):
-        """
-        Test error conditions of clock formatting.
-        """
-        with self.assertRaises(ValueError):
-            time_as_clock(-5)
-        with self.assertRaises(ValueError):
-            time_as_clock(100000)
-        with self.assertRaises(ValueError):
-            time_in_english(-5)
-        with self.assertRaises(ValueError):
-            time_in_english(100000)

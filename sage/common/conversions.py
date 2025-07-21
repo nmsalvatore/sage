@@ -34,14 +34,7 @@ def time_string_to_seconds(time_string: str) -> int:
     hours = extract_time_value(r"(\d+)\s*(h|hour|hours)")
     minutes = extract_time_value(r"(\d+)\s*(m|min|minute|minutes)")
     seconds = extract_time_value(r"(\d+)\s*(s|sec|second|seconds)")
-
-    if not any([hours, minutes, seconds]):
-        raise ValueError("could not find a valid time value in the provided time string.")
-
     total = hours * 3600 + minutes * 60 + seconds
-
-    if total <= 0 or total > 86400:
-        raise ValueError("total seconds must be greater than 0 and less than or equal to 86400.")
 
     return total
 
@@ -53,3 +46,30 @@ def time_string_to_time_units(time_string: str) -> HoursMinutesSeconds:
     return seconds_to_time_units(
         time_string_to_seconds(time_string)
     )
+
+
+def get_duration(time_string: str) -> int:
+    """
+    Determine the timer duration in seconds based on whether the string
+    represents a preset or not.
+    """
+    from sage.config import presets
+
+    total_seconds = 0
+
+    if preset := presets.get(time_string):
+        hours = preset.get("hours", 0)
+        minutes = preset.get("minutes", 0)
+        seconds = preset.get("seconds", 0)
+        total_seconds = time_units_to_seconds(hours, minutes, seconds)
+
+    else:
+        total_seconds = time_string_to_seconds(time_string)
+
+    if total_seconds <= 0:
+        raise ValueError("Duration must be greater than 0 seconds.")
+
+    if total_seconds > 86400:
+        raise ValueError("Duration cannot exceed 24 hours.")
+
+    return total_seconds

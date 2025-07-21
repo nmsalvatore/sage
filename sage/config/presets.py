@@ -5,7 +5,7 @@ from typing import TypeAlias
 import click
 from platformdirs import user_config_dir
 
-from sage.common.conversions import time_string_to_time_units
+from sage.common.conversions import time_string_to_time_units, time_units_to_seconds
 
 
 PresetDict: TypeAlias = dict[str, int]
@@ -88,6 +88,14 @@ def create(name: str, time_string: str) -> PresetDict:
         raise ValueError(f"'{name}' is already a preset.")
 
     hours, minutes, seconds = time_string_to_time_units(time_string)
+    total_seconds = time_units_to_seconds(hours, minutes, seconds)
+
+    if total_seconds <= 0:
+        raise ValueError("Duration must be greater than 0 seconds.")
+
+    if total_seconds > 86400:
+        raise ValueError("Duration cannot exceed 24 hours.")
+
     presets = load_all()
     presets[name] = {
         "hours": hours,

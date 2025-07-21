@@ -5,14 +5,14 @@ from sage.config import presets
 
 @click.command()
 @click.argument("name", required=True)
-@click.argument("duration", required=True)
-def create(name, duration):
+@click.argument("new_name", required=True)
+def rename(name, new_name):
     """
-    Create a preset.
+    Rename a preset.
     """
     try:
-        presets.create(name, duration)
-        click.echo(f"Successfully created '{name}'.")
+        presets.rename(name, new_name)
+        click.echo(f"Successfully renamed '{name}' to '{new_name}'.")
 
     except ValueError as e:
         raise click.BadArgumentUsage(str(e))

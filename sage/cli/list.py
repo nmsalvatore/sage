@@ -15,10 +15,12 @@ def list():
     all_presets = presets.load_all()
 
     if not all_presets:
-        click.echo(dedent("""\
-            No presets.
-            Create a preset with 'sage create <name> <duration>', e.g. 'sage create pomodoro 25m'."""
-        ))
+        click.echo(
+            dedent("""\
+                No presets.
+                Create a preset with 'sage create <name> <duration>', e.g. 'sage create pomodoro 25m'."""
+            )
+        )
         return
 
     max_width = max(len(name) for name in all_presets.keys())
