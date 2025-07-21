@@ -7,20 +7,15 @@ from sage.common.conversions import time_units_to_seconds
 from sage.common.formatting import time_in_english
 
 
-@click.command
+@click.command(short_help="List all timers")
 def list():
     """
-    List all presets.
+    List all saved timers and their durations in human-readable format.
     """
     all_presets = presets.load_all()
 
     if not all_presets:
-        click.echo(
-            dedent("""\
-                No presets.
-                Create a preset with 'sage create <name> <duration>', e.g. 'sage create pomodoro 25m'."""
-            )
-        )
+        click.echo("No saved timers")
         return
 
     max_width = max(len(name) for name in all_presets.keys())

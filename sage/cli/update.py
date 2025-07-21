@@ -5,18 +5,19 @@ from sage.common.conversions import time_units_to_seconds
 from sage.config import presets
 
 
-@click.command()
+@click.command(short_help="Update a timer's duration")
 @click.argument("name", required=True)
 @click.argument("duration", required=True)
 def update(name: str, duration: str) -> None:
     """
-    Update preset duration.
+    Update the duration of an existing timer. Duration accepts flexible
+    formats like '25m', '1 hour 30 minutes', or '45s'.
     """
     try:
         preset = presets.update(name, duration)
         hours, minutes, seconds = preset.values()
         total_seconds = time_units_to_seconds(hours, minutes, seconds)
-        click.echo(f"Successfully updated '{name}' to {time_in_english(total_seconds)}.")
+        click.echo(f"Successfully updated timer '{name}' to {time_in_english(total_seconds)}.")
 
     except ValueError as e:
         raise click.BadArgumentUsage(str(e))
