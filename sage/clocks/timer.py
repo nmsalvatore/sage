@@ -11,7 +11,7 @@ from .constants import (
     TIMES_UP_SOUND,
     TIMES_UP_MESSAGE,
 )
-from sage.common.conversions import get_duration
+from sage.common.conversions import time_string_to_seconds, time_units_to_seconds
 from sage.common.formatting import time_as_clock
 from sage.config import sounds, presets
 
@@ -25,11 +25,11 @@ class Timer(Clock):
         super().__init__()
         self.times_up = False
 
-    def print_duration(self, time_input: str) -> None:
+    def print_duration(self, time_input) -> None:
         """
         Print the timer duration without loading the timer.
         """
-        time_in_seconds = get_duration(time_input)
+        time_in_seconds = self._get_total_seconds(time_input)
         click.echo(time_as_clock(time_in_seconds))
 
     def _load_clock(self, **kwargs):
@@ -45,9 +45,33 @@ class Timer(Clock):
         """
         Initialize timer settings.
         """
-        self.time_input = kwargs.get("time_input", "")
+        time_input = kwargs.get("time_input", "")
+        self.time_input = time_input
         self.start_time = time.perf_counter()
-        self.total_seconds = get_duration(self.time_input)
+        self.total_seconds = self._get_total_seconds(time_input)
+
+    def _get_total_seconds(self, time_input):
+        """
+        Determine the timer duration in seconds based on whether the string
+        represents a preset or not.
+        """
+        if preset := presets.get(time_input):
+            seconds = time_units_to_seconds(**preset)
+        else:
+            seconds = time_string_to_seconds(time_input)
+
+        self._validate_total_seconds(seconds)
+        return seconds
+
+    def _validate_total_seconds(self, total_seconds):
+        """
+        Validation check that total seconds is within the required
+        range from 1 second to 24 hours.
+        """
+        if total_seconds <= 0:
+            raise ValueError("Duration must be greater than 0 seconds.")
+        if total_seconds > 86400:
+            raise ValueError("Duration cannot exceed 24 hours.")
 
     def _setup_timer_display(self):
         """
