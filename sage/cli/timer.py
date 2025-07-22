@@ -6,7 +6,7 @@ from sage.clocks.timer import Timer
 
 
 @click.command(short_help="Start a timer")
-@click.argument("time_string", required=True)
+@click.argument("time_input", required=True)
 @click.option("--paused", is_flag=True, help="Start timer in a paused state.")
 @click.option("--test", is_flag=True, hidden=True)
 def timer(test, **kwargs):
@@ -19,8 +19,8 @@ def timer(test, **kwargs):
         timer = Timer()
 
         if test:
-            time_string = kwargs.get("time_string", "")
-            timer.print_duration(time_string)
+            time_input = kwargs.get("time_input", "")
+            timer.print_duration(time_input)
             return
 
         timer.run(**kwargs)

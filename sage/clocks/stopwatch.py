@@ -1,6 +1,5 @@
 """Sage stopwatch implementation."""
 
-import curses
 import time
 
 from .clock import Clock
@@ -13,27 +12,21 @@ class Stopwatch(Clock):
     Stopwatch interface.
     """
 
-    def run(self, **kwargs):
+    def _run_clock(self, **kwargs):
         """
-        Convenience method to initialize curses interface.
-        """
-        curses.wrapper(lambda stdscr: self.load(stdscr, **kwargs))
-
-    def load(self, stdscr, paused):
-        """
-        Load the stopwatch.
+        Core stopwatch logic.
         """
         start_time = time.perf_counter()
-        self._init_clock_config(stdscr)
-        self._handle_paused_on_start(stdscr, paused)
 
-        while True:
-            if self._handle_keystrokes(stdscr) == ord("q"):
-                break
+        if kwargs.get("paused"):
+            self._on_pause()
+
+        while self._handle_keystrokes() != ord("q"):
+            # TODO: listen for window resize and clear the screen if true.
 
             time_elapsed = self._get_elapsed_time(start_time)
             ftime_elapsed = time_as_clock(time_elapsed, include_centiseconds=True)
+            self.renderer.render_clock(ftime_elapsed)
 
-            self._render_clock(stdscr, ftime_elapsed)
             time.sleep(REFRESH_RATE_IN_SECONDS)
-            stdscr.refresh()
+            self.renderer.stdscr.refresh()

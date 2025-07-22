@@ -1,6 +1,7 @@
-"""Sage clock constants."""
+"""Sage constants."""
 
-# Shared clock constants
+# Clock constants
+APP_TITLE = "sage"
 HELP_TEXT = "<q> Quit, <Space> Pause/Resume, <Enter> Increment counter"
 PAUSE_MESSAGE = "Paused"
 REFRESH_RATE_IN_SECONDS = 0.01

@@ -1,6 +1,5 @@
 """Sage timer implementation."""
 
-import curses
 import math
 import time
 
@@ -13,7 +12,7 @@ from .constants import (
     TIMES_UP_TEXT,
 )
 from sage.common.conversions import get_duration
-from sage.common.formatting import time_as_clock, time_in_english
+from sage.common.formatting import time_as_clock
 from sage.config import sounds, presets
 
 
@@ -26,70 +25,94 @@ class Timer(Clock):
         super().__init__()
         self.times_up = False
 
-    def run(self, **kwargs):
-        """
-        Convenience method to initialize curses interface.
-        """
-        curses.wrapper(lambda stdscr: self.load(stdscr, **kwargs))
-
-    def load(self, stdscr, time_string, paused):
-        """
-        Load the timer.
-        """
-        start_time = time.perf_counter()
-        total_seconds = get_duration(time_string)
-        heading_text = self._get_timer_heading_text(time_string, total_seconds)
-
-        self._init_clock_config(stdscr)
-        self._render_clock_heading(stdscr, heading_text)
-        self._render_clock(stdscr, time_as_clock(total_seconds))
-        self._handle_paused_on_start(stdscr, paused)
-
-        if not sounds.file_exists(TIMES_UP_SOUND_FILENAME):
-            self._render_warning(
-                stdscr, "Warning: Cannot find sound file. Timer will complete silently."
-            )
-
-        while True:
-            if self._handle_keystrokes(stdscr) == ord("q"):
-                break
-
-            elapsed = self._get_elapsed_time(start_time)
-            time_remaining = total_seconds - elapsed
-            display_seconds = math.ceil(time_remaining)
-            display_time = time_as_clock(display_seconds)
-            self._render_clock(stdscr, display_time)
-
-            if time_remaining <= 0:
-                self.times_up = True
-                break
-
-            time.sleep(REFRESH_RATE_IN_SECONDS)
-            stdscr.refresh()
-
-        self._handle_timer_completion(stdscr)
-
-    def print_duration(self, time_string: str) -> None:
+    def print_duration(self, time_input: str) -> None:
         """
         Print the timer duration without loading the timer.
         """
-        time_in_seconds = get_duration(time_string)
+        time_in_seconds = get_duration(time_input)
         click.echo(time_as_clock(time_in_seconds))
 
-    def _get_timer_heading_text(self, time_string: str, total_seconds: float):
+    def _run_clock(self, **kwargs):
         """
-        Determine the proper heading text for the timer.
+        Core timer logic.
         """
-        if time_string and presets.get(time_string) is not None:
-            return time_string
-        return time_in_english(total_seconds)
+        self._initialize_timer(**kwargs)
+        self._setup_timer_display()
 
-    def _handle_timer_completion(self, stdscr):
+        if kwargs.get("paused"):
+            self._on_pause()
+
+        while self._handle_keystrokes() != ord("q"):
+            self._update_display()
+            self._check_if_time_is_up()
+            self._sleep_and_refresh()
+
+    def _initialize_timer(self, **kwargs):
+        """
+        Initialize timer settings.
+        """
+        self.time_input = kwargs.get("time_input", "")
+        self.start_time = time.perf_counter()
+        self.total_seconds = get_duration(self.time_input)
+
+    def _setup_timer_display(self):
+        """
+        Initial paint of timer display.
+        """
+        if presets.get(self.time_input):
+            self.renderer.render_heading(self.time_input)
+
+        if not sounds.file_exists(TIMES_UP_SOUND_FILENAME):
+            self.renderer.render_warning(
+                "Warning: Cannot find sound file. "
+                "Timer will complete silently."
+            )
+
+        initial_time = time_as_clock(self.total_seconds)
+        self.renderer.render_clock(initial_time)
+
+    def _update_display(self):
+        """
+        Update the timer display.
+        """
+        display_time = self._get_display_time()
+        self.renderer.render_clock(display_time)
+
+    def _get_display_time(self):
+        """
+        Calculate the display time.
+        """
+        time_remaining = self._get_time_remaining()
+        display_seconds = math.ceil(time_remaining)
+        return time_as_clock(display_seconds)
+
+    def _sleep_and_refresh(self):
+        """
+        Handling timing and screen refresh.
+        """
+        time.sleep(REFRESH_RATE_IN_SECONDS)
+        self.renderer.stdscr.refresh()
+
+    def _get_time_remaining(self):
+        """
+        Calculate time remaining.
+        """
+        elapsed = self._get_elapsed_time(self.start_time)
+        return self.total_seconds - elapsed
+
+    def _check_if_time_is_up(self):
+        """
+        Check if timer has completed.
+        """
+        time_remaining = self._get_time_remaining()
+        if not self.times_up and time_remaining <= 0:
+            self._complete_timer()
+
+    def _complete_timer(self):
         """
         Handle logic for timer completion.
         """
-        if self.times_up:
-            sounds.play_file(TIMES_UP_SOUND_FILENAME)
-            self._render_status_text(stdscr, TIMES_UP_TEXT)
-            stdscr.nodelay(0)
-            stdscr.getch()
+        self.times_up = True
+        sounds.play_file(TIMES_UP_SOUND_FILENAME)
+        self.renderer.render_status(TIMES_UP_TEXT)
+        self.renderer.stdscr.nodelay(0)

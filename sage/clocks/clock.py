@@ -2,9 +2,9 @@
 
 import curses
 import time
-from typing import Tuple
 
-from .constants import HELP_TEXT, PAUSE_MESSAGE
+from .constants import PAUSE_MESSAGE
+from .renderer import ClockRenderer
 
 
 class Clock:
@@ -13,33 +13,45 @@ class Clock:
     """
 
     def __init__(self):
-        self.counter = 0
+        self.count = 0
         self.paused = False
         self.pause_start = 0
         self.pause_time = 0
 
-    @staticmethod
-    def _setup_colors():
+    def run(self, **kwargs):
         """
-        Initialize curses color pairs.
+        Initialize curses and load the application.
         """
-        curses.start_color()
-        curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLACK)
-        curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
-        curses.init_pair(3, curses.COLOR_BLUE, curses.COLOR_BLACK)
-        curses.init_pair(4, curses.COLOR_YELLOW, curses.COLOR_BLACK)
+        curses.wrapper(lambda stdscr: self._run_with_curses(stdscr, **kwargs))
 
-    def _init_clock_config(self, stdscr):
+    def _run_with_curses(self, stdscr, **kwargs):
         """
-        Initial configurations for the curses interface.
+        Run the application with curses initialized.
         """
-        stdscr.clear()
-        curses.curs_set(0)
-        stdscr.nodelay(1)
-        self._setup_colors()
-        self._render_application_title(stdscr)
-        self._render_help_text(stdscr, HELP_TEXT)
-        self._render_counter(stdscr)
+        self.setup_components(stdscr)
+        self.setup_display()
+        self._run_clock(**kwargs)
+
+    def setup_components(self, stdscr):
+        """
+        Set up clock component classes.
+        """
+        self.renderer = ClockRenderer(stdscr)
+
+    def setup_display(self):
+        """
+        Initialize the sage display.
+        """
+        self.renderer.initialize_curses_window()
+        self.renderer.render_app_title()
+        self.renderer.render_help_text()
+        self.renderer.render_counter()
+
+    def _run_clock(self):
+        """
+        Run clock's core logic.
+        """
+        raise NotImplementedError("Subclasses must implement '_run_clock'.")
 
     def _get_elapsed_time(self, start_time) -> int:
         """
@@ -50,135 +62,33 @@ class Clock:
         else:
             return time.perf_counter() - start_time - self.pause_time
 
-    def _handle_paused_on_start(self, stdscr, paused):
+    def _on_pause(self):
         """
-        Handle logic for --paused flag.
-        """
-        if paused:
-            self._toggle_pause(stdscr)
-            self._clear_status_text(stdscr)
-            self._render_status_text(stdscr, PAUSE_MESSAGE)
-
-    def _handle_keystrokes(self, stdscr):
-        """
-        Handle keystroke logic for curses interface.
-        """
-        key = stdscr.getch()
-
-        if key == ord(" "):
-            self._toggle_pause(stdscr)
-            return
-
-        if key == 10 or key == curses.KEY_ENTER:
-            self.counter += 1
-            self._render_counter(stdscr)
-            return
-
-        return key
-
-    def _toggle_pause(self, stdscr):
-        """
-        Handle logic for pause toggling.
+        Handle paused state changes.
         """
         if not self.paused:
             self.pause_start = time.perf_counter()
             self.paused = True
-            self._render_status_text(stdscr, PAUSE_MESSAGE)
+            self.renderer.render_status(PAUSE_MESSAGE)
         else:
             self.pause_time += time.perf_counter() - self.pause_start
             self.paused = False
             self.pause_start = 0
-            self._clear_status_text(stdscr)
+            self.renderer.clear_status()
 
-    @staticmethod
-    def _get_center_y_start() -> int:
+    def _handle_keystrokes(self):
         """
-        Calculate the starting y position of the window center.
+        Handle keystroke logic for curses interface.
         """
-        return curses.LINES // 2
+        key = self.renderer.stdscr.getch()
 
-    @staticmethod
-    def _get_center_x_start(text: str) -> int:
-        """
-        Calculate the starting x position for a centered text string.
-        """
-        x = (curses.COLS // 2) - (len(text) // 2)
-        return x - 1 if len(text) % 2 else x
+        if key == ord(" "):
+            self._on_pause()
+            return
 
-    def _get_clock_coordinates(self, text: str) -> Tuple[int, int]:
-        """
-        Calculate the clock coordinates, window center.
-        """
-        return (self._get_center_y_start(), self._get_center_x_start(text))
+        if key == 10 or key == curses.KEY_ENTER:
+            self.count += 1
+            self.renderer.render_counter(self.count)
+            return
 
-    def _get_status_coordinates(self, text: str = "") -> Tuple[int, int]:
-        """
-        Calculate the clock status coordinates, below the clock.
-        """
-        y, x = self._get_clock_coordinates(text)
-        x = x if text else 0
-        return (y + 1, x)
-
-    def _get_title_coordinates(self, text: str = "") -> Tuple[int, int]:
-        """
-        Calculate the clock title coordinates, above the clock.
-        """
-        y, x = self._get_clock_coordinates(text)
-        return (y - 1, x)
-
-    def _render_clock(self, stdscr, formatted_time: str) -> None:
-        """
-        Render the clock at window center.
-        """
-        y, x = self._get_clock_coordinates(formatted_time)
-        stdscr.addstr(y, x, formatted_time, curses.color_pair(1))
-
-    def _render_help_text(self, stdscr, help_text: str = HELP_TEXT, color_id: int = 3) -> None:
-        """
-        Render the help text at the bottom left of window.
-        """
-        stdscr.addstr(curses.LINES - 1, 1, help_text, curses.color_pair(color_id))
-
-    def _render_status_text(self, stdscr, status_text: str) -> None:
-        """
-        Render the status text below the clock.
-        """
-        y, x = self._get_status_coordinates(status_text)
-        stdscr.addstr(y, x, status_text, curses.color_pair(4))
-
-    def _render_application_title(self, stdscr, title_text: str = "sage") -> None:
-        """
-        Render title text at the top left of window.
-        """
-        stdscr.addstr(1, 1, title_text, curses.color_pair(2))
-
-    def _clear_status_text(self, stdscr) -> None:
-        """
-        Clear the status text.
-        """
-        y, x = self._get_status_coordinates()
-        stdscr.move(y, x)
-        stdscr.clrtoeol()
-
-    def _render_clock_heading(self, stdscr, timer_name: str) -> None:
-        """
-        Render the timer name in the curses interface.
-        """
-        y, x = self._get_title_coordinates(timer_name)
-        stdscr.addstr(y, x, timer_name, curses.color_pair(2))
-
-    def _render_counter(self, stdscr, counter_text: str = "Counter: 1") -> None:
-        """
-        Render the lap count at the bottom right of screen.
-        """
-        counter_text = f"Counter: {self.counter}"
-        y = curses.LINES - 1
-        x = curses.COLS - len(counter_text) - 1
-        stdscr.addstr(y, x, counter_text, curses.color_pair(3))
-
-    def _render_warning(self, stdscr, message: str) -> None:
-        """
-        Render warning text in upper right corner of screen.
-        """
-        x = curses.COLS - len(message) - 1
-        stdscr.addstr(1, x, message, curses.color_pair(4))
+        return key
