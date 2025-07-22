@@ -13,7 +13,7 @@ class Stopwatch(Clock):
 
     def _load_clock(self, **kwargs):
         """
-        Core stopwatch logic.
+        Initialize and start the stopwatch.
         """
         self._initialize_stopwatch()
         self._handle_pause_on_start(**kwargs)
@@ -29,7 +29,7 @@ class Stopwatch(Clock):
         """
         Start the stopwatch.
         """
-        while self._handle_keystrokes() != ord("q"):
+        while self._listen_for_keys() != ord("q"):
             self._update_display()
             self._sleep_and_refresh()
 

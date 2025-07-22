@@ -9,7 +9,7 @@ from .renderer import ClockRenderer
 
 class Clock:
     """
-    Base clock interface inherited by Timer and Stopwatch.
+    Base clock class inherited by Timer and Stopwatch.
     """
 
     def __init__(self):
@@ -75,26 +75,33 @@ class Clock:
             self.pause_start = 0
             self.renderer.clear_status()
 
-    def _handle_keystrokes(self):
+    def _listen_for_keys(self):
         """
-        Handle keystroke logic for curses interface.
+        Listen for keystrokes and handle command logic.
         """
         key = self.renderer.stdscr.getch()
+        self._handle_pause_key(key)
+        self._handle_enter_key(key)
+        return key
 
+    def _handle_pause_key(self, key):
+        """
+        Handle pause toggling triggered by SPACE key.
+        """
         if key == ord(" "):
             self._on_pause()
-            return
 
+    def _handle_enter_key(self, key):
+        """
+        Handle counter increment triggered by ENTER key.
+        """
         if key == 10 or key == curses.KEY_ENTER:
             self.count += 1
             self.renderer.render_counter(self.count)
-            return
-
-        return key
 
     def _sleep_and_refresh(self):
         """
-        Handling timing and screen refresh.
+        Handle timing and screen refresh.
         """
         time.sleep(REFRESH_RATE_IN_SECONDS)
         self.renderer.stdscr.refresh()
