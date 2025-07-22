@@ -52,16 +52,14 @@ class Timer(Clock):
 
     def _get_total_seconds(self, time_input):
         """
-        Determine the timer duration in seconds based on whether the string
-        represents a preset or not.
+        Determine the timer duration in seconds based on whether the
+        string represents a preset or not.
         """
         if preset := presets.get(time_input):
             seconds = time_units_to_seconds(**preset)
         else:
             seconds = time_string_to_seconds(time_input)
-
-        self._validate_total_seconds(seconds)
-        return seconds
+        return self._validate_total_seconds(seconds)
 
     def _validate_total_seconds(self, total_seconds):
         """
@@ -72,6 +70,7 @@ class Timer(Clock):
             raise ValueError("Duration must be greater than 0 seconds.")
         if total_seconds > 86400:
             raise ValueError("Duration cannot exceed 24 hours.")
+        return total_seconds
 
     def _setup_timer_display(self):
         """
