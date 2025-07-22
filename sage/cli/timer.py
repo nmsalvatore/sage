@@ -23,7 +23,7 @@ def timer(test, **kwargs):
             timer.print_duration(time_input)
             return
 
-        timer.run(**kwargs)
+        timer.load(**kwargs)
 
     except ValueError as e:
         raise click.BadArgumentUsage(str(e))

@@ -31,21 +31,14 @@ class Timer(Clock):
         time_in_seconds = get_duration(time_input)
         click.echo(time_as_clock(time_in_seconds))
 
-    def _run_clock(self, **kwargs):
+    def _load_clock(self, **kwargs):
         """
         Core timer logic.
         """
         self._initialize_timer(**kwargs)
         self._setup_timer_display()
-
-        if kwargs.get("paused"):
-            self._on_pause()
-
-        while self._handle_keystrokes() != ord("q"):
-            # TODO: listen for window resize and clear the screen if true.
-            self._update_display()
-            self._check_if_time_is_up()
-            self._sleep_and_refresh()
+        self._handle_pause_on_start(**kwargs)
+        self._start()
 
     def _initialize_timer(self, **kwargs):
         """
@@ -71,6 +64,15 @@ class Timer(Clock):
         initial_time = time_as_clock(self.total_seconds)
         self.renderer.render_clock(initial_time)
 
+    def _start(self):
+        """
+        Start the timer.
+        """
+        while self._handle_keystrokes() != ord("q"):
+            self._update_display()
+            self._check_if_time_is_up()
+            self._sleep_and_refresh()
+
     def _update_display(self):
         """
         Update the timer display.
@@ -90,7 +92,7 @@ class Timer(Clock):
         """
         Calculate time remaining.
         """
-        elapsed = self._get_elapsed_time(self.start_time)
+        elapsed = self._get_elapsed_time()
         return self.total_seconds - elapsed
 
     def _check_if_time_is_up(self):

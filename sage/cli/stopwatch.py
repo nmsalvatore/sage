@@ -12,4 +12,4 @@ def stopwatch(**kwargs):
     Start a stopwatch to time activities of unknown duration.
     """
     stopwatch = Stopwatch()
-    stopwatch.run(**kwargs)
+    stopwatch.load(**kwargs)

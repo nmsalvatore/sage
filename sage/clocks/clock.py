@@ -17,20 +17,13 @@ class Clock:
         self.paused = False
         self.pause_start = 0
         self.pause_time = 0
+        self.start_time = 0
 
-    def run(self, **kwargs):
+    def load(self, **kwargs):
         """
         Initialize curses and load the application.
         """
-        curses.wrapper(lambda stdscr: self._run_with_curses(stdscr, **kwargs))
-
-    def _run_with_curses(self, stdscr, **kwargs):
-        """
-        Run the application with curses initialized.
-        """
-        self.setup_components(stdscr)
-        self.setup_display()
-        self._run_clock(**kwargs)
+        curses.wrapper(lambda stdscr: self._load_with_curses(stdscr, **kwargs))
 
     def setup_components(self, stdscr):
         """
@@ -47,20 +40,26 @@ class Clock:
         self.renderer.render_help_text()
         self.renderer.render_counter()
 
-    def _run_clock(self):
+    def _load_with_curses(self, stdscr, **kwargs):
         """
-        Run clock's core logic.
+        Load the application with curses initialized.
         """
-        raise NotImplementedError("Subclasses must implement '_run_clock'.")
+        self.setup_components(stdscr)
+        self.setup_display()
+        self._load_clock(**kwargs)
 
-    def _get_elapsed_time(self, start_time) -> int:
+    def _load_clock(self):
         """
-        Calculate the elapsed time depending on paused status.
+        Load the clock.
         """
-        if self.paused:
-            return self.pause_start - start_time - self.pause_time
-        else:
-            return time.perf_counter() - start_time - self.pause_time
+        raise NotImplementedError("Subclasses must implement '_load_clock'.")
+
+    def _handle_pause_on_start(self, **kwargs):
+        """
+        Handle paused state change if --paused flag passed to clock.
+        """
+        if kwargs.get("paused"):
+            self._on_pause()
 
     def _on_pause(self):
         """
@@ -99,3 +98,11 @@ class Clock:
         """
         time.sleep(REFRESH_RATE_IN_SECONDS)
         self.renderer.stdscr.refresh()
+
+    def _get_elapsed_time(self):
+        """
+        Calculate the elapsed time depending on paused status.
+        """
+        if self.paused:
+            return self.pause_start - self.start_time - self.pause_time
+        return time.perf_counter() - self.start_time - self.pause_time
