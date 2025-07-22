@@ -1,5 +1,4 @@
 import subprocess
-from test.test_sys_settrace import raises
 
 
 def test_timer_help():
