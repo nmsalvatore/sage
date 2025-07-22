@@ -3,7 +3,7 @@
 import curses
 import time
 
-from .constants import PAUSE_MESSAGE
+from .constants import PAUSE_MESSAGE, REFRESH_RATE_IN_SECONDS
 from .renderer import ClockRenderer
 
 
@@ -92,3 +92,10 @@ class Clock:
             return
 
         return key
+
+    def _sleep_and_refresh(self):
+        """
+        Handling timing and screen refresh.
+        """
+        time.sleep(REFRESH_RATE_IN_SECONDS)
+        self.renderer.stdscr.refresh()

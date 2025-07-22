@@ -7,7 +7,6 @@ import click
 
 from .clock import Clock
 from .constants import (
-    REFRESH_RATE_IN_SECONDS,
     TIMES_UP_SOUND_FILENAME,
     TIMES_UP_TEXT,
 )
@@ -43,6 +42,7 @@ class Timer(Clock):
             self._on_pause()
 
         while self._handle_keystrokes() != ord("q"):
+            # TODO: listen for window resize and clear the screen if true.
             self._update_display()
             self._check_if_time_is_up()
             self._sleep_and_refresh()
@@ -86,13 +86,6 @@ class Timer(Clock):
         display_seconds = math.ceil(time_remaining)
         return time_as_clock(display_seconds)
 
-    def _sleep_and_refresh(self):
-        """
-        Handling timing and screen refresh.
-        """
-        time.sleep(REFRESH_RATE_IN_SECONDS)
-        self.renderer.stdscr.refresh()
-
     def _get_time_remaining(self):
         """
         Calculate time remaining.
@@ -113,6 +106,6 @@ class Timer(Clock):
         Handle logic for timer completion.
         """
         self.times_up = True
-        sounds.play_file(TIMES_UP_SOUND_FILENAME)
         self.renderer.render_status(TIMES_UP_TEXT)
         self.renderer.stdscr.nodelay(0)
+        sounds.play_file(TIMES_UP_SOUND_FILENAME)

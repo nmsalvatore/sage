@@ -3,7 +3,6 @@
 import time
 
 from .clock import Clock
-from .constants import REFRESH_RATE_IN_SECONDS
 from sage.common.formatting import time_as_clock
 
 
@@ -16,17 +15,32 @@ class Stopwatch(Clock):
         """
         Core stopwatch logic.
         """
-        start_time = time.perf_counter()
+        self._initialize_stopwatch()
 
         if kwargs.get("paused"):
             self._on_pause()
 
         while self._handle_keystrokes() != ord("q"):
             # TODO: listen for window resize and clear the screen if true.
+            self._update_display()
+            self._sleep_and_refresh()
 
-            time_elapsed = self._get_elapsed_time(start_time)
-            ftime_elapsed = time_as_clock(time_elapsed, include_centiseconds=True)
-            self.renderer.render_clock(ftime_elapsed)
+    def _initialize_stopwatch(self):
+        """
+        Initialize stopwatch settings.
+        """
+        self.start_time = time.perf_counter()
 
-            time.sleep(REFRESH_RATE_IN_SECONDS)
-            self.renderer.stdscr.refresh()
+    def _update_display(self):
+        """
+        Update the stopwatch display.
+        """
+        display_time = self._get_display_time()
+        self.renderer.render_clock(display_time)
+
+    def _get_display_time(self):
+        """
+        Calculate the display time.
+        """
+        time_elapsed = self._get_elapsed_time(self.start_time)
+        return time_as_clock(time_elapsed, include_centiseconds=True)
