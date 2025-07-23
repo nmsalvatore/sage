@@ -3,7 +3,7 @@
 import click
 
 from sage.common.formatting import time_in_english
-from sage.common.conversions import time_units_to_seconds
+from sage.common.conversions import hms_to_seconds
 from sage.config import presets
 
 
@@ -23,7 +23,7 @@ def update(name: str, duration: str) -> None:
     """
     try:
         preset = presets.update(name, duration)
-        total_seconds = time_units_to_seconds(**preset)
+        total_seconds = hms_to_seconds(**preset)
         click.echo(f"Successfully updated timer '{name}' to {time_in_english(total_seconds)}.")
 
     except ValueError as e:

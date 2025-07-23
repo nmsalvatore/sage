@@ -7,14 +7,14 @@ from typing import TypeAlias
 HoursMinutesSeconds: TypeAlias = tuple[int, int, int]
 
 
-def time_units_to_seconds(hours=0, minutes=0, seconds=0) -> int:
+def hms_to_seconds(hours=0, minutes=0, seconds=0) -> int:
     """
     Converts hours, minutes, and seconds to total seconds.
     """
     return (hours * 3600) + (minutes * 60) + seconds
 
 
-def seconds_to_time_units(total_seconds: float) -> HoursMinutesSeconds:
+def seconds_to_hms(total_seconds: float) -> HoursMinutesSeconds:
     """
     Expand a time in seconds to hours, minutes, and seconds.
     """
@@ -41,10 +41,10 @@ def time_input_to_seconds(time_input: str) -> int:
     return total
 
 
-def time_input_to_time_units(time_input: str) -> HoursMinutesSeconds:
+def time_input_to_hms(time_input: str) -> HoursMinutesSeconds:
     """
     Convert a human-readable time string to hours, minutes, and seconds.
     """
-    return seconds_to_time_units(
+    return seconds_to_hms(
         time_input_to_seconds(time_input)
     )

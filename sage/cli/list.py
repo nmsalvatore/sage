@@ -3,7 +3,7 @@
 import click
 
 from sage.config import presets
-from sage.common.conversions import time_units_to_seconds
+from sage.common.conversions import hms_to_seconds
 from sage.common.formatting import time_in_english
 
 
@@ -25,5 +25,5 @@ def list():
     max_width = max(len(name) for name in all_presets.keys())
 
     for timer, duration in sorted(all_presets.items()):
-        total_seconds = time_units_to_seconds(**duration)
+        total_seconds = hms_to_seconds(**duration)
         click.echo(f"{timer:<{max_width + 2}} {time_in_english(total_seconds)}")
