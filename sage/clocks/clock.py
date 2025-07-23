@@ -5,6 +5,7 @@ import time
 
 from .constants import PAUSE_MESSAGE, REFRESH_RATE_IN_SECONDS
 from .renderer import ClockRenderer
+from .resize import ResizeHandler
 
 
 class Clock:
@@ -30,29 +31,48 @@ class Clock:
         Set up clock component classes.
         """
         self.renderer = ClockRenderer(stdscr)
+        self.resize_handler = ResizeHandler(stdscr, self.resize_redraw)
+        self.resize_handler.setup()
 
     def setup_display(self):
         """
-        Initialize the sage display.
+        Initialize the app display.
         """
         self.renderer.initialize_curses_window()
-        self.renderer.render_app_title()
-        self.renderer.render_help_text()
-        self.renderer.render_counter()
+        self.renderer.render_base_features()
+        self.renderer.render_counter(self.count)
+
+    def resize_redraw(self):
+        """
+        Redraw the app display on window resize.
+        """
+        self.setup_display()
+        if self.paused:
+            self.renderer.render_status(PAUSE_MESSAGE)
 
     def _load_with_curses(self, stdscr, **kwargs):
         """
         Load the application with curses initialized.
         """
-        self.setup_components(stdscr)
-        self.setup_display()
-        self._load_clock(**kwargs)
+        try:
+            self.setup_components(stdscr)
+            self.setup_display()
+            self._load_clock(**kwargs)
+        finally:
+            self.resize_handler.cleanup()
 
     def _load_clock(self):
         """
         Load the clock.
         """
         raise NotImplementedError("Subclasses must implement '_load_clock'.")
+
+    def _check_for_resize(self):
+        """
+        Check for window resize and handle resizing.
+        """
+        if self.resize_handler:
+            self.resize_handler.check_and_handle()
 
     def _handle_pause_on_start(self, **kwargs):
         """
@@ -80,18 +100,18 @@ class Clock:
         Listen for keystrokes and handle command logic.
         """
         key = self.renderer.stdscr.getch()
-        self._handle_pause_key(key)
-        self._handle_enter_key(key)
+        self._handle_pause(key)
+        self._handle_counter(key)
         return key
 
-    def _handle_pause_key(self, key):
+    def _handle_pause(self, key):
         """
         Handle pause toggling triggered by SPACE key.
         """
         if key == ord(" "):
             self._on_pause()
 
-    def _handle_enter_key(self, key):
+    def _handle_counter(self, key):
         """
         Handle counter increment triggered by ENTER key.
         """

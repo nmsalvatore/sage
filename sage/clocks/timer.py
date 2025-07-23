@@ -24,6 +24,7 @@ class Timer(Clock):
     def __init__(self):
         super().__init__()
         self.times_up = False
+        self.timer_heading = None
 
     def print_duration(self, time_input) -> None:
         """
@@ -85,6 +86,7 @@ class Timer(Clock):
         Check if timer is a preset and render heading if so.
         """
         if presets.get(self.time_input):
+            self.timer_heading = self.time_input
             self.renderer.render_heading(self.time_input)
 
     def _check_for_sound_warning(self):
@@ -99,9 +101,22 @@ class Timer(Clock):
         Start the timer.
         """
         while self._listen_for_keys() != ord("q"):
+            self._check_for_resize()
             self._update_display()
             self._check_if_time_is_up()
             self._sleep_and_refresh()
+
+    def resize_redraw(self):
+        """
+        Append status and heading render to display redraw.
+        """
+        super().resize_redraw()
+
+        if self.times_up:
+            self.renderer.render_status(TIMES_UP_MESSAGE)
+
+        if self.timer_heading:
+            self.renderer.render_heading(self.timer_heading)
 
     def _listen_for_keys(self):
         """
@@ -119,6 +134,8 @@ class Timer(Clock):
         if not self.times_up:
             display_time = self._get_display_time()
             self.renderer.render_clock(display_time)
+        else:
+            self.renderer.render_clock("00:00:00")
 
     def _get_display_time(self):
         """

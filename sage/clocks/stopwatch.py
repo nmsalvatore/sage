@@ -30,6 +30,7 @@ class Stopwatch(Clock):
         Start the stopwatch.
         """
         while self._listen_for_keys() != ord("q"):
+            self._check_for_resize()
             self._update_display()
             self._sleep_and_refresh()
 

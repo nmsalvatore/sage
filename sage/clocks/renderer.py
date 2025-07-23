@@ -41,7 +41,7 @@ class ClockRenderer:
 
         return (y, x)
 
-    def initialize_curses_window(self) -> None:
+    def initialize_curses_window(self):
         """
         Initial curses window configuration.
         """
@@ -49,21 +49,28 @@ class ClockRenderer:
         curses.curs_set(0)
         self.stdscr.nodelay(1)
 
-    def render_app_title(self) -> None:
+    def render_base_features(self):
+        """
+        Render base clock features
+        """
+        self.render_app_title()
+        self.render_help_text()
+
+    def render_app_title(self):
         """
         Render the application title at the top left of the curses
         window.
         """
         self.stdscr.addstr(1, 1, APP_TITLE, curses.color_pair(2))
 
-    def render_clock(self, time_text: str) -> None:
+    def render_clock(self, time_text: str):
         """
         Render the clock at the center of the curses window.
         """
         y, x = self.get_center_coordinates(time_text)
         self.stdscr.addstr(y, x, time_text, curses.color_pair(1))
 
-    def render_status(self, status_text: str) -> None:
+    def render_status(self, status_text: str):
         """
         Render the clock status directly below the clock in the curses
         window.
@@ -71,7 +78,7 @@ class ClockRenderer:
         y, x = self.get_center_coordinates(status_text)
         self.stdscr.addstr(y + 1, x, status_text, curses.color_pair(4))
 
-    def clear_status(self) -> None:
+    def clear_status(self):
         """
         Clear the status text.
         """
@@ -79,21 +86,21 @@ class ClockRenderer:
         self.stdscr.move(y + 1, 0)
         self.stdscr.clrtoeol()
 
-    def render_help_text(self, help_text = HELP_TEXT) -> None:
+    def render_help_text(self, help_text = HELP_TEXT):
         """
         Render the help text at the bottom left of the curses window.
         """
         y, _ = self.stdscr.getmaxyx()
         self.stdscr.addstr(y - 1, 1, help_text, curses.color_pair(3))
 
-    def render_heading(self, heading_text: str) -> None:
+    def render_heading(self, heading_text: str):
         """
         Render the timer heading above the clock in the curses window.
         """
         y, x = self.get_center_coordinates(heading_text)
         self.stdscr.addstr(y - 1, x, heading_text, curses.color_pair(2))
 
-    def render_counter(self, count = 0) -> None:
+    def render_counter(self, count = 0):
         """
         Render the counter at the bottom right of the curses window.
         """
@@ -102,7 +109,7 @@ class ClockRenderer:
         x -= len(counter_text)
         self.stdscr.addstr(y - 1, x - 1, counter_text, curses.color_pair(3))
 
-    def render_warning(self, warning_text: str) -> None:
+    def render_warning(self, warning_text: str):
         """
         Render warning text in upper right corner of screen.
         """
