@@ -8,6 +8,7 @@ from sage.clocks.timer import Timer
 @click.command(short_help="Start a timer")
 @click.argument("time_input", required=True)
 @click.option("--paused", is_flag=True, help="Start timer in a paused state.")
+@click.option("--quiet", is_flag=True, help="Timer will complete silently.")
 @click.option("--test", is_flag=True, hidden=True)
 def timer(test, **kwargs):
     """

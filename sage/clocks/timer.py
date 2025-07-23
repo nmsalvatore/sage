@@ -29,8 +29,11 @@ class Timer(Clock):
 
     def __init__(self):
         super().__init__()
+        self.time_input = ""
         self.times_up = False
         self.timer_heading = None
+        self.total_seconds = 0
+        self.quiet = False
 
     def print_duration(self, time_input) -> None:
         """
@@ -53,9 +56,10 @@ class Timer(Clock):
         Initialize timer settings.
         """
         time_input = kwargs.get("time_input", "")
-        self.time_input = time_input
         self.start_time = time.perf_counter()
+        self.time_input = time_input
         self.total_seconds = self._get_total_seconds(time_input)
+        self.quiet = kwargs.get("quiet", False)
 
     def _get_total_seconds(self, time_input):
         """
@@ -173,4 +177,6 @@ class Timer(Clock):
         self.times_up = True
         self.renderer.render_status(TIMES_UP_MESSAGE)
         self.renderer.stdscr.nodelay(0)
-        sounds.play_file(TIMES_UP_SOUND)
+
+        if not self.quiet:
+            sounds.play_file(TIMES_UP_SOUND)
