@@ -3,7 +3,7 @@
 import curses
 import time
 
-from .constants import PAUSE_MESSAGE, REFRESH_RATE_IN_SECONDS
+from .constants import DisplayText
 from .renderer import ClockRenderer
 from .resize import ResizeHandler
 
@@ -27,6 +27,7 @@ class Clock:
         self.paused = False
         self.pause_start = 0
         self.pause_time = 0
+        self.refresh_rate = 0.01
         self.start_time = 0
 
     def load(self, **kwargs):
@@ -57,7 +58,7 @@ class Clock:
         """
         self.setup_display()
         if self.paused:
-            self.renderer.render_status(PAUSE_MESSAGE)
+            self.renderer.render_status(DisplayText.PAUSED)
 
     def _load_with_curses(self, stdscr, **kwargs):
         """
@@ -97,7 +98,7 @@ class Clock:
         if not self.paused:
             self.pause_start = time.perf_counter()
             self.paused = True
-            self.renderer.render_status(PAUSE_MESSAGE)
+            self.renderer.render_status(DisplayText.PAUSED)
         else:
             self.pause_time += time.perf_counter() - self.pause_start
             self.paused = False
@@ -132,7 +133,7 @@ class Clock:
         """
         Handle timing and screen refresh.
         """
-        time.sleep(REFRESH_RATE_IN_SECONDS)
+        time.sleep(self.refresh_rate)
         self.renderer.stdscr.refresh()
 
     def _get_elapsed_time(self):

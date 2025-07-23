@@ -2,7 +2,7 @@
 
 import curses
 
-from .constants import APP_TITLE, HELP_TEXT
+from .constants import DisplayText
 
 
 class ClockRenderer:
@@ -65,7 +65,7 @@ class ClockRenderer:
         Render the application title at the top left of the curses
         window.
         """
-        self.stdscr.addstr(1, 1, APP_TITLE, curses.color_pair(2))
+        self.stdscr.addstr(1, 1, DisplayText.TITLE, curses.color_pair(2))
 
     def render_clock(self, time_text: str):
         """
@@ -90,7 +90,7 @@ class ClockRenderer:
         self.stdscr.move(y + 1, 0)
         self.stdscr.clrtoeol()
 
-    def render_help_text(self, help_text = HELP_TEXT):
+    def render_help_text(self, help_text = DisplayText.RUNNING_HELP):
         """
         Render the help text at the bottom left of the curses window.
         """

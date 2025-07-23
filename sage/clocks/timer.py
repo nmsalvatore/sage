@@ -6,11 +6,7 @@ import time
 import click
 
 from .clock import Clock
-from .constants import (
-    MISSING_SOUND_MESSAGE,
-    TIMES_UP_SOUND,
-    TIMES_UP_MESSAGE,
-)
+from .constants import DisplayText, SoundFileName
 from sage.common.conversions import time_input_to_seconds, hms_to_seconds
 from sage.common.formatting import time_as_clock
 from sage.config import sounds, presets
@@ -103,8 +99,8 @@ class Timer(Clock):
         """
         Check for missing sound file and render warning if so.
         """
-        if not sounds.file_exists(TIMES_UP_SOUND):
-            self.renderer.render_warning(MISSING_SOUND_MESSAGE)
+        if not sounds.file_exists(SoundFileName.TIMES_UP):
+            self.renderer.render_warning(DisplayText.MISSING_SOUND)
 
     def _start(self):
         """
@@ -123,7 +119,7 @@ class Timer(Clock):
         super().resize_redraw()
 
         if self.times_up:
-            self.renderer.render_status(TIMES_UP_MESSAGE)
+            self.renderer.render_status(DisplayText.TIMES_UP)
 
         if self.timer_heading:
             self.renderer.render_heading(self.timer_heading)
@@ -175,8 +171,8 @@ class Timer(Clock):
         Handle logic for timer completion.
         """
         self.times_up = True
-        self.renderer.render_status(TIMES_UP_MESSAGE)
+        self.renderer.render_status(DisplayText.TIMES_UP)
         self.renderer.stdscr.nodelay(0)
 
         if not self.quiet:
-            sounds.play_file(TIMES_UP_SOUND)
+            sounds.play_file(SoundFileName.TIMES_UP)
