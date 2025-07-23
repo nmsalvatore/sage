@@ -141,7 +141,7 @@ class Timer(Clock):
             display_time = self._get_display_time()
             self.renderer.render_clock(display_time)
         else:
-            self.renderer.render_clock("00:00:00")
+            self.renderer.render_clock(DisplayText.TIMES_UP_TIME)
 
     def _get_display_time(self):
         """
