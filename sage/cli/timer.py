@@ -13,7 +13,15 @@ def timer(test, **kwargs):
     """
     Start a timer with flexible time input. Accepts human-readable
     formats like "25m", "1h 30m", or "45 seconds". You can also use
-    custom timer names like 'pomodoro' or 'workout'.
+    custom timer names like "pomodoro" or "rest".
+
+    \b
+    Examples:
+        sage timer pomodoro
+        sage timer "45 minutes"
+        sage timer 3m
+        sage timer "1 min 30s"
+        sage timer 8hrs30m
     """
     try:
         timer = Timer()

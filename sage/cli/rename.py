@@ -10,7 +10,12 @@ from sage.config import presets
 @click.argument("new_name", required=True)
 def rename(name, new_name):
     """
-    Rename an existing timer.
+    Rename an existing timer. Accepts two arguments, the first being
+    the existing timer name and the second being the new timer name.
+
+    \b
+    Example:
+        sage rename pomodoro freshpom
     """
     try:
         presets.rename(name, new_name)

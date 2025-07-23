@@ -11,7 +11,13 @@ from sage.config import presets
 def create(name, duration):
     """
     Create a custom timer with a memorable name. Duration accepts
-    flexible formats like "25m", "1 hour 30 minutes", or "45s".
+    human-readable formats like "25m", "1h 30m", or "45 seconds".
+
+    \b
+    Examples:
+        sage create pomodoro 25m
+        sage create break "10 minutes"
+        sage create titatnic 3hrs14min
     """
     try:
         presets.create(name, duration)

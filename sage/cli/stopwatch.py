@@ -9,7 +9,11 @@ from sage.clocks.stopwatch import Stopwatch
 @click.option("--paused", is_flag=True, help="Start stopwatch in a paused state.")
 def stopwatch(**kwargs):
     """
-    Start a stopwatch to time activities of unknown duration.
+    Start a stopwatch with centisecond precision.
+
+    \b
+    Example:
+        sage stopwatch
     """
     stopwatch = Stopwatch()
     stopwatch.load(**kwargs)

@@ -10,6 +10,10 @@ from sage.config import presets
 def delete(name):
     """
     Delete a saved timer. This action cannot be undone.
+
+    \b
+    Example:
+        sage delete pomodoro
     """
     try:
         presets.delete(name)

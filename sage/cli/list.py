@@ -10,7 +10,11 @@ from sage.common.formatting import time_in_english
 @click.command(short_help="List all timers")
 def list():
     """
-    List all saved timers and their durations in human-readable format.
+    List all saved timers and their durations.
+
+    \b
+    Example:
+        sage list
     """
     all_presets = presets.load_all()
 
