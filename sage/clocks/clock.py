@@ -10,7 +10,16 @@ from .resize import ResizeHandler
 
 class Clock:
     """
-    Base clock class inherited by Timer and Stopwatch.
+    Base class for all timing applications (Timer and Stopwatch).
+
+    Provides shared functionality including:
+    - Curses interface setup and teardown
+    - Pause/resume functionality
+    - Counter increment
+    - Keyboard input handling
+    - Window resize management
+
+    This is an abstract base class - subclasses must implement _load_clock().
     """
 
     def __init__(self):

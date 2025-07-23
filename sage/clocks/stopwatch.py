@@ -8,7 +8,11 @@ from sage.common.formatting import time_as_clock
 
 class Stopwatch(Clock):
     """
-    Stopwatch interface.
+    A stopwatch that counts up from zero with centisecond precision.
+
+    The Stopwatch class provides elapsed time tracking functionality
+    with a curses-based-display. It inherits from Clock for shared
+    functionality like pause/resume and counter increment.
     """
 
     def _load_clock(self, **kwargs):

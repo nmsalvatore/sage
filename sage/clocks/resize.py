@@ -7,7 +7,10 @@ import threading
 
 class ResizeHandler:
     """
-    Handler for terminal resizing.
+    Manages terminal window resize events for curses applications.
+
+    Uses signal handling to detect SIGWINCH events and coordinate with the
+    main application to redraw the interface when the terminal is resized.
     """
 
     def __init__(self, stdscr, redraw_callback):

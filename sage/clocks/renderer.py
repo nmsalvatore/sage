@@ -7,7 +7,11 @@ from .constants import APP_TITLE, HELP_TEXT
 
 class ClockRenderer:
     """
-    Renderer class for curses clock interface.
+    Handles all curses-based rendering for timer and stopwatch displays.
+
+    The ClockRenderer manages the terminal UI including clock display, status
+    messages, help text, and color schemes. It calculates positioning and
+    handles text centering automatically.
     """
 
     def __init__(self, stdscr):

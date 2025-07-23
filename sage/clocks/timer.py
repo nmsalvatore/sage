@@ -18,7 +18,13 @@ from sage.config import sounds, presets
 
 class Timer(Clock):
     """
-    Timer interface.
+    A countdown timer that displays remaining time and plays a sound
+    when complete.
+
+    The Timer class handles countdown functionality with preset
+    support, sound notifications, and a curses-based display. It
+    inherits from Clock for shared functionality like pause/resume and
+    counter increment.
     """
 
     def __init__(self):
