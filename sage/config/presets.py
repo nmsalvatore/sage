@@ -7,7 +7,7 @@ from typing import TypeAlias
 import click
 from platformdirs import user_config_dir
 
-from sage.common.conversions import time_string_to_time_units, time_units_to_seconds
+from sage.common.conversions import time_input_to_time_units, time_units_to_seconds
 
 
 PresetDict: TypeAlias = dict[str, int]
@@ -82,14 +82,14 @@ def get(name: str) -> PresetDict | None:
     return presets.get(name)
 
 
-def create(name: str, time_string: str) -> PresetDict:
+def create(name: str, time_input: str) -> PresetDict:
     """
     Create a preset and save it.
     """
     if get(name):
         raise ValueError(f"'{name}' is already a preset.")
 
-    hours, minutes, seconds = time_string_to_time_units(time_string)
+    hours, minutes, seconds = time_input_to_time_units(time_input)
     total_seconds = time_units_to_seconds(hours, minutes, seconds)
 
     if total_seconds <= 0:
@@ -142,7 +142,7 @@ def update(name: str, duration: str) -> PresetDict:
     if get(name) is None:
         raise ValueError(f"'{name}' is not a preset.")
 
-    hours, minutes, seconds = time_string_to_time_units(duration)
+    hours, minutes, seconds = time_input_to_time_units(duration)
     presets = load_all()
     presets[name] = {
         "hours": hours,

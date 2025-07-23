@@ -1,8 +1,8 @@
 from sage.common.conversions import (
     seconds_to_time_units,
     time_units_to_seconds,
-    time_string_to_seconds,
-    time_string_to_time_units
+    time_input_to_seconds,
+    time_input_to_time_units
 )
 
 
@@ -33,19 +33,19 @@ def test_seconds_to_time_units():
     assert seconds_to_time_units(28933) == (8, 2, 13)
 
 
-def test_convert_time_string_to_seconds():
+def test_convert_time_input_to_seconds():
     """
     Test conversion of time string to seconds.
     """
-    assert time_string_to_seconds("2 minutes") == 120
-    assert time_string_to_seconds("3min40s") == 220
-    assert time_string_to_seconds("17 hours 3 minutes 40 sec") == 61420
+    assert time_input_to_seconds("2 minutes") == 120
+    assert time_input_to_seconds("3min40s") == 220
+    assert time_input_to_seconds("17 hours 3 minutes 40 sec") == 61420
 
 
-def test_convert_time_string_to_time_units():
+def test_convert_time_input_to_time_units():
     """
     Test conversion of time string to hours, minutes, and seconds.
     """
-    assert time_string_to_time_units("2 minutes") == (0, 2, 0)
-    assert time_string_to_time_units("3min40s") == (0, 3, 40)
-    assert time_string_to_time_units("17 hours 3 minutes 40 sec") == (17, 3, 40)
+    assert time_input_to_time_units("2 minutes") == (0, 2, 0)
+    assert time_input_to_time_units("3min40s") == (0, 3, 40)
+    assert time_input_to_time_units("17 hours 3 minutes 40 sec") == (17, 3, 40)

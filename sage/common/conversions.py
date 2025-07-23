@@ -24,13 +24,13 @@ def seconds_to_time_units(total_seconds: float) -> HoursMinutesSeconds:
     return (hours, minutes, seconds)
 
 
-def time_string_to_seconds(time_string: str) -> int:
+def time_input_to_seconds(time_input: str) -> int:
     """
     Convert a human-readable time string to total seconds.
     """
 
     def extract_time_value(pattern: str) -> int:
-        match = re.search(pattern, time_string)
+        match = re.search(pattern, time_input)
         return int(match.group(1)) if match else 0
 
     hours = extract_time_value(r"(\d+)\s*(h|hour|hours)")
@@ -41,10 +41,10 @@ def time_string_to_seconds(time_string: str) -> int:
     return total
 
 
-def time_string_to_time_units(time_string: str) -> HoursMinutesSeconds:
+def time_input_to_time_units(time_input: str) -> HoursMinutesSeconds:
     """
     Convert a human-readable time string to hours, minutes, and seconds.
     """
     return seconds_to_time_units(
-        time_string_to_seconds(time_string)
+        time_input_to_seconds(time_input)
     )

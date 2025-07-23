@@ -11,7 +11,7 @@ from .constants import (
     TIMES_UP_SOUND,
     TIMES_UP_MESSAGE,
 )
-from sage.common.conversions import time_string_to_seconds, time_units_to_seconds
+from sage.common.conversions import time_input_to_seconds, time_units_to_seconds
 from sage.common.formatting import time_as_clock
 from sage.config import sounds, presets
 
@@ -65,7 +65,7 @@ class Timer(Clock):
         if preset := presets.get(time_input):
             seconds = time_units_to_seconds(**preset)
         else:
-            seconds = time_string_to_seconds(time_input)
+            seconds = time_input_to_seconds(time_input)
         return self._validate_total_seconds(seconds)
 
     def _validate_total_seconds(self, total_seconds):
