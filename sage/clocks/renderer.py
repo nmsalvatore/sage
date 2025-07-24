@@ -97,12 +97,12 @@ class ClockRenderer:
         y, _ = self.stdscr.getmaxyx()
         self.stdscr.addstr(y - 1, 1, help_text, curses.color_pair(3))
 
-    def clear_help_text(self):
+    def clear_help_text(self, help_text = DisplayText.RUNNING_HELP):
         """
         Clear the help text at the bottom left of the curses window.
         """
         y, _ = self.stdscr.getmaxyx()
-        empty_string = " " * len(DisplayText.RUNNING_HELP)
+        empty_string = " " * len(help_text)
         self.stdscr.addstr(y - 1, 1, empty_string)
 
     def render_heading(self, heading_text: str):
@@ -128,3 +128,12 @@ class ClockRenderer:
         _, x = self.stdscr.getmaxyx()
         x -= len(warning_text)
         self.stdscr.addstr(1, x - 1, warning_text, curses.color_pair(4))
+
+    def render_times_up_display(self):
+        """
+        Render display for timer completion state.
+        """
+        self.render_status(DisplayText.TIMES_UP)
+        self.stdscr.nodelay(0)
+        self.clear_help_text()
+        self.render_help_text(DisplayText.TIMES_UP_HELP)

@@ -163,7 +163,6 @@ class Timer(Clock):
         Check if timer has completed and complete if so.
         """
         time_remaining = self._get_time_remaining()
-
         if not self.times_up and time_remaining <= 0:
             self._handle_times_up()
 
@@ -174,10 +173,7 @@ class Timer(Clock):
         if not self.times_up:
             self.times_up = True
 
-        self.renderer.render_status(DisplayText.TIMES_UP)
-        self.renderer.stdscr.nodelay(0)
-        self.renderer.clear_help_text()
-        self.renderer.render_help_text(DisplayText.TIMES_UP_HELP)
+        self.renderer.render_times_up_display()
 
         if not self.quiet:
             sounds.play_file(SoundFileName.TIMES_UP)
