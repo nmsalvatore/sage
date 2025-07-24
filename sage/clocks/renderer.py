@@ -97,6 +97,14 @@ class ClockRenderer:
         y, _ = self.stdscr.getmaxyx()
         self.stdscr.addstr(y - 1, 1, help_text, curses.color_pair(3))
 
+    def clear_help_text(self):
+        """
+        Clear the help text at the bottom left of the curses window.
+        """
+        y, _ = self.stdscr.getmaxyx()
+        empty_string = " " * len(DisplayText.RUNNING_HELP)
+        self.stdscr.addstr(y - 1, 1, empty_string)
+
     def render_heading(self, heading_text: str):
         """
         Render the timer heading above the clock in the curses window.

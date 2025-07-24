@@ -173,6 +173,8 @@ class Timer(Clock):
         self.times_up = True
         self.renderer.render_status(DisplayText.TIMES_UP)
         self.renderer.stdscr.nodelay(0)
+        self.renderer.clear_help_text()
+        self.renderer.render_help_text(DisplayText.TIMES_UP_HELP)
 
         if not self.quiet:
             sounds.play_file(SoundFileName.TIMES_UP)
