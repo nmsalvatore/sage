@@ -109,7 +109,7 @@ class Timer(Clock):
         while self._listen_for_keys() != ord("q"):
             self._check_for_resize()
             self._update_display()
-            self._check_if_time_is_up()
+            self._handle_times_up()
             self._sleep_and_refresh()
 
     def resize_redraw(self):
@@ -117,10 +117,7 @@ class Timer(Clock):
         Append status and heading render to display redraw.
         """
         super().resize_redraw()
-
-        if self.times_up:
-            self._handle_times_up()
-
+        self._handle_times_up()
         if self.timer_heading:
             self.renderer.render_heading(self.timer_heading)
 
@@ -158,22 +155,21 @@ class Timer(Clock):
         elapsed = self._get_elapsed_time()
         return self.total_seconds - elapsed
 
-    def _check_if_time_is_up(self):
-        """
-        Check if timer has completed and complete if so.
-        """
-        time_remaining = self._get_time_remaining()
-        if not self.times_up and time_remaining <= 0:
-            self._handle_times_up()
-
     def _handle_times_up(self):
         """
         Handle logic for timer completion.
         """
-        if not self.times_up:
+        if self._get_time_remaining() <= 0:
             self.times_up = True
 
-        self.renderer.render_times_up_display()
+        if self.times_up:
+            self.renderer.render_times_up_display()
+            self._handle_times_up_sound()
 
-        if not self.quiet:
-            sounds.play_file(SoundFileName.TIMES_UP)
+    def _handle_times_up_sound(self, sound_filename = SoundFileName.TIMES_UP):
+        """
+        Handle logic for sound play on timer_completion, no sound
+        played if --quiet flag is passed to timer.
+        """
+        if not self.quiet and self.times_up:
+            sounds.play_file(sound_filename)
