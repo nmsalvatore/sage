@@ -119,7 +119,7 @@ class Timer(Clock):
         super().resize_redraw()
 
         if self.times_up:
-            self.renderer.render_status(DisplayText.TIMES_UP)
+            self._handle_times_up()
 
         if self.timer_heading:
             self.renderer.render_heading(self.timer_heading)
@@ -163,14 +163,17 @@ class Timer(Clock):
         Check if timer has completed and complete if so.
         """
         time_remaining = self._get_time_remaining()
-        if not self.times_up and time_remaining <= 0:
-            self._complete_timer()
 
-    def _complete_timer(self):
+        if not self.times_up and time_remaining <= 0:
+            self._handle_times_up()
+
+    def _handle_times_up(self):
         """
         Handle logic for timer completion.
         """
-        self.times_up = True
+        if not self.times_up:
+            self.times_up = True
+
         self.renderer.render_status(DisplayText.TIMES_UP)
         self.renderer.stdscr.nodelay(0)
         self.renderer.clear_help_text()
