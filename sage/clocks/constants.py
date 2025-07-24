@@ -10,7 +10,7 @@ class DisplayText(StrEnum):
     MISSING_SOUND = "Cannot find sound file. Timer will complete silently."
     RUNNING_HELP = "<q> Quit, <Space> Pause/Resume, <Enter> Increment counter"
     PAUSED = "Paused"
-    TIMES_UP_HELP = "<q> Quit, <Space> Restart"
+    TIMES_UP_HELP = "<q> Quit"
     TIMES_UP = "Time's up!"
     TIMES_UP_TIME = "00:00:00"
     TITLE = "sage"
