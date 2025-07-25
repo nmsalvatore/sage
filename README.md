@@ -13,10 +13,10 @@ create preset timers that can be called with names like "pomodoro".
 
 ## Quick Start
 
-1. Install Sage:
+1. Install Sage globally with [pipx](https://github.com/pypa/pipx).
 
 ```bash
-pip install sage-timer
+pipx install sage-timer
 ```
 
 2. Start a timer or stopwatch.
@@ -24,6 +24,26 @@ pip install sage-timer
 ```bash
 sage timer 35m                          # Start a 35-minute timer
 sage stopwatch                          # Start a stopwatch
+```
+
+## Installation
+
+Sage requires Python 3.10+. Installation with [pipx](https://github.com/pypa/pipx)
+is recommended:
+
+```bash
+pipx install sage-timer
+```
+
+[pipx](https://github.com/pypa/pipx) is designed for installing
+command-line tools like Sage. It creates an isolated environment for
+each tool, preventing dependency conflicts while making the `sage`
+command globally available.
+
+Alternatively, you can use pip or other PyPI-based package managers:
+
+```bash
+pip install sage-timer
 ```
 
 ## Usage
@@ -81,7 +101,7 @@ sage rename <name> <new_name>           # Rename a timer
 sage delete <name>                      # Delete a timer
 ```
 
-##### Example Usage
+These commands in action would like something like this:
 
 ```bash
 sage create workout 45m                 # Create 45 minute workout timer
