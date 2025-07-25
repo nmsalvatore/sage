@@ -21,9 +21,9 @@ dev = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["sage"]
-artifacts = [
-    "sounds/*",
+include = [
+    "sage/",
+    "sounds/",
 ]
 
 [tool.hatch.version]
