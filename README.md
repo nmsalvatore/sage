@@ -35,10 +35,9 @@ is recommended:
 pipx install sage-timer
 ```
 
-[pipx](https://github.com/pypa/pipx) is designed for installing
-command-line tools like Sage. It creates an isolated environment for
-each tool, preventing dependency conflicts while making the `sage`
-command globally available.
+pipx is designed for installing command-line tools like Sage. It
+creates an isolated environment for each tool, preventing dependency
+conflicts while making the `sage` command globally available.
 
 Alternatively, you can use pip or other PyPI-based package managers:
 
