@@ -1,4 +1,3 @@
-Version 1.1.0
 # Changelog
 
 All notable changes to this project will be documented in this file.
@@ -24,7 +23,7 @@ recommendation to use pipx for installation.
 
 ### Added
 
-- Added more screenshots in README, specifically for the Timer,
+- More screenshots in README, specifically for the Timer,
 Stopwatch, and Load Clock Without Starting sections.
 
 ### Fixed
