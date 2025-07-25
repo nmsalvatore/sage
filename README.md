@@ -34,6 +34,8 @@ sage stopwatch                          # Start a stopwatch
 
 ![Sage timer](https://raw.githubusercontent.com/nmsalvatore/sage/main/docs/images/timer.png)
 
+#### Run A Timer
+
 Sage recognizes flexible, human-readable time formats across multiple
 styles that match however you naturally express time.
 
@@ -50,7 +52,7 @@ found with `sage list`.
 sage timer pomodoro                     # Start a 25-minute timer
 ```
 
-#### Let Timer Complete Quietly
+#### Let A Timer Complete Quietly
 
 Use the `--quiet` flag to let the timer complete without a sound.
 
@@ -67,7 +69,7 @@ sage create workout 1hr                 # Create 1 hour workout timer
 sage timer workout                      # Start workout timer
 ```
 
-### Managing Custom Timers
+#### Managing Custom Timers
 
 Custom timers are managed with the following commands:
 
@@ -79,7 +81,7 @@ sage rename <name> <new_name>           # Rename a timer
 sage delete <name>                      # Delete a timer
 ```
 
-#### Example Usage
+##### Example Usage
 
 ```bash
 sage create workout 45m                 # Create 45 minute workout timer
@@ -89,13 +91,13 @@ sage timer yoga                         # Start 1 hour yoga timer
 sage delete yoga                        # Delete yoga timer
 ```
 
-All timer commands accept the same flexible time formats as the main timer.
-
 ### Stopwatch
 
 *A running Sage stopwatch, with centisecond precision.*
 
 ![Sage stopwatch](https://raw.githubusercontent.com/nmsalvatore/sage/main/docs/images/stopwatch.png)
+
+#### Run A Stopwatch
 
 Sage provides precise time tracking with centisecond accuracy for
 activities with unknown duration.
