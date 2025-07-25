@@ -44,9 +44,9 @@ sage timer "1 hour 15m"                 # 1 hour 15 minutes
 sage timer 2h30m45s                     # 2 hours 30 minutes 45 seconds
 ```
 
-#### Have Timer Complete Silently
+#### Let Timer Complete Quietly
 
-Use the `--quiet` flag to have the timer complete without a sound.
+Use the `--quiet` flag to let the timer complete without a sound.
 
 ```bash
 sage timer 7m --quiet
@@ -110,12 +110,12 @@ sage stopwatch                          # Start a stopwatch immediately
 ### Counter
 
 Both `timer` and `stopwatch` include a counter which can be used to track
-laps, counts, reps, etc. Just press ENTER to increment.
+laps, counts, reps, etc. Just press `Enter` to increment.
 
-### Load Clock Without Starting
+### Load A Clock Without Starting
 
-Both `timer` and `stopwatch` can start in a paused state with the
-`--paused` flag. Once a clock is loaded, press SPACE to start.
+Both `timer` and `stopwatch` can load in a paused state with the
+`--paused` flag. Once a clock is loaded, press `Space` to start.
 
 ```bash
 sage timer 25m --paused                 # Load timer in paused state
