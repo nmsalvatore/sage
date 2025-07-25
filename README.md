@@ -117,8 +117,9 @@ following simple keystrokes:
 
 ### The Counter
 
-Both `timer` and `stopwatch` include a counter which can be used to track
-laps, counts, reps, etc. Just press `Enter` to increment.
+The Sage timer and stopwatch include a counter which can be used to track
+laps, counts, reps, etc. Just press `Enter` to increment while in the
+clock interface.
 
 ### Load A Clock Without Starting
 
@@ -126,8 +127,10 @@ laps, counts, reps, etc. Just press `Enter` to increment.
 
 ![Paused Sage timer](https://raw.githubusercontent.com/nmsalvatore/sage/main/docs/images/paused.png)
 
-Both `timer` and `stopwatch` can load in a paused state with the
-`--paused` flag. Once a clock is loaded, press `Space` to start.
+The `timer` and `stopwatch` commands accept a `--paused` flag that will
+load the clock in a paused state. Once the clock is loaded, a "Paused"
+message will be shown beneath the clock time and the clock will wait for
+the `Space` key to be pressed before starting.
 
 ```bash
 sage timer 25m --paused                 # Load timer in paused state
