@@ -34,8 +34,8 @@ sage stopwatch                          # Start a stopwatch
 
 ![Sage timer](https://raw.githubusercontent.com/nmsalvatore/sage/main/docs/images/timer.png)
 
-`sage timer` accepts flexible, human-readable time formats that work
-however you naturally think about time:
+Sage recognizes flexible, human-readable time formats across multiple
+styles that match however you naturally express time.
 
 ```bash
 sage timer 25m                          # Start a 25-minute timer
@@ -57,14 +57,6 @@ Use the `--quiet` flag to let the timer complete without a sound.
 ```bash
 sage timer 7m --quiet
 ```
-
-#### Timer Controls
-
-Once running, control your timer with simple keystrokes:
-
-- **Space** - Pause and resume
-- **Enter** - Increment counter
-- **Q** - Quit
 
 #### Custom Timers
 
@@ -105,13 +97,14 @@ All timer commands accept the same flexible time formats as the main timer.
 
 ![Sage stopwatch](https://raw.githubusercontent.com/nmsalvatore/sage/main/docs/images/stopwatch.png)
 
-For timing activities with unknown duration:
+Sage provides precise time tracking with centisecond accuracy for
+activities with unknown duration.
 
 ```bash
 sage stopwatch                          # Start a stopwatch immediately
 ```
 
-#### Clock Controls
+### Controls
 
 Once running, both the timer and stopwatch can be controlled with the
 following simple keystrokes:
@@ -127,7 +120,7 @@ laps, counts, reps, etc. Just press `Enter` to increment.
 
 ### Load A Clock Without Starting
 
-*Built-in potato timer, loaded in paused state.*
+*Built-in potato timer, loaded in a paused state.*
 
 ![Paused Sage timer](https://raw.githubusercontent.com/nmsalvatore/sage/main/docs/images/paused.png)
 
@@ -138,6 +131,14 @@ Both `timer` and `stopwatch` can load in a paused state with the
 sage timer 25m --paused                 # Load timer in paused state
 sage stopwatch --paused                 # Load stopwatch in paused state
 ```
+
+## Philosophy
+
+Most CLI tools prioritize technical precision over human usability,
+making them inaccessible to casual users. Sage was built out of a
+desire to prove that command line applications can be both powerful
+and intuitive, using natural language processing and thoughtful UX
+design.
 
 ## License
 
