@@ -12,7 +12,7 @@ from sage.cli.update import update
 
 
 @click.group()
-@click.version_option()
+@click.version_option(package_name="sage-timer")
 def sage():
     pass
 
