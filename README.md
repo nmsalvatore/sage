@@ -142,7 +142,7 @@ sage stopwatch --paused                 # Load stopwatch in paused state
 Most CLI tools prioritize technical precision over human usability,
 making them inaccessible to casual users. Sage was built out of a
 desire to prove that command line applications can be both powerful
-and intuitive, using natural language processing and thoughtful UX
+and intuitive, using natural language processing and a simple UX
 design.
 
 ## License
