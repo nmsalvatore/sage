@@ -38,6 +38,15 @@ class Timer(Clock):
         time_in_seconds = self._get_total_seconds(time_input)
         click.echo(time_as_clock(time_in_seconds))
 
+    def resize_redraw(self):
+        """
+        Append status and heading render to display redraw.
+        """
+        super().resize_redraw()
+        self._handle_times_up()
+        if self.timer_heading:
+            self.renderer.render_heading(self.timer_heading)
+
     def _load_clock(self, **kwargs):
         """
         Initialize and start the timer.
@@ -111,15 +120,6 @@ class Timer(Clock):
             self._update_display()
             self._handle_times_up()
             self._sleep_and_refresh()
-
-    def resize_redraw(self):
-        """
-        Append status and heading render to display redraw.
-        """
-        super().resize_redraw()
-        self._handle_times_up()
-        if self.timer_heading:
-            self.renderer.render_heading(self.timer_heading)
 
     def _listen_for_keys(self):
         """
