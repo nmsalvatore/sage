@@ -100,7 +100,8 @@ sage rename <name> <new_name>           # Rename a timer
 sage delete <name>                      # Delete a timer
 ```
 
-These commands in action would like something like this:
+To better illustrate their use, a comprehensive workflow with Sage's
+management commands would look something like this.
 
 ```bash
 sage create workout 45m                 # Create 45 minute workout timer
