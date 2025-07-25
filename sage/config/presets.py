@@ -33,11 +33,10 @@ def create_defaults() -> PresetsDict:
     Create and return default presets.
     """
     return {
-        "pika": {"hours": 0, "minutes": 0, "seconds": 5},
         "johncage": {"hours": 0, "minutes": 4, "seconds": 33},
         "pomodoro": {"hours": 0, "minutes": 25, "seconds": 0},
         "potato": {"hours": 0, "minutes": 50, "seconds": 0},
-        "rest": {"hours": 0, "minutes": 10, "seconds": 0},
+        "break": {"hours": 0, "minutes": 10, "seconds": 0},
     }
 
 
