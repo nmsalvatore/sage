@@ -106,7 +106,7 @@ activities with unknown duration.
 sage stopwatch                          # Start a stopwatch immediately
 ```
 
-### Controls
+### Clock Controls
 
 Once running, both the timer and stopwatch can be controlled with the
 following simple keystrokes:
@@ -115,7 +115,7 @@ following simple keystrokes:
 - **Enter** - Increment counter
 - **Q** - Quit
 
-### Counter
+### The Counter
 
 Both `timer` and `stopwatch` include a counter which can be used to track
 laps, counts, reps, etc. Just press `Enter` to increment.
