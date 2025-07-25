@@ -16,7 +16,7 @@ create preset timers that can be called with names like "pomodoro".
 1. Install Sage:
 
 ```bash
-pip install sage
+pip install sage-timer
 ```
 
 2. Start a timer or stopwatch.
