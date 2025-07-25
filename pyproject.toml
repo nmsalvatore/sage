@@ -1,10 +1,10 @@
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "uv-dynamic-versioning"]
 build-backend = "hatchling.build"
 
 [project]
 name = "sage"
-version = "0.1.0"
+dynamic = ["version"]
 description = "A clean and easy-to-use CLI timer"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -14,4 +14,9 @@ dependencies = ["click>=8.2.1", "nava>=0.7", "platformdirs>=4.3.8"]
 sage = "sage.cli.main:sage"
 
 [dependency-groups]
-dev = ["pytest>=8.4.1"]
+dev = [
+    "pytest>=8.4.1",
+]
+
+[tool.hatch.version]
+source = "uv-dynamic-versioning"
