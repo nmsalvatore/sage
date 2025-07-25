@@ -159,17 +159,17 @@ class Timer(Clock):
         """
         Handle logic for timer completion.
         """
-        if self._get_time_remaining() <= 0:
+        if self._get_time_remaining() <= 0 and not self.times_up:
             self.times_up = True
+            self._handle_times_up_sound()
 
         if self.times_up:
             self.renderer.render_times_up_display()
-            self._handle_times_up_sound()
 
     def _handle_times_up_sound(self, sound_filename = SoundFileName.TIMES_UP):
         """
         Handle logic for sound play on timer_completion, no sound
         played if --quiet flag is passed to timer.
         """
-        if not self.quiet and self.times_up:
+        if not self.quiet:
             sounds.play_file(sound_filename)
