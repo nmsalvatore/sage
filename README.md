@@ -9,7 +9,7 @@ create preset timers that can be called with names like "pomodoro".
 
 *Sage integrated into a development workflow*
 
-![Sage pomodoro timer](docs/images/workflow.png)
+![Sage pomodoro timer](https://raw.githubusercontent.com/nmsalvatore/sage/main/docs/images/workflow.png)
 
 ## Quick Start
 
