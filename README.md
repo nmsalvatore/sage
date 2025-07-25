@@ -124,7 +124,7 @@ sage stopwatch --paused                 # Load stopwatch in paused state
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) file for details.
+MIT License - see [LICENSE](https://github.com/nmsalvatore/sage/blob/main/LICENSE) file for details.
 
 ## Contributing
 
