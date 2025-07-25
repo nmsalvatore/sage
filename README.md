@@ -129,8 +129,8 @@ clock interface.
 
 The `timer` and `stopwatch` commands accept a `--paused` flag that will
 load the clock in a paused state. Once the clock is loaded, a "Paused"
-message will be shown beneath the clock time and the clock will wait for
-the `Space` key to be pressed before starting.
+message will appear beneath the clock time and the clock will wait for
+the `Space` key to start.
 
 ```bash
 sage timer 25m --paused                 # Load timer in paused state
