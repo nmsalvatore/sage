@@ -7,6 +7,8 @@ to your human inclinations about the language of time. Use natural
 language like "25m" or "1 hour 30 minutes" when running timers, or
 create preset timers that can be called with names like "pomodoro".
 
+*Sage integrated into a development workflow*
+
 ![Sage pomodoro timer](docs/images/workflow.png)
 
 ## Quick Start
