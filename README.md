@@ -7,7 +7,7 @@ to your human inclinations about the language of time. Use natural
 language like "25m" or "1 hour 30 minutes" when running timers, or
 create preset timers that can be called with names like "pomodoro".
 
-*Sage integrated into a development workflow*
+*Sage integrated into a development workflow.*
 
 ![Sage pomodoro timer](https://raw.githubusercontent.com/nmsalvatore/sage/main/docs/images/workflow.png)
 
@@ -23,25 +23,31 @@ pip install sage-timer
 
 ```bash
 sage timer 35m                          # Start a 35-minute timer
-sage timer pomodoro                     # Start pomodoro timer
-sage timer pomodoro --paused            # Load pomodoro timer, but don't start
 sage stopwatch                          # Start a stopwatch
-sage stopwatch --paused                 # Load stopwatch, but don't start
-sage list                               # See all preset timers
 ```
 
 ## Usage
 
 ### Timer
 
-`sage timer` accepts flexible, human-readable time formats that work however you naturally think about time:
+*A running Sage timer.*
+
+![Sage timer](https://raw.githubusercontent.com/nmsalvatore/sage/main/docs/images/timer.png)
+
+`sage timer` accepts flexible, human-readable time formats that work
+however you naturally think about time:
 
 ```bash
-sage timer 25m                          # 25 minutes
-sage timer "10 minutes 30 seconds"      # 10 minutes 30 seconds
-sage timer 3min25s                      # 3 minutes 25 seconds
-sage timer "1 hour 15m"                 # 1 hour 15 minutes
-sage timer 2h30m45s                     # 2 hours 30 minutes 45 seconds
+sage timer 25m                          # Start a 25-minute timer
+sage timer "10 minutes 30 seconds"      # Start a 10-minute 30-second timer
+sage timer 3min25s                      # Start a 3-minute 25-second
+```
+
+It also accepts custom timer names. A list of built-in timers can be
+found with `sage list`.
+
+```bash
+sage timer pomodoro                     # Start a 25-minute timer
 ```
 
 #### Let Timer Complete Quietly
@@ -95,13 +101,20 @@ All timer commands accept the same flexible time formats as the main timer.
 
 ### Stopwatch
 
+*A running Sage stopwatch, with centisecond precision.*
+
+![Sage stopwatch](https://raw.githubusercontent.com/nmsalvatore/sage/main/docs/images/stopwatch.png)
+
 For timing activities with unknown duration:
 
 ```bash
 sage stopwatch                          # Start a stopwatch immediately
 ```
 
-#### Stopwatch Controls
+#### Clock Controls
+
+Once running, both the timer and stopwatch can be controlled with the
+following simple keystrokes:
 
 - **Space** - Pause and resume
 - **Enter** - Increment counter
@@ -113,6 +126,10 @@ Both `timer` and `stopwatch` include a counter which can be used to track
 laps, counts, reps, etc. Just press `Enter` to increment.
 
 ### Load A Clock Without Starting
+
+*Built-in potato timer, loaded in paused state.*
+
+![Paused Sage timer](https://raw.githubusercontent.com/nmsalvatore/sage/main/docs/images/paused.png)
 
 Both `timer` and `stopwatch` can load in a paused state with the
 `--paused` flag. Once a clock is loaded, press `Space` to start.
