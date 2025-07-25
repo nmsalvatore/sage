@@ -22,6 +22,9 @@ dev = [
 
 [tool.hatch.build.targets.wheel]
 packages = ["sage"]
+artifacts = [
+    "sounds/",
+]
 
 [tool.hatch.version]
 source = "uv-dynamic-versioning"
