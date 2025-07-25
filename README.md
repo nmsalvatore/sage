@@ -22,7 +22,7 @@ pipx install sage-timer
 2. Start a timer or stopwatch.
 
 ```bash
-sage timer 35m                          # Start a 35-minute timer
+sage timer 35m                          # Start a 35 minute timer
 sage stopwatch                          # Start a stopwatch
 ```
 
@@ -59,16 +59,16 @@ Sage recognizes flexible, human-readable time formats across multiple
 styles that match however you naturally express time.
 
 ```bash
-sage timer 25m                          # Start a 25-minute timer
-sage timer "10 minutes 30 seconds"      # Start a 10-minute 30-second timer
-sage timer 3min25s                      # Start a 3-minute 25-second
+sage timer 25m                          # Start a 25 minute timer
+sage timer "10 minutes 30 seconds"      # Start a 10 minute 30 second timer
+sage timer 3min25s                      # Start a 3 minute 25 second
 ```
 
 It also accepts custom timer names. A list of built-in timers can be
 found with `sage list`.
 
 ```bash
-sage timer pomodoro                     # Start a 25-minute timer
+sage timer pomodoro                     # Start a 25 minute timer
 ```
 
 #### Let A Timer Complete Quietly
